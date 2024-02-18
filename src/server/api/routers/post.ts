@@ -1,19 +1,19 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
 import { posts } from "~/server/db/schema";
 
 export const postRouter = createTRPCRouter({
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
     .query(({ input, ctx }) => {
-      console.log(ctx.auth)
+    
       return {
         greeting: `Hello ${input.text}, you are ${ctx.user?.firstName}!`,
       };
     }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       // simulate a slow db call
