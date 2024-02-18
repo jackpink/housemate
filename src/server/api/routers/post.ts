@@ -6,9 +6,10 @@ import { posts } from "~/server/db/schema";
 export const postRouter = createTRPCRouter({
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
+      console.log(ctx.auth)
       return {
-        greeting: `Hello ${input.text}`,
+        greeting: `Hello ${input.text}, you are ${ctx.user?.firstName}!`,
       };
     }),
 
