@@ -7,7 +7,7 @@
     "build": "next build",
     "db:push": "drizzle-kit push:mysql",
     "db:studio": "drizzle-kit studio",
-    "dev": "next dev",
+    "dev": "sst bind next dev",
     "lint": "next lint",
     "start": "next start"
   },
@@ -28,6 +28,7 @@
     "react-dom": "18.2.0",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
+    "svix": "^1.18.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -38,6 +39,8 @@
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "autoprefixer": "^10.4.14",
+    "aws-cdk-lib": "2.124.0",
+    "constructs": "10.3.0",
     "drizzle-kit": "^0.20.9",
     "eslint": "^8.54.0",
     "eslint-config-next": "^14.0.4",
@@ -45,6 +48,7 @@
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
     "prettier-plugin-tailwindcss": "^0.5.7",
+    "sst": "^2.40.3",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.1.6"
   },
