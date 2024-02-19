@@ -9,10 +9,13 @@ export function CreatePost() {
   const router = useRouter();
   const [name, setName] = useState("");
 
+  const ctx = api.useUtils();
+
   const createPost = api.post.create.useMutation({
     onSuccess: () => {
       router.refresh();
       setName("");
+      void ctx.post.getLatest.invalidate();
     },
   });
 
