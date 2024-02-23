@@ -30,44 +30,32 @@ export const posts = createTable(
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
 );
 
-export const users = createTable(
-  "user",
-  {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    firstName: varchar("name", { length: 256 }),
-    lastName: varchar("name", { length: 256 }),
-    email: varchar("email", { length: 256 }),
-    properties: 
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt").onUpdateNow(),
-  },
-  (user) => ({
-    nameIndex: index("name_idx").on(user.name),
-  })
-);
+export const users = createTable("user", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  firstName: varchar("name", { length: 256 }),
+  lastName: varchar("name", { length: 256 }),
+  email: varchar("email", { length: 256 }),
 
-export const properties = createTable(
-  "property",
-  {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    apartment: varchar("name", { length: 256 }),
-    streetNumber: varchar("address", { length: 256 }),
-    streetName: varchar("address", { length: 256 }),
-    suburb: varchar("address", { length: 256 }),
-    state: varchar("address", { length: 256 }),
-    postcode: varchar("address", { length: 256 }),
-    country: varchar("address", { length: 256 }),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt").onUpdateNow(),
-  },
-  (property) => ({
-    nameIndex: index("name_idx").on(property.name),
-  })
-);
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updatedAt").onUpdateNow(),
+});
+
+export const properties = createTable("property", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  apartment: varchar("name", { length: 256 }),
+  streetNumber: varchar("address", { length: 256 }),
+  streetName: varchar("address", { length: 256 }),
+  suburb: varchar("address", { length: 256 }),
+  state: varchar("address", { length: 256 }),
+  postcode: varchar("address", { length: 256 }),
+  country: varchar("address", { length: 256 }),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updatedAt").onUpdateNow(),
+});
