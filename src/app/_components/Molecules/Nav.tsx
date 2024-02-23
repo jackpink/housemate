@@ -19,21 +19,21 @@ const NavItems: React.FC = () => {
     <>
       <li className="mb-4">
         <Link href="/homeowner" className="hover:text-sky-500 ">
-          <Text className="text-altPrimary hover:text-brandSecondary font-semibold">
+          <Text className="font-semibold text-altPrimary hover:text-brandSecondary">
             Dashboard
           </Text>
         </Link>
       </li>
       <li className="mb-4">
         <Link href="/about" className="">
-          <Text className="text-altPrimary hover:text-brandSecondary font-semibold">
+          <Text className="font-semibold text-altPrimary hover:text-brandSecondary">
             About
           </Text>
         </Link>
       </li>
       <li className="mb-4">
         <Link href="/contact" className="hover:text-sky-500">
-          <Text className="text-altPrimary hover:text-brandSecondary font-semibold">
+          <Text className="font-semibold text-altPrimary hover:text-brandSecondary">
             Contact
           </Text>
         </Link>
@@ -51,11 +51,11 @@ const UserItems: React.FC = () => {
           <Text className="text-altSecondary">ACCOUNT</Text>
           <div className="relative h-32 px-6">
             <UserButton afterSignOutUrl="/sign-in" userProfileMode="modal" />
-            <Text className="text-altSecondary absolute right-0 top-0">
+            <Text className="absolute right-0 top-0 text-altSecondary">
               {user?.fullName}
             </Text>
 
-            <Text className="text-altSecondary absolute right-0 top-10">
+            <Text className="absolute right-0 top-10 text-altSecondary">
               {user?.primaryEmailAddress?.emailAddress}
             </Text>
           </div>
