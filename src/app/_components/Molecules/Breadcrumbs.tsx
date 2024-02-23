@@ -13,7 +13,7 @@ type BreadcrumbsProps = {
 
 const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ breadcrumbs }) => {
   return (
-    <div className="bg-altSecondary flex flex-wrap gap-2 px-8 py-6">
+    <div className="flex flex-wrap gap-2 bg-altSecondary px-8 py-6">
       {breadcrumbs.map((breadcrumb, index) => (
         <div key={index} className="flex flex-nowrap items-center">
           <span className="px-4">
@@ -58,7 +58,7 @@ export const PropertiesBreadcrumbs: React.FC<PropertiesBreadcrumbsProps> = ({
           { href: "/properties", text: "Properties" },
           {
             href: `/property/${encodeURIComponent(propertyId)}`,
-            text: address.split(",")[0] || address,
+            text: address.split(",")[0] ?? address,
           },
           {
             href: `/property/${encodeURIComponent(
@@ -72,7 +72,7 @@ export const PropertiesBreadcrumbs: React.FC<PropertiesBreadcrumbsProps> = ({
             { href: "/properties", text: "Properties" },
             {
               href: `/property/${encodeURIComponent(propertyId)}`,
-              text: address.split(",")[0] || address,
+              text: address.split(",")[0] ?? address,
             },
           ]
         : [{ href: "/properties", text: "Properties" }];

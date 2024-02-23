@@ -7,6 +7,7 @@ import {
 import { PageTitle } from "../../_components/Atoms/Title";
 import { Text } from "../../_components/Atoms/Text";
 import { PropertiesBreadcrumbs } from "../../_components/Molecules/Breadcrumbs";
+import { db } from "~/server/db";
 
 const HomeownerPage = async () => {
   const { userId } = auth();
@@ -25,10 +26,15 @@ type HomeownerPageWithUserProps = {
   name: string | null;
 };
 
-const HomeownerPageWithUser: React.FC<HomeownerPageWithUserProps> = ({
+const HomeownerPageWithUser: React.FC<HomeownerPageWithUserProps> = async ({
   userId,
   name,
 }) => {
+  const posts = await db.query.posts.findMany({
+    orderBy: (posts, { desc }) => [desc(posts.createdAt)],
+    limit: 10,
+  });
+  console.log(posts);
   return (
     <>
       <PageTitle>Properties</PageTitle>
@@ -39,6 +45,17 @@ const HomeownerPageWithUser: React.FC<HomeownerPageWithUserProps> = ({
             Welcome {name}, this is your Dashboard. Create or Select a specific
             property or browse recent jobs here.
           </Text>
+          {posts ? (
+            posts.map((post) => {
+              return (
+                <div key={post.id}>
+                  <h2>{post.name}</h2>
+                </div>
+              );
+            })
+          ) : (
+            <div>Loading</div>
+          )}
         </ColumnOne>
         <ColumnTwo></ColumnTwo>
       </ResponsiveColumns>

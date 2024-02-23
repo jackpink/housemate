@@ -1,4 +1,4 @@
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 
@@ -15,7 +15,6 @@ import { Text } from "../_components/Atoms/Text";
 
 export default async function Home() {
   noStore();
-  const hello = await api.post.hello.query({ text: "from tRPC" });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
@@ -53,21 +52,5 @@ export default async function Home() {
         </SignedOut>
       </div>
     </main>
-  );
-}
-
-async function CrudShowcase() {
-  const latestPost = await api.post.getLatest.query();
-
-  return (
-    <div className="w-full max-w-xs">
-      {latestPost ? (
-        <p className="truncate">Your most recent post: {latestPost.name}</p>
-      ) : (
-        <p>You have no posts yet.</p>
-      )}
-
-      <CreatePost />
-    </div>
   );
 }
