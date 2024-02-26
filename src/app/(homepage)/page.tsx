@@ -46,7 +46,7 @@ export default async function Home() {
 
           <div className="flex justify-center">
             <Link className="block" href="/create-account">
-              <CTAButton rounded>Create An Account</CTAButton>
+              <CTAButton rounded>Create An Account.</CTAButton>
             </Link>
           </div>
         </SignedOut>

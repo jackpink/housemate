@@ -43,7 +43,7 @@ const HomeownerPageWithUser: React.FC<HomeownerPageWithUserProps> = async ({
         <ColumnOne>
           <Text className="mb-6 border-b-2 border-black py-4 text-center font-sans text-xl font-extrabold text-slate-900">
             Welcome {name}, this is your Dashboard. Create or Select a specific
-            property or browse recent jobs here.
+            property or browse recent jobs here. test
           </Text>
           {posts ? (
             posts.map((post) => {
