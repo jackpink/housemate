@@ -33,4 +33,4 @@ jobs:
           path: '/'
           pkg-manager: 'yarn' # required
           stage: 'staging'
-          pre-deploy: 'cd ./path/to/web/app/or/something && yarn'
+          
