@@ -1,36 +1,37 @@
 on: pull_request
 
+# Concurrency group name ensures concurrent workflow runs wait for any in-progress job to finish
+concurrency:
+ group: merge-${{ github.ref }}
+
+permissions:
+ id-token: write # This is required for requesting the JWT
+ contents: read # This is required for actions/checkout
+
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    name: Deploy SST APP
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          path: "./"
-
-      - name: Use Node.JS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Deploy SST app
-        uses: quenginedev/sst-deploy@main
-        env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-            # ANY OTHER ENVS can go here
-            DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
-            NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}}
-            CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-            WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
-            UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
-            UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
-        with:
-          path: ""
-          pkg-manager: 'yarn' # required
-          stage: 'staging'
-          
+ DeployApp:
+   runs-on: ubuntu-latest
+   env:
+   #Define your envs needed for static generation:
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+    # ANY OTHER ENVS can go here
+    DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}}
+    CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+    WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
+    UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+    UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+   steps:
+     - name: Git clone the repository
+       uses: actions/checkout@v3
+     - name: Configure AWS credentials
+       uses: aws-actions/configure-aws-credentials@v2
+       with:
+         role-to-assume: arn:aws:iam::908679486416:role/GitHub
+         role-duration-seconds: 14390 #adjust as needed for your build time
+         aws-region: ap-southeast-2
+     - name: Deploy app
+       run: |
+         npm i && npx sst deploy --stage staging
