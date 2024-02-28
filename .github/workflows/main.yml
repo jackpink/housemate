@@ -13,8 +13,6 @@ jobs:
    runs-on: ubuntu-latest
    env:
    #Define your envs needed for static generation:
-    
-    # ANY OTHER ENVS can go here
     DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}}
     CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
