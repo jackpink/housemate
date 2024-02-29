@@ -2,6 +2,7 @@ import { auth, currentUser } from "@clerk/nextjs";
 import {
   ColumnOne,
   ColumnTwo,
+  PageWithSingleColumn,
   ResponsiveColumns,
 } from "../../_components/Atoms/PageLayout";
 import { PageTitle } from "../../_components/Atoms/Title";
@@ -39,26 +40,23 @@ const HomeownerPageWithUser: React.FC<HomeownerPageWithUserProps> = async ({
     <>
       <PageTitle>Properties</PageTitle>
       <PropertiesBreadcrumbs />
-      <ResponsiveColumns>
-        <ColumnOne>
-          <Text className="mb-6 border-b-2 border-black py-4 text-center font-sans text-xl font-extrabold text-slate-900">
-            Welcome {name}, this is your Dashboard. Create or Select a specific
-            property or browse recent jobs here. test
-          </Text>
-          {posts ? (
-            posts.map((post) => {
-              return (
-                <div key={post.id}>
-                  <h2>{post.name}</h2>
-                </div>
-              );
-            })
-          ) : (
-            <div>Loading</div>
-          )}
-        </ColumnOne>
-        <ColumnTwo></ColumnTwo>
-      </ResponsiveColumns>
+      <PageWithSingleColumn>
+        <Text className="mb-6 border-b-2 border-black py-4 text-center font-sans text-xl font-extrabold text-slate-900">
+          Welcome {name}, this is your Dashboard. Create or Select a specific
+          property or browse recent jobs here. test
+        </Text>
+        {posts ? (
+          posts.map((post) => {
+            return (
+              <div key={post.id}>
+                <h2>{post.name}</h2>
+              </div>
+            );
+          })
+        ) : (
+          <div>Loading</div>
+        )}
+      </PageWithSingleColumn>
     </>
   );
 };
