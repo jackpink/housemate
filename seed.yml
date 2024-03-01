@@ -1,5 +1,6 @@
 before_compile:
   - echo "Before compile"
+  - n 18.17.0
 
 #compile:
 #  - echo "Override compile"
