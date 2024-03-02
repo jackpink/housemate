@@ -6,7 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
-import Nav from "../_components/Molecules/Nav";
+import Nav from "./_components/Molecules/Nav";
 
 const inter = Inter({
   subsets: ["latin"],

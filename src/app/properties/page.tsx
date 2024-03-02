@@ -1,10 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs";
-import {
-  ColumnOne,
-  ColumnTwo,
-  PageWithSingleColumn,
-  ResponsiveColumns,
-} from "../_components/Atoms/PageLayout";
+import { PageWithSingleColumn } from "../_components/Atoms/PageLayout";
 import { PageTitle } from "../_components/Atoms/Title";
 import { Text } from "../_components/Atoms/Text";
 import { PropertiesBreadcrumbs } from "../_components/Molecules/Breadcrumbs";
