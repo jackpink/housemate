@@ -7,6 +7,7 @@ before_compile:
 
 before_build:
   - echo "Before build"
+  - npx sst version
 
 before_deploy:
   - echo "Before deploy"
