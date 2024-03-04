@@ -9,9 +9,9 @@ import {
   LargeButton,
   LargeButtonContent,
   LargeButtonTitle,
-} from "../_components/Atoms/Button";
-import Logo from "../_components/Atoms/Logo";
-import { Text } from "../_components/Atoms/Text";
+} from "./_components/Atoms/Button";
+import Logo from "./_components/Atoms/Logo";
+import { Text } from "./_components/Atoms/Text";
 
 export default async function Home() {
   noStore();

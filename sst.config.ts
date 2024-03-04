@@ -1,6 +1,6 @@
 import { SSTConfig } from "sst";
-import { NextjsSite } from "sst/constructs";
-import dotenv from "dotenv";
+import { Config, NextjsSite } from "sst/constructs";
+import { env } from "~/env";
 
 export default {
   config(_input) {
@@ -11,14 +11,14 @@ export default {
   },
   stacks(app) {
     app.stack(function Site({ stack }) {
-      // get stage
-      const { stage } = stack;
-      // get path to .env file for given stage
-      const path = envPathMap.get(stage);
-      // use dotenv to get the env file
-      const { parsed: environment } = dotenv.config({ path });
+      const CLERK_SECRET_KEY = new Config.Secret(stack, "CLERK_SECRET_KEY");
       const site = new NextjsSite(stack, "site", {
-        environment,
+        environment: {
+          CLERK_SECRET_KEY: env.CLERK_SECRET_KEY,
+          DATABASE_URL: env.DATABASE_URL,
+          UPSTASH_REDIS_REST_URL: env.UPSTASH_REDIS_REST_URL,
+          UPSTASH_REDIS_REST_TOKEN: env.UPSTASH_REDIS_REST_TOKEN,
+        },
       });
 
       stack.addOutputs({
@@ -27,8 +27,3 @@ export default {
     });
   },
 } satisfies SSTConfig;
-
-const envPathMap = new Map();
-envPathMap.set("dev", ".env.dev");
-envPathMap.set("staging", ".env.staging");
-envPathMap.set("prod", ".env.prod");
