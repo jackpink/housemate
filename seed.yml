@@ -11,6 +11,7 @@ before_build:
 
 before_deploy:
   - echo "Before deploy"
+  - npm run db:push
 
 after_deploy:
   - echo "After deploy"
