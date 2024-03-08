@@ -2,13 +2,8 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
 import { sql } from "drizzle-orm";
-import {
-  bigint,
-  index,
-  mysqlTableCreator,
-  timestamp,
-  varchar,
-} from "drizzle-orm/mysql-core";
+
+import { pgTable, serial, text, time, uuid } from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -16,31 +11,31 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = mysqlTableCreator((name) => `housemate_${name}`);
 
-export const users = createTable("homeowner", {
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  firstName: varchar("name", { length: 256 }),
-  lastName: varchar("name", { length: 256 }),
-  email: varchar("email", { length: 256 }),
+export const homeowner = pgTable("homeowner", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  firstName: text("name"),
+  lastName: text("name"),
+  email: text("email"),
 
-  createdAt: timestamp("created_at")
+  createdAt: time("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updatedAt").onUpdateNow(),
+  updatedAt: time("updatedAt").defaultNow(),
 });
 
-export const properties = createTable("property", {
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  apartment: varchar("name", { length: 256 }),
-  streetNumber: varchar("address", { length: 256 }),
-  streetName: varchar("address", { length: 256 }),
-  suburb: varchar("address", { length: 256 }),
-  state: varchar("address", { length: 256 }),
-  postcode: varchar("address", { length: 256 }),
-  country: varchar("address", { length: 256 }),
-  createdAt: timestamp("created_at")
+export const property = pgTable("property", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  apartment: text("name"),
+  streetNumber: text("address"),
+  streetName: text("address"),
+  suburb: text("address"),
+  state: text("address"),
+  postcode: text("address"),
+  country: text("address"),
+  homeownerId: uuid("homeowner_id").references(() => homeowner.id),
+  createdAt: time("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updatedAt").onUpdateNow(),
+  updatedAt: time("updatedAt").defaultNow(),
 });
