@@ -26,11 +26,6 @@ const HomeownerPageWithUser: React.FC<HomeownerPageWithUserProps> = async ({
   userId,
   name,
 }) => {
-  const posts = await db.query.posts.findMany({
-    orderBy: (posts, { desc }) => [desc(posts.createdAt)],
-    limit: 10,
-  });
-  console.log(posts);
   return (
     <>
       <PageTitle>Properties</PageTitle>
@@ -40,17 +35,6 @@ const HomeownerPageWithUser: React.FC<HomeownerPageWithUserProps> = async ({
           Welcome {name}, this is your Dashboard. Create or Select a specific
           property or browse recent jobs here. stage
         </Text>
-        {posts ? (
-          posts.map((post) => {
-            return (
-              <div key={post.id}>
-                <h2>{post.name}</h2>
-              </div>
-            );
-          })
-        ) : (
-          <div>Loading</div>
-        )}
       </PageWithSingleColumn>
     </>
   );

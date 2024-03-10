@@ -1,9 +1,6 @@
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
-
-import { CreatePost } from "~/app/_components/create-post";
-import { api } from "~/trpc/server";
 import {
   CTAButton,
   LargeButton,
@@ -39,7 +36,7 @@ export default async function Home() {
         <SignedOut>
           {/* Signed out users get sign in button */}
           <div className="flex justify-center">
-            <Link className="block py-4" href="/">
+            <Link className="block py-4" href="/sign-in">
               <CTAButton rounded>Sign In</CTAButton>
             </Link>
           </div>
