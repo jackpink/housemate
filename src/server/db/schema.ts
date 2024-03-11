@@ -1,14 +1,16 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
+
 import {
-  bigint,
-  index,
-  mysqlTableCreator,
-  timestamp,
-  varchar,
-} from "drizzle-orm/mysql-core";
+  AnyPgColumn,
+  pgTable,
+  serial,
+  text,
+  time,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -16,46 +18,42 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = mysqlTableCreator((name) => `housemate_${name}`);
 
-export const posts = createTable(
-  "post",
-  {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    name: varchar("name", { length: 256 }),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt").onUpdateNow(),
-  },
-  (example) => ({
-    nameIndex: index("name_idx").on(example.name),
+export const homeowner = pgTable("homeowner", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  email: text("email"),
+  authId: text("auth_id"),
+  createdAt: time("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: time("updatedAt").defaultNow(),
+});
+
+export const property = pgTable("property", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  apartment: text("aparment"),
+  streetNumber: text("street_number"),
+  streetName: text("street_name"),
+  suburb: text("suburb"),
+  state: text("state"),
+  postcode: text("postcode"),
+  country: text("country"),
+  homeownerId: text("homeowner_id"),
+  createdAt: time("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: time("updatedAt").defaultNow(),
+});
+
+export const userRelations = relations(homeowner, ({ many }) => ({
+  properties: many(property),
+}));
+
+export const propertyRelations = relations(property, ({ one }) => ({
+  homeowner: one(homeowner, {
+    fields: [property.homeownerId],
+    references: [homeowner.id],
   }),
-);
-
-export const users = createTable("user", {
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  firstName: varchar("name", { length: 256 }),
-  lastName: varchar("name", { length: 256 }),
-  email: varchar("email", { length: 256 }),
-
-  createdAt: timestamp("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updatedAt").onUpdateNow(),
-});
-
-export const properties = createTable("property", {
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  apartment: varchar("name", { length: 256 }),
-  streetNumber: varchar("address", { length: 256 }),
-  streetName: varchar("address", { length: 256 }),
-  suburb: varchar("address", { length: 256 }),
-  state: varchar("address", { length: 256 }),
-  postcode: varchar("address", { length: 256 }),
-  country: varchar("address", { length: 256 }),
-  createdAt: timestamp("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updatedAt").onUpdateNow(),
-});
+}));

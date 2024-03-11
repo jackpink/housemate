@@ -1,36 +1,33 @@
 on: pull_request
 
 jobs:
-  deploy:
+  planetscale:
     runs-on: ubuntu-latest
-    name: Deploy SST APP
     steps:
-
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          path: "./"
-
-      - name: Use Node.JS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Deploy SST app
-        uses: quenginedev/sst-deploy@main
+      - name: Setup pscale
+        uses: planetscale/setup-pscale-action@v1
+      - name: Open DR if migrations
         env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-            # ANY OTHER ENVS can go here
-            DATABASE_URL: ${{ secrets.DATABASE_URL_DEV }}
-            NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}}
-            CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-            WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
-            UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
-            UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
+        run: pscale deploy-request create ${{ secrets.PLANETSCALE_DATABASE_NAME }} ${{ env.PSCALE_BRANCH_NAME }}
+      - name: Comment on PR
+        env:
+          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
+        run: |
+          echo "Deploy request opened: https://app.planetscale.com/${{ secrets.PLANETSCALE_ORG_NAME }}/${{ secrets.PLANETSCALE_DATABASE_NAME }}/deploy-requests/${{ env.DEPLOY_REQUEST_NUMBER }}" >> migration-message.txt
+          echo "" >> migration-message.txt
+          echo "\`\`\`diff" >> migration-message.txt
+          pscale deploy-request diff ${{ secrets.PLANETSCALE_DATABASE_NAME }} ${{ env.DEPLOY_REQUEST_NUMBER }}  -f json | jq -r '.[].raw' >> migration-message.txt
+          echo "\`\`\`" >> migration-message.txt
+      - name: Comment PR - db migrated
+        uses: thollander/actions-comment-pull-request@v2
         with:
-        
-          pkg-manager: 'yarn' # required
-          stage: 'staging'
-          
+          filePath: migration-message.txt 
+      - name: Deploy schema migrations
+        env:
+          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
+        run: |
+          pscale deploy-request deploy ${{ secrets.PLANETSCALE_DATABASE_NAME }} ${{ env.PSCALE_BRANCH_NAME }} --wait
