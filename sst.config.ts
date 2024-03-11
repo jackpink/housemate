@@ -1,5 +1,5 @@
 import { SSTConfig } from "sst";
-import { Config, NextjsSite } from "sst/constructs";
+import { NextjsSite } from "sst/constructs";
 import { env } from "~/env";
 
 export default {
@@ -11,7 +11,6 @@ export default {
   },
   stacks(app) {
     app.stack(function Site({ stack }) {
-      const CLERK_SECRET_KEY = new Config.Secret(stack, "CLERK_SECRET_KEY");
       const site = new NextjsSite(stack, "site", {
         environment: {
           CLERK_SECRET_KEY: env.CLERK_SECRET_KEY,
@@ -19,6 +18,13 @@ export default {
           UPSTASH_REDIS_REST_URL: env.UPSTASH_REDIS_REST_URL,
           UPSTASH_REDIS_REST_TOKEN: env.UPSTASH_REDIS_REST_TOKEN,
         },
+        customDomain:
+          stack.stage === "prod"
+            ? {
+                domainName: "housemate.dev",
+                domainAlias: "www.housemate.dev",
+              }
+            : undefined,
       });
 
       stack.addOutputs({
