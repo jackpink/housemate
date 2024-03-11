@@ -18,13 +18,13 @@ export default {
           UPSTASH_REDIS_REST_URL: env.UPSTASH_REDIS_REST_URL,
           UPSTASH_REDIS_REST_TOKEN: env.UPSTASH_REDIS_REST_TOKEN,
         },
-        customDomain: {
-          domainName:
-            stack.stage === "prod"
-              ? "housemate.dev"
-              : `${stack.stage}.housemate.dev`,
-          domainAlias: stack.stage === "prod" ? "www.housemate.dev" : undefined,
-        },
+        customDomain:
+          stack.stage === "prod"
+            ? {
+                domainName: "housemate.dev",
+                domainAlias: "www.housemate.dev",
+              }
+            : undefined,
       });
 
       stack.addOutputs({
