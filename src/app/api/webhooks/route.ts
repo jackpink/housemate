@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { env } from "~/env";
 import { db } from "~/server/db";
-import { posts } from "~/server/db/schema";
+import { homeowner } from "~/server/db/schema";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
@@ -63,8 +63,11 @@ export async function POST(req: Request) {
   if (eventType === "user.created") {
     //responseBody = "User created";
     try {
-      const newUser = await db.insert(posts).values({
-        name: "New User webhook",
+      const newUser = await db.insert(homeowner).values({
+        firstName: evt.data.first_name,
+        lastName: evt.data.last_name,
+        email: evt.data.primary_email_address_id,
+        authId: evt.data.id,
       });
 
       responseBody = "insert";
