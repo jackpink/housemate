@@ -9,13 +9,13 @@ export const propertyRouter = createTRPCRouter({
     .input(
       z.object({
         apartment: z.string().min(1).optional(),
-        streetNumber: z.string().min(1).optional(),
-        streetName: z.string().min(1).optional(),
-        city: z.string().min(1).optional(),
-        state: z.string().min(1).optional(),
-        postcode: z.string().min(1).optional(),
-        country: z.string().min(1).optional(),
-        homeownerId: z.string().min(1).optional(),
+        streetNumber: z.string().min(1),
+        streetName: z.string().min(1),
+        suburb: z.string().min(1),
+        state: z.string().min(1),
+        postcode: z.string().min(1),
+        country: z.string().min(1),
+        homeownerId: z.string().min(1),
       }),
     )
     .mutation(async ({ ctx, input }) => {
