@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       const newUser = await db.insert(homeowner).values({
         firstName: evt.data.first_name,
         lastName: evt.data.last_name,
-        email: evt.data.primary_email_address_id,
+        email: evt.data.email_addresses[0]?.email_address,
         authId: evt.data.id,
       });
 
