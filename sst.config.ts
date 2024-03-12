@@ -17,6 +17,7 @@ export default {
           DATABASE_URL: env.DATABASE_URL,
           UPSTASH_REDIS_REST_URL: env.UPSTASH_REDIS_REST_URL,
           UPSTASH_REDIS_REST_TOKEN: env.UPSTASH_REDIS_REST_TOKEN,
+          WEBHOOK_SECRET: env.WEBHOOK_SECRET,
         },
         /*customDomain:
           stack.stage === "prod"
