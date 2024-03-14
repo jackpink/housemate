@@ -40,7 +40,7 @@ export const property = pgTable("property", {
   state: text("state"),
   postcode: text("postcode"),
   country: text("country"),
-  homeownerId: text("homeowner_id"),
+  homeownerId: uuid("homeowner_id"),
   createdAt: time("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
