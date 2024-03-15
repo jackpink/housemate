@@ -58,33 +58,41 @@ export const propertyRouter = createTRPCRouter({
           addressLines: [input.addressSearchString],
         },
       };
-      const response = await client.post(
-        googleAddressValidationEndpoint,
-        requestBody,
-      );
-      const AddressObj: IAddress = {
-        apartment: null,
-        streetNumber: "",
-        street: "",
-        suburb: "",
-        postcode: "",
-        state: "",
-        country: "",
-      };
-
-      const returnData = response.data as IGoogleApiData;
-      const addressComponents = returnData.result.address.addressComponents;
-
-      for (const addressComponent of addressComponents) {
-        const componentType = addressComponent.componentType;
-        // check that the componentType is corect
-        if (isKeyOfObject(componentType, googleAPINameMappings)) {
-          const field = googleAPINameMappings[componentType];
-          const value = addressComponent.componentName.text;
-          if (isKeyOfObject(field, AddressObj)) AddressObj[field] = value;
+      console.log("requestBody", requestBody);
+      try {
+        const response = await client.post(
+          googleAddressValidationEndpoint,
+          requestBody,
+        );
+        const AddressObj: IAddress = {
+          apartment: null,
+          streetNumber: "",
+          street: "",
+          suburb: "",
+          postcode: "",
+          state: "",
+          country: "",
+        };
+        console.log("response", response);
+        const returnData = response.data as IGoogleApiData;
+        console.log("returnData", returnData);
+        const addressComponents = returnData.result.address.addressComponents;
+        console.log("addressComponents", addressComponents);
+        for (const addressComponent of addressComponents) {
+          const componentType = addressComponent.componentType;
+          // check that the componentType is corect
+          if (isKeyOfObject(componentType, googleAPINameMappings)) {
+            const field = googleAPINameMappings[componentType];
+            const value = addressComponent.componentName.text;
+            console.log("field", field, "value", value);
+            if (isKeyOfObject(field, AddressObj)) AddressObj[field] = value;
+          }
         }
+        return AddressObj;
+      } catch (error) {
+        console.error("Error getting address", error);
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
       }
-      return AddressObj;
     }),
   create: protectedProcedure
     .input(

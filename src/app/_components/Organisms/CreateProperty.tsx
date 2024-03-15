@@ -4,13 +4,23 @@ import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { Text } from "../Atoms/Text";
 import { api } from "~/trpc/react";
 import { RouterOutputs } from "~/trpc/shared";
+import { concatAddress } from "~/utils/functions";
+import { CTAButton } from "../Atoms/Button";
 
 type ValidAddress = RouterOutputs["property"]["getValidAddress"];
 
 export default function CreateProperty() {
   const [addressSearchTerm, setAddressSearchTerm] = useState("");
 
-  const [ValidAddress, setValidAddress] = useState<ValidAddress | null>(null);
+  const [validAddress, setValidAddress] = useState<ValidAddress>({
+    apartment: null,
+    streetNumber: "",
+    street: "",
+    suburb: "",
+    postcode: "",
+    state: "",
+    country: "",
+  });
 
   const { mutate: getValidAddress, isLoading: isValidatingAddress } =
     api.property.getValidAddress.useMutation({
@@ -26,13 +36,16 @@ export default function CreateProperty() {
     void getValidAddress({ addressSearchString: addressSearchTerm });
   }, [addressSearchTerm]);
 
+  const addressString = concatAddress(validAddress);
+  console.log("validAddress", validAddress);
+
   return (
-    <div className="flex flex-col items-center justify-center border-2 border-black p-6">
+    <div className="flex flex-col items-center justify-center p-6">
       <AddressSearch
         setAddressSearchTerm={setAddressSearchTerm}
         onClickSearch={onClickSearch}
       />
-      <Text>Try searching for your address</Text>
+      <AddressResults validAddress={addressString} />
     </div>
   );
 }
@@ -82,6 +95,29 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
           </svg>
         </button>
       </div>
+    </div>
+  );
+};
+
+type AddressResultsProps = {
+  validAddress: string;
+};
+
+const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
+  if (validAddress === " , , , ") {
+    return <Text>Try searching for your address</Text>;
+  } else if (validAddress.includes(", ,")) {
+    return <Text>Not Found, Please add more detail to the address</Text>;
+  }
+  console.log("validAddress", validAddress);
+
+  return (
+    <div className="flex flex-col items-center">
+      <Text className="font-bold">{validAddress}</Text>
+      <Text>Is this your address? Create property for this address below</Text>
+      <CTAButton>
+        Create Property <br />
+      </CTAButton>
     </div>
   );
 };

@@ -1,23 +1,22 @@
-import { InferSelectModel } from "drizzle-orm";
-import { property } from "~/server/db/schema";
+//import { InferSelectModel } from "drizzle-orm";
 
-type Property = InferSelectModel<typeof property>;
+//type Property = InferSelectModel<typeof property>;
 
-export const concatAddress = (property: Property) => {
+export const concatAddress = (addressObject: IAddress) => {
   let address =
-    property.streetNumber +
+    addressObject.streetNumber +
     " " +
-    property.streetName +
+    addressObject.street +
     ", " +
-    property.suburb +
+    addressObject.suburb +
     ", " +
-    property.state +
+    addressObject.state +
     ", " +
-    property.country;
-  if (!!property.apartment) {
+    addressObject.country;
+  if (!!addressObject.apartment) {
     // add apartment number in front /
 
-    address = property.apartment + " / " + address;
+    address = addressObject.apartment + " / " + address;
   }
   return address;
 };

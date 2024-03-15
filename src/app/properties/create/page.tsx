@@ -9,7 +9,9 @@ export default function CreatePropertyPage() {
       <PageTitle>Create New Property</PageTitle>
       <CreatePropertyBreadcrumbs />
       <PageWithSingleColumn>
-        <CreateProperty />
+        <div className="pt-32">
+          <CreateProperty />
+        </div>
       </PageWithSingleColumn>
     </>
   );
