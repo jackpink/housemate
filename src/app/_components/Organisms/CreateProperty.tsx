@@ -12,32 +12,20 @@ type ValidAddress = RouterOutputs["property"]["getValidAddress"];
 export default function CreateProperty() {
   const [addressSearchTerm, setAddressSearchTerm] = useState("");
 
-  const [validAddress, setValidAddress] = useState<ValidAddress>({
-    apartment: null,
-    streetNumber: "",
-    street: "",
-    suburb: "",
-    postcode: "",
-    state: "",
-    country: "",
-  });
+  const [validAddress, setValidAddress] = useState<ValidAddress | null>(null);
 
   const { mutate: getValidAddress, isLoading: isValidatingAddress } =
     api.property.getValidAddress.useMutation({
       onSuccess: (AddressObj) => {
         // Redirect to new Job route
-        console.log("got address string", AddressObj);
+
         setValidAddress(AddressObj);
       },
     });
 
   const onClickSearch = useCallback(() => {
-    console.log("search adddress");
     void getValidAddress({ addressSearchString: addressSearchTerm });
   }, [addressSearchTerm]);
-
-  const addressString = concatAddress(validAddress);
-  console.log("validAddress", validAddress);
 
   return (
     <div className="flex flex-col items-center justify-center p-6">
@@ -45,7 +33,7 @@ export default function CreateProperty() {
         setAddressSearchTerm={setAddressSearchTerm}
         onClickSearch={onClickSearch}
       />
-      <AddressResults validAddress={addressString} />
+      <AddressResults validAddress={validAddress} />
     </div>
   );
 }
@@ -100,20 +88,47 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
 };
 
 type AddressResultsProps = {
-  validAddress: string;
+  validAddress: IAddress | null;
 };
 
 const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
-  if (validAddress === " , , , ") {
+  if (!validAddress) {
     return <Text>Try searching for your address</Text>;
-  } else if (validAddress.includes(", ,")) {
+  }
+  const address = concatAddress(validAddress);
+  if (address.includes(", ,")) {
     return <Text>Not Found, Please add more detail to the address</Text>;
   }
-  console.log("validAddress", validAddress);
 
+  return <AddressFound address={address} validAddress={validAddress} />;
+};
+
+const AddressFound: React.FC<{ address: string; validAddress: IAddress }> = ({
+  address,
+  validAddress,
+}) => {
+  const { mutate: createProperty, isLoading: isCreatingProperty } =
+    api.property.create.useMutation({
+      onSuccess: (property) => {
+        // Redirect to new property route
+      },
+    });
+
+  const onClickCreateProperty = useCallback(() => {
+    void createProperty({
+      apartment: validAddress.apartment ?? undefined,
+      streetNumber: validAddress.streetNumber,
+      streetName: validAddress.street,
+      suburb: validAddress.suburb,
+      postcode: validAddress.postcode,
+      country: validAddress.country,
+      state: validAddress.state,
+      homeownerId: "1",
+    });
+  }, [validAddress]);
   return (
     <div className="flex flex-col items-center">
-      <Text className="font-bold">{validAddress}</Text>
+      <Text className="font-bold">{address}</Text>
       <Text>Is this your address? Create property for this address below</Text>
       <CTAButton>
         Create Property <br />
