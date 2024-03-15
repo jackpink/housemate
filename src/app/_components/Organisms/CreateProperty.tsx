@@ -94,6 +94,9 @@ type AddressResultsProps = {
 
 const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
   const { isLoaded, user } = useUser();
+  if (isLoaded) {
+    console.log("user f", user?.publicMetadata);
+  }
   if (!validAddress) {
     return <Text>Try searching for your address</Text>;
   }

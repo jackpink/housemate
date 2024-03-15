@@ -88,6 +88,7 @@ export const propertyRouter = createTRPCRouter({
             if (isKeyOfObject(field, AddressObj)) AddressObj[field] = value;
           }
         }
+        console.log("AddressObj", AddressObj);
         return AddressObj;
       } catch (error) {
         console.error("Error getting address", error);
