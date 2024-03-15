@@ -8,6 +8,7 @@ import { homeowner, property } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { PgUUID } from "drizzle-orm/pg-core";
+import { CTAButton } from "../_components/Atoms/Button";
 
 const HomeownerPage = async () => {
   const { userId } = auth();
@@ -50,11 +51,9 @@ const HomeownerPageWithUser: React.FC<HomeownerPageWithUserProps> = async ({
           or browse recent jobs here. stage
         </Text>
         <Properties properties={properties} />
-        {/* <Link href="/properties/create">
-          <a className="rounded-md bg-green-500 p-2 text-center text-white">
-            Add Property
-          </a>
-        </Link> */}
+        <Link href="/properties/create">
+          <CTAButton>Add Property</CTAButton>
+        </Link>
       </PageWithSingleColumn>
     </>
   );

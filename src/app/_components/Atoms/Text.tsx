@@ -23,3 +23,15 @@ export function Text({
     </p>
   );
 }
+
+export function ErrorMessage({
+  error,
+  errorMessage,
+}: {
+  error: boolean;
+  errorMessage: string | null;
+}) {
+  return (
+    <>{error ? <p className="text-red-500">⚠️ {errorMessage}</p> : <></>}</>
+  );
+}

@@ -79,3 +79,12 @@ export const PropertiesBreadcrumbs: React.FC<PropertiesBreadcrumbsProps> = ({
 
   return <Breadcrumbs breadcrumbs={breadcrumbs} />;
 };
+
+export const CreatePropertyBreadcrumbs: React.FC = () => {
+  const breadcrumbs = [
+    { href: "/properties", text: "Properties" },
+    { href: "/properties/create", text: "Create" },
+  ];
+
+  return <Breadcrumbs breadcrumbs={breadcrumbs} />;
+};
