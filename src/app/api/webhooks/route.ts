@@ -4,6 +4,7 @@ import { WebhookEvent } from "@clerk/nextjs/server";
 import { env } from "~/env";
 import { db } from "~/server/db";
 import { homeowner } from "~/server/db/schema";
+import { clerkClient } from "@clerk/nextjs";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
@@ -63,14 +64,22 @@ export async function POST(req: Request) {
   if (eventType === "user.created") {
     //responseBody = "User created";
     try {
-      const newUser = await db.insert(homeowner).values({
-        firstName: evt.data.first_name,
-        lastName: evt.data.last_name,
-        email: evt.data.email_addresses[0]?.email_address,
-        authId: evt.data.id,
-      });
+      const newUser = await db
+        .insert(homeowner)
+        .values({
+          firstName: evt.data.first_name,
+          lastName: evt.data.last_name,
+          email: evt.data.email_addresses[0]?.email_address,
+          authId: evt.data.id,
+        })
+        .returning();
 
       responseBody = "insert";
+      await clerkClient.users.updateUserMetadata(evt.data.id, {
+        publicMetadata: {
+          appUserId: newUser[0]?.id,
+        },
+      });
     } catch (err) {
       responseBody = "Error creating user in db";
     }
