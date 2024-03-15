@@ -6,6 +6,7 @@ import { api } from "~/trpc/react";
 import { RouterOutputs } from "~/trpc/shared";
 import { concatAddress } from "~/utils/functions";
 import { CTAButton } from "../Atoms/Button";
+import { useUser } from "@clerk/nextjs";
 
 type ValidAddress = RouterOutputs["property"]["getValidAddress"];
 
@@ -92,6 +93,7 @@ type AddressResultsProps = {
 };
 
 const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
+  const { isLoaded, user } = useUser();
   if (!validAddress) {
     return <Text>Try searching for your address</Text>;
   }
@@ -100,19 +102,31 @@ const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
     return <Text>Not Found, Please add more detail to the address</Text>;
   }
 
-  return <AddressFound address={address} validAddress={validAddress} />;
+  if (!isLoaded) {
+    return <Text>Loading...</Text>;
+  }
+
+  return (
+    <AddressFound
+      address={address}
+      validAddress={validAddress}
+      userId={user?.publicMetadata.appUserId as string}
+    />
+  );
 };
 
-const AddressFound: React.FC<{ address: string; validAddress: IAddress }> = ({
-  address,
-  validAddress,
-}) => {
+const AddressFound: React.FC<{
+  address: string;
+  validAddress: IAddress;
+  userId: string;
+}> = ({ address, validAddress, userId }) => {
   const { mutate: createProperty, isLoading: isCreatingProperty } =
     api.property.create.useMutation({
       onSuccess: (property) => {
         // Redirect to new property route
       },
     });
+  console.log("userId", userId);
 
   const onClickCreateProperty = useCallback(() => {
     void createProperty({
