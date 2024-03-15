@@ -26,6 +26,7 @@ export default {
             env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
           NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
             env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
+          GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
         },
         /*customDomain:
           stack.stage === "prod"
