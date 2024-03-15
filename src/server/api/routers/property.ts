@@ -89,7 +89,7 @@ export const propertyRouter = createTRPCRouter({
         }
       }
       console.log("AddressObj", AddressObj);
-      return { address: "47 don" };
+      return null;
     }),
   create: protectedProcedure
     .input(
