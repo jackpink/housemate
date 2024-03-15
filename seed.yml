@@ -12,7 +12,7 @@ before_build:
 before_deploy:
   - echo "Before deploy"
   - if [ $SEED_STAGE_NAME = "staging" ] || [ $SEED_STAGE_NAME = "prod" ]; then 
-    echo 'Staging'; fi
+    npm run db:push; fi
   - if [ $SEED_STAGE_NAME != "staging" ] && [ $SEED_STAGE_NAME != "prod" ]; then 
     npm run db:push; fi
 
