@@ -13,7 +13,7 @@ type ValidAddress = RouterOutputs["property"]["getValidAddress"];
 export default function CreateProperty() {
   const [addressSearchTerm, setAddressSearchTerm] = useState("");
 
-  const [validAddress, setValidAddress] = useState<ValidAddress | null>(null);
+  const [validAddress, setValidAddress] = useState<ValidAddress>(null);
 
   const { mutate: getValidAddress, isLoading: isValidatingAddress } =
     api.property.getValidAddress.useMutation({
