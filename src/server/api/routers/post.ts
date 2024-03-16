@@ -6,11 +6,13 @@ import {
   createTRPCRouter,
   publicProcedure,
   protectedProcedure,
+  testProcedure,
 } from "~/server/api/trpc";
 
 export const postRouter = createTRPCRouter({
-  hello: publicProcedure
+  hello: testProcedure
     .input(z.object({ text: z.string() }))
+    .output(z.object({ greeting: z.string() }))
     .query(({ input, ctx }) => {
       return {
         greeting: `Hello ${input.text}, you are ${ctx.user?.firstName}!`,
