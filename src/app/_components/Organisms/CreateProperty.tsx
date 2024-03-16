@@ -28,6 +28,8 @@ export default function CreateProperty() {
     void getValidAddress({ addressSearchString: addressSearchTerm });
   }, [addressSearchTerm]);
 
+  const { data } = api.post.hello.useQuery({ text: "World" });
+
   return (
     <div className="flex flex-col items-center justify-center p-6">
       <AddressSearch
@@ -35,6 +37,7 @@ export default function CreateProperty() {
         onClickSearch={onClickSearch}
       />
       <AddressResults validAddress={validAddress} />
+      {data?.greeting && <Text>{data.greeting}</Text>}
     </div>
   );
 }

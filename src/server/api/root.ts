@@ -9,6 +9,7 @@ import { propertyRouter } from "./routers/property";
  */
 export const appRouter = createTRPCRouter({
   property: propertyRouter,
+  post: postRouter,
 });
 
 // export type definition of API
