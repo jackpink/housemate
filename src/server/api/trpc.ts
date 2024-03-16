@@ -103,3 +103,12 @@ const isAuthed = t.middleware(({ next, ctx }) => {
 });
 
 export const protectedProcedure = t.procedure.use(isAuthed);
+
+const testMiddleware = t.middleware(async ({ next, ctx }) => {
+  console.log("middleware test");
+  const res = await next({ ctx });
+  console.log("middleware test res", res);
+  return res;
+});
+
+export const testProcedure = t.procedure.use(testMiddleware);
