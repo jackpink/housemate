@@ -7,25 +7,39 @@ import { RouterOutputs } from "~/trpc/shared";
 import { concatAddress } from "~/utils/functions";
 import { CTAButton } from "../Atoms/Button";
 import { useUser } from "@clerk/nextjs";
+import { getValidAddress } from "~/app/actions";
 
-type ValidAddress = RouterOutputs["property"]["getValidAddress"];
+//type ValidAddress = RouterOutputs["property"]["getValidAddress"];
+type ValidAddress = Awaited<ReturnType<typeof getValidAddress>>;
 
 export default function CreateProperty() {
   const [addressSearchTerm, setAddressSearchTerm] = useState("");
 
-  const [validAddress, setValidAddress] = useState<ValidAddress>(null);
+  const [validAddress, setValidAddress] = useState<ValidAddress>({
+    apartment: null,
+    streetNumber: "",
+    street: "",
+    suburb: "",
+    postcode: "",
+    state: "",
+    country: "",
+  });
 
-  const { mutate: getValidAddress, isLoading: isValidatingAddress } =
-    api.property.getValidAddress.useMutation({
-      onSuccess: (AddressObj) => {
-        // Redirect to new Job route
+  // const { mutate: getValidAddress, isLoading: isValidatingAddress } =
+  //   api.property.getValidAddress.useMutation({
+  //     onSuccess: (AddressObj) => {
+  //       // Redirect to new Job route
 
-        setValidAddress(AddressObj);
-      },
-    });
+  //       setValidAddress(AddressObj);
+  //     },
+  //   });
 
   const onClickSearch = useCallback(() => {
-    void getValidAddress({ addressSearchString: addressSearchTerm });
+    getValidAddress({ addressSearchString: addressSearchTerm }).then(
+      (addressObject) => {
+        setValidAddress(addressObject);
+      },
+    );
   }, [addressSearchTerm]);
 
   const { data } = api.post.hello.useQuery({ text: "World" });
