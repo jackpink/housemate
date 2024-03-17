@@ -8,6 +8,7 @@ import { concatAddress } from "~/utils/functions";
 import { CTAButton } from "../Atoms/Button";
 import { useUser } from "@clerk/nextjs";
 import { getValidAddress } from "~/app/actions";
+import { createProperty } from "~/app/actions/property";
 
 //type ValidAddress = RouterOutputs["property"]["getValidAddress"];
 type ValidAddress = Awaited<ReturnType<typeof getValidAddress>>;
@@ -142,16 +143,16 @@ const AddressFound: React.FC<{
   validAddress: IAddress;
   userId: string;
 }> = ({ address, validAddress, userId }) => {
-  const { mutate: createProperty, isLoading: isCreatingProperty } =
-    api.property.create.useMutation({
-      onSuccess: (property) => {
-        // Redirect to new property route
-      },
-    });
+  // const { mutate: createProperty, isLoading: isCreatingProperty } =
+  //   api.property.create.useMutation({
+  //     onSuccess: (property) => {
+  //       // Redirect to new property route
+  //     },
+  //   });
   console.log("userId", userId);
 
   const onClickCreateProperty = useCallback(() => {
-    void createProperty({
+    createProperty({
       apartment: validAddress.apartment ?? undefined,
       streetNumber: validAddress.streetNumber,
       streetName: validAddress.street,
@@ -159,14 +160,14 @@ const AddressFound: React.FC<{
       postcode: validAddress.postcode,
       country: validAddress.country,
       state: validAddress.state,
-      homeownerId: "1",
+      homeownerId: userId,
     });
   }, [validAddress]);
   return (
     <div className="flex flex-col items-center">
       <Text className="font-bold">{address}</Text>
       <Text>Is this your address? Create property for this address below</Text>
-      <CTAButton>
+      <CTAButton onClick={onClickCreateProperty}>
         Create Property <br />
       </CTAButton>
     </div>
