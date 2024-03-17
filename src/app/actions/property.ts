@@ -98,14 +98,12 @@ export async function getValidAddress({
 
 async function rateLimit() {
   const { userId } = auth();
-  var result;
   if (userId) {
     const { success } = await rateLimiter.limit(userId);
-    result = success;
+    return success;
   } else {
-    result = false;
+    return false;
   }
-  return result;
 }
 
 // test edge case that user id doesnt exist
