@@ -35,11 +35,13 @@ export default function CreateProperty() {
   //   });
 
   const onClickSearch = useCallback(() => {
-    getValidAddress({ addressSearchString: addressSearchTerm }).then(
-      (addressObject) => {
+    getValidAddress({ addressSearchString: addressSearchTerm })
+      .then((addressObject) => {
         setValidAddress(addressObject);
-      },
-    );
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, [addressSearchTerm]);
 
   const { data } = api.post.hello.useQuery({ text: "World" });
