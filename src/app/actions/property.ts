@@ -1,6 +1,7 @@
 "use server";
 
 import { useAuth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import axios from "axios";
 import { z } from "zod";
 import { env } from "~/env";
@@ -96,10 +97,10 @@ export async function getValidAddress({
 }
 
 async function rateLimit() {
-  const auth = useAuth();
+  const { userId } = auth();
   var result;
-  if (auth.userId) {
-    const { success } = await rateLimiter.limit(auth.userId);
+  if (userId) {
+    const { success } = await rateLimiter.limit(userId);
     result = success;
   } else {
     result = false;
@@ -126,23 +127,31 @@ export async function createProperty({
   state: string;
   postcode: string;
   country: string;
-  homeownerId: string;
+  homeownerId: string | undefined;
 }) {
   const success = await rateLimit();
   if (!success) {
     throw new Error("Too many requests");
   }
-  // simulate a slow db call
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  if (!homeownerId) {
+    throw new Error("No homeownerId");
+  }
 
-  await db.insert(property).values({
-    apartment: apartment,
-    streetNumber: streetNumber,
-    streetName: streetName,
-    suburb: suburb,
-    state: state,
-    postcode: postcode,
-    country: country,
-    homeownerId: homeownerId,
-  });
+  const [created] = await db
+    .insert(property)
+    .values({
+      apartment: apartment,
+      streetNumber: streetNumber,
+      streetName: streetName,
+      suburb: suburb,
+      state: state,
+      postcode: postcode,
+      country: country,
+      homeownerId: homeownerId,
+    })
+    .returning({ id: property.id });
+  if (!created) {
+    throw new Error("Property created but id not returned");
+  }
+  return created;
 }
