@@ -6,7 +6,7 @@ export const concatAddress = (addressObject: IAddress) => {
   let address =
     addressObject.streetNumber +
     " " +
-    addressObject.street +
+    addressObject.streetName +
     ", " +
     addressObject.suburb +
     ", " +

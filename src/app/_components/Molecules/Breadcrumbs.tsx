@@ -51,7 +51,6 @@ export const PropertiesBreadcrumbs: React.FC<PropertiesBreadcrumbsProps> = ({
   propertyId,
   propertyPage,
 }) => {
-  console.log(address, propertyId, propertyPage);
   const breadcrumbs =
     address && propertyId && propertyPage
       ? [
