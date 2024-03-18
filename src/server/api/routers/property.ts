@@ -37,7 +37,7 @@ interface IGoogleApiAddress {
 const googleAPINameMappings = {
   subpremise: "apartment",
   street_number: "streetNumber",
-  route: "street",
+  route: "streetName",
   country: "country",
   locality: "suburb",
   administrative_area_level_1: "state",
@@ -67,7 +67,7 @@ export const propertyRouter = createTRPCRouter({
       const AddressObj: IAddress = {
         apartment: null,
         streetNumber: "",
-        street: "",
+        streetName: "",
         suburb: "",
         postcode: "",
         state: "",
