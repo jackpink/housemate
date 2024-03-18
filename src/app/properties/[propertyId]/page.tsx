@@ -6,6 +6,8 @@ import { PageTitle } from "~/app/_components/Atoms/Title";
 import { concatAddress } from "~/utils/functions";
 import { PropertiesBreadcrumbs } from "~/app/_components/Molecules/Breadcrumbs";
 import { PageWithSingleColumn } from "~/app/_components/Atoms/PageLayout";
+import { CoverImage } from "~/app/_components/Organisms/PropertyCoverImage";
+import { getPresignedUrlForPropertyCoverImage } from "~/app/actions/uploads";
 
 async function getProperty({ propertyId }: { propertyId: string }) {
   const { userId } = auth();
@@ -35,12 +37,17 @@ export default async function PropertyPage({
     .property;
 
   const address = concatAddress(property);
+  const url = await getPresignedUrlForPropertyCoverImage({
+    propertyId: params.propertyId,
+  });
+
   return (
     <>
       <PageTitle>{address}</PageTitle>
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
         {/*Cover Image */}
+        <CoverImage url={url} />
         {/*Property Details */}
         {/* Links to main pages */}
       </PageWithSingleColumn>

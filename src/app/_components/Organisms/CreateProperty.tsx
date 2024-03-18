@@ -2,13 +2,10 @@
 
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { ErrorMessage, Text } from "../Atoms/Text";
-import { api } from "~/trpc/react";
-import { RouterOutputs } from "~/trpc/shared";
 import { concatAddress } from "~/utils/functions";
 import { CTAButton } from "../Atoms/Button";
 import { useUser } from "@clerk/nextjs";
-import { getValidAddress } from "~/app/actions";
-import { createProperty } from "~/app/actions/property";
+import { createProperty, getValidAddress } from "~/app/actions/property";
 import { SearchIcon } from "../Atoms/Icons";
 import { redirect } from "next/navigation";
 
@@ -100,7 +97,6 @@ type AddressResultsProps = {
 const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
   const { isLoaded, user } = useUser();
   if (isLoaded) {
-    console.log("user f", user?.publicMetadata);
   }
   if (!validAddress) {
     return null;
@@ -140,7 +136,6 @@ const AddressFound: React.FC<{
   //   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({ errorState: false, errorMessage: "" });
-  console.log("userId", userId);
 
   const onClickCreateProperty = useCallback(() => {
     setLoading(true);
