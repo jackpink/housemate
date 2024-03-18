@@ -1,4 +1,4 @@
-import { auth, currentUser, useAuth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs";
 import { PageWithSingleColumn } from "../_components/Atoms/PageLayout";
 import { PageTitle } from "../_components/Atoms/Title";
 import { Text } from "../_components/Atoms/Text";
@@ -7,53 +7,35 @@ import { db } from "~/server/db";
 import { homeowner, property } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
-import { PgUUID } from "drizzle-orm/pg-core";
 import { CTAButton } from "../_components/Atoms/Button";
+import { concatAddress } from "~/utils/functions";
+import { InferSelectModel } from "drizzle-orm";
+import { PlusIcon } from "../_components/Atoms/Icons";
 
-const HomeownerPage = async () => {
+async function getProperties() {
   const { userId } = auth();
 
-  console.log(userId);
   if (!userId) {
-    return <>Loading</>;
+    throw new Error("No UserId");
   }
-  //const propertiesWithJobs = api.property.getPropertiesForTradeUser.useQuery({ user: userId});
 
-  return <HomeownerPageWithUser authId={userId} />;
-};
-
-type HomeownerPageWithUserProps = {
-  authId: string;
-};
-
-async function getProperties(authUserId: string) {
-  const properties = db
+  const properties = await db
     .select()
     .from(property)
     .innerJoin(homeowner, eq(property.homeownerId, homeowner.id))
-    .where(eq(homeowner.authId, authUserId));
+    .where(eq(homeowner.authId, userId));
 
   return properties;
 }
 
-const HomeownerPageWithUser: React.FC<HomeownerPageWithUserProps> = async ({
-  authId,
-}) => {
-  const properties = await getProperties(authId);
-  console.log(properties);
+const HomeownerPage = async () => {
+  const properties = await getProperties();
   return (
     <>
       <PageTitle>Properties</PageTitle>
       <PropertiesBreadcrumbs />
       <PageWithSingleColumn>
-        <Text className="mb-6 border-b-2 border-black py-4 text-center font-sans text-xl font-extrabold text-slate-900">
-          Welcome , this is your Dashboard. Create or Select a specific property
-          or browse recent jobs here. stage
-        </Text>
         <Properties properties={properties} />
-        <Link href="/properties/create">
-          <CTAButton>Add Property</CTAButton>
-        </Link>
       </PageWithSingleColumn>
     </>
   );
@@ -62,11 +44,39 @@ const HomeownerPageWithUser: React.FC<HomeownerPageWithUserProps> = async ({
 export default HomeownerPage;
 
 type Properties = Awaited<ReturnType<typeof getProperties>>;
+//type Property = Properties[0]["property"];
+
+type Property = InferSelectModel<typeof property>;
 
 const Properties = ({ properties }: { properties: Properties }) => {
   return (
-    <div>
-      <p>propeties</p>
+    <div className="p-10">
+      {properties.map((property) => (
+        <div className="my-5" key={property.property.id}>
+          <Property {...property.property} />
+        </div>
+      ))}
+
+      <Link href="/properties/create" className="block">
+        <CTAButton rounded className="w-full">
+          <div className="flex w-full items-center justify-center">
+            <PlusIcon width={28} />{" "}
+            <Text className="ml-10 text-xl">Add Property</Text>
+          </div>
+        </CTAButton>
+      </Link>
     </div>
+  );
+};
+
+const Property = (property: Property) => {
+  const address = concatAddress(property);
+
+  return (
+    <Link href={`/properties/${property.id}`}>
+      <div className="rounded-full bg-altSecondary p-7 hover:bg-altSecondary/80">
+        <Text className="text-xl font-bold">{address}</Text>
+      </div>
+    </Link>
   );
 };

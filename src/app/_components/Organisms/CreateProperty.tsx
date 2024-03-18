@@ -147,7 +147,7 @@ const AddressFound: React.FC<{
     createProperty({
       apartment: validAddress.apartment ?? undefined,
       streetNumber: validAddress.streetNumber,
-      streetName: validAddress.street,
+      streetName: validAddress.streetName,
       suburb: validAddress.suburb,
       postcode: validAddress.postcode,
       country: validAddress.country,
