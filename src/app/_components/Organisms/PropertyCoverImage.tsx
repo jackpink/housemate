@@ -33,10 +33,10 @@ export function CoverImage({
 
     setUploading(true);
     uploadFile({ file: currentFile, url: url })
-      .then((response) => {
+      .then(async (response) => {
         console.log("response", response);
         // add to db
-        updateProperty({ coverImageKey: key, propertyId: propertyId });
+        await updateProperty({ coverImageKey: key, propertyId: propertyId });
       })
       .catch((error) => {
         console.error("error", error);
