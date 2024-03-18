@@ -3,6 +3,7 @@
 import { useAuth } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import axios from "axios";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "~/env";
 import { rateLimiter } from "~/server/api/ratelimiter";
@@ -152,4 +153,26 @@ export async function createProperty({
     throw new Error("Property created but id not returned");
   }
   return created;
+}
+
+export async function updateProperty({
+  coverImageKey,
+  propertyId,
+}: {
+  coverImageKey: string;
+  propertyId: string;
+}) {
+  const success = await rateLimit();
+  if (!success) {
+    throw new Error("Too many requests");
+  }
+
+  const updated = await db
+    .update(property)
+    .set({
+      coverImageKey: coverImageKey,
+    })
+    .where(eq(property.id, propertyId));
+
+  return updated;
 }

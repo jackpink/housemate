@@ -1,29 +1,59 @@
 "use client";
 
-export function CoverImage({ url }: { url: string }) {
+import { useState } from "react";
+import { updateProperty } from "~/app/actions/property";
+import { uploadFile } from "~/app/actions/uploads";
+
+export function CoverImage({
+  url,
+  key,
+  propertyId,
+}: {
+  url: string;
+  key: string;
+  propertyId: string;
+}) {
+  const [currentFile, setCurrentFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const selectFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      throw new Error("No file");
+    }
+    setCurrentFile(file);
+    setProgress(0);
+  };
+
+  const upload = () => {
+    if (!currentFile) {
+      throw new Error("No file");
+    }
+
+    setUploading(true);
+    uploadFile({ file: currentFile, url: url })
+      .then((response) => {
+        console.log("response", response);
+        // add to db
+        updateProperty({ coverImageKey: key, propertyId: propertyId });
+      })
+      .catch((error) => {
+        console.error("error", error);
+      });
+
+    setUploading(false);
+  };
+
   return (
-    <form
-      onSubmit={async (e) => {
-        e.preventDefault();
-
-        const file = e.target as HTMLInputElement;
-        console.log("file", file.files);
-
-        if (!file) {
-          throw new Error("No file");
-        }
-
-        const image = await fetch(url, {
-          body: file,
-          method: "PUT",
-          headers: {
-            "Content-Type": file.type,
-            "Content-Disposition": `attachment; filename="${file.name}"`,
-          },
-        });
-      }}
-    >
-      <input name="file" type="file" accept="image/png, image/jpeg" />
+    <form onSubmit={upload}>
+      <input
+        onChange={selectFile}
+        name="file"
+        type="file"
+        accept="image/png, image/jpeg"
+        multiple={false}
+      />
       <button type="submit">Upload</button>
     </form>
   );

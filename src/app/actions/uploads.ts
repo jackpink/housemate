@@ -9,37 +9,31 @@ export async function getPresignedUrlForPropertyCoverImage({
   propertyId: string;
 }) {
   const bucketName = Bucket.PropertyCoverImageBucket.bucketName;
+  const key = `${propertyId}/${crypto.randomUUID()}`;
   const command = new PutObjectCommand({
     ACL: "private",
-    Key: `${propertyId}/${crypto.randomUUID()}`,
+    Key: key,
     Bucket: bucketName,
   });
 
   const url = await getSignedUrl(new S3Client({}), command);
 
-  return url;
+  return { url: url, key: key };
 }
 
 export function uploadFile({ file, url }: { file: File; url: string }) {
-  axios
-    .post(url, file, {
-      headers: {
-        "Content-Type": file.type,
-        "Content-Disposition": `attachment; filename="${file.name}"`,
-      },
-      onUploadProgress: (progressEvent) => {
-        if (progressEvent.total) {
-          const progress = Math.round(
-            (progressEvent.loaded / progressEvent.total) * 100,
-          );
-          console.log("progress", progress);
-        }
-      },
-    })
-    .then((response) => {
-      console.log("response", response);
-    })
-    .catch((error) => {
-      console.error("error", error);
-    });
+  return axios.post(url, file, {
+    headers: {
+      "Content-Type": file.type,
+      "Content-Disposition": `attachment; filename="${file.name}"`,
+    },
+    onUploadProgress: (progressEvent) => {
+      if (progressEvent.total) {
+        const progress = Math.round(
+          (progressEvent.loaded / progressEvent.total) * 100,
+        );
+        console.log("progress", progress);
+      }
+    },
+  });
 }

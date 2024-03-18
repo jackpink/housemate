@@ -45,6 +45,7 @@ export const property = pgTable("property", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   updatedAt: time("updatedAt").defaultNow(),
+  coverImageKey: text("cover_image_key"),
 });
 
 export const userRelations = relations(homeowner, ({ many }) => ({
