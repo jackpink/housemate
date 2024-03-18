@@ -34,12 +34,12 @@ export const homeowner = pgTable("homeowner", {
 export const property = pgTable("property", {
   id: uuid("id").primaryKey().defaultRandom(),
   apartment: text("aparment"),
-  streetNumber: text("street_number"),
-  streetName: text("street_name"),
-  suburb: text("suburb"),
-  state: text("state"),
-  postcode: text("postcode"),
-  country: text("country"),
+  streetNumber: text("street_number").notNull(),
+  streetName: text("street_name").notNull(),
+  suburb: text("suburb").notNull(),
+  state: text("state").notNull(),
+  postcode: text("postcode").notNull(),
+  country: text("country").notNull(),
   homeownerId: uuid("homeowner_id"),
   createdAt: time("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
