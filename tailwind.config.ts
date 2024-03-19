@@ -26,8 +26,8 @@ export default {
         brandSecondary: "#c470e7",
         dark: "#011627",
         light: "#f7ece1",
-        altPrimary: "#0A5B5A", //#0E7C7B",
-        altSecondary: "#86bbbd",
+        altPrimary: "#004459", //#0E7C7B",0A5B5A
+        altSecondary: "#86bbbd", //#
       },
       transitionProperty: {
         "max-height": "max-height",
