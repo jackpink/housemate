@@ -79,7 +79,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
         loading={searchLoading}
         onClick={onClickSearch}
         rounded
-        className="mt-10 w-full"
+        className="mt-4 w-full"
       >
         <div className="flex justify-center">
           <Text className="pr-4">Search Address</Text>
@@ -104,7 +104,7 @@ const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
   const address = concatAddress(validAddress);
   if (address.includes(", ,")) {
     return (
-      <Text className="pt-10">
+      <Text className="pt-4">
         Not Found, Please add more detail to the address
       </Text>
     );
@@ -164,9 +164,9 @@ const AddressFound: React.FC<{
       });
   }, [validAddress]);
   return (
-    <div className="flex flex-col items-center pt-10">
-      <Text className="text-3xl font-bold">{address}</Text>
-      <Text className="pb-6 pt-2">
+    <div className="flex flex-col items-center pt-20">
+      <Text className="text-xl font-bold">{address}</Text>
+      <Text className="pb-4 pt-2">
         Is this your address? Create property for this address below
       </Text>
       <CTAButton
@@ -175,7 +175,7 @@ const AddressFound: React.FC<{
         loading={loading}
         className="pb-4"
       >
-        Create Property <br />
+        Create Property
       </CTAButton>
       <ErrorMessage
         error={error.errorState}
