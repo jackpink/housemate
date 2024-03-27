@@ -47,7 +47,7 @@ export default async function PropertyPage({
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
         {/*Cover Image */}
-        {/* <CoverImage url={url} key={key} propertyId={params.propertyId} /> */}
+        <CoverImage url={url} key={key} propertyId={params.propertyId} />
         {/*Property Details */}
         {/* Links to main pages */}
       </PageWithSingleColumn>
