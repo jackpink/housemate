@@ -9,7 +9,7 @@ export default async function CreatePropertyPage() {
       <PageTitle>Create New Property</PageTitle>
       <CreatePropertyBreadcrumbs />
       <PageWithSingleColumn>
-        <div className="pt-32">
+        <div className="pt-20">
           <CreateProperty />
         </div>
       </PageWithSingleColumn>

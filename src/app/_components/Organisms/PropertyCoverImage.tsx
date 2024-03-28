@@ -1,18 +1,15 @@
 "use client";
 
+import axios from "axios";
+import { as } from "node_modules/@upstash/redis/zmscore-5d82e632";
 import { useState } from "react";
 import { updateProperty } from "~/app/actions/property";
-import { uploadFile } from "~/app/actions/uploads";
+import {
+  getPresignedUrlForPropertyCoverImage,
+  uploadFile,
+} from "~/app/actions/uploads";
 
-export function CoverImage({
-  url,
-  key,
-  propertyId,
-}: {
-  url: string;
-  key: string;
-  propertyId: string;
-}) {
+export function CoverImage({ propertyId }: { propertyId: string }) {
   const [currentFile, setCurrentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -26,27 +23,50 @@ export function CoverImage({
     setProgress(0);
   };
 
-  const upload = () => {
+  const upload = async () => {
     if (!currentFile) {
       throw new Error("No file");
     }
+    const res = await fetch(
+      "/api/presigned-url?file=" +
+        currentFile.name +
+        "&propertyId=" +
+        propertyId,
+    );
+
+    const { presignedUrl } = (await res.json()) as { presignedUrl: string };
+
+    console.log("presignedUrl", presignedUrl);
 
     setUploading(true);
-    uploadFile({ file: currentFile, url: url })
-      .then(async (response) => {
-        console.log("response", response);
-        // add to db
-        await updateProperty({ coverImageKey: key, propertyId: propertyId });
-      })
-      .catch((error) => {
-        console.error("error", error);
-      });
+    const response = axios.post(presignedUrl, currentFile, {
+      headers: {
+        "Content-Type": currentFile.type,
+        "Content-Disposition": `attachment; filename="${currentFile.name}"`,
+      },
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total) {
+          const progress = Math.round(
+            (progressEvent.loaded / progressEvent.total) * 100,
+          );
+          console.log("progress", progress);
+        }
+      },
+    });
+    // .then(async (response) => {
+    //   console.log("response", response);
+    //   // add to db
+    //   // await updateProperty({ coverImageKey: key, propertyId: propertyId });
+    // })
+    // .catch((error) => {
+    //   console.error("error", error);
+    // });
 
     setUploading(false);
   };
 
   return (
-    <form onSubmit={upload}>
+    <form action={upload}>
       <input
         onChange={selectFile}
         name="file"
