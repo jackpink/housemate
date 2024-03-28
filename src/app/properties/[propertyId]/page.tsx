@@ -37,9 +37,6 @@ export default async function PropertyPage({
     .property;
 
   const address = concatAddress(property);
-  const { url, key } = await getPresignedUrlForPropertyCoverImage({
-    propertyId: params.propertyId,
-  });
 
   return (
     <>
@@ -47,7 +44,7 @@ export default async function PropertyPage({
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
         {/*Cover Image */}
-        <CoverImage url={url} key={key} propertyId={params.propertyId} />
+        <CoverImage propertyId={params.propertyId} />
         {/*Property Details */}
         {/* Links to main pages */}
       </PageWithSingleColumn>
