@@ -1,13 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { as } from "node_modules/@upstash/redis/zmscore-5d82e632";
 import { useState } from "react";
-import { updateProperty } from "~/app/actions/property";
-import {
-  getPresignedUrlForPropertyCoverImage,
-  uploadFile,
-} from "~/app/actions/uploads";
 
 export function CoverImage({ propertyId }: { propertyId: string }) {
   const [currentFile, setCurrentFile] = useState<File | null>(null);
