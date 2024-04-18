@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Monorepo for housemate app",
   "workspaces": [
-	  "packages/*"
+    "packages/*"
   ],
   "scripts": {},
   "repository": {
@@ -12,4 +12,7 @@
   },
   "author": "Jack Pinkerton",
   "license": "ISC",
+  "dependencies": {
+    "sst": "^2.41.4"
+  }
 }
