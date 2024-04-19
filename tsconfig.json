@@ -1,0 +1,9 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json", 
+  "exclude": ["packages", "node_modules", "prettier.config.js", "stacks"],
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowJs": true,
+  }
+}
