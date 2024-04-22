@@ -23,8 +23,5 @@
   },
   "workspaces": [
     "packages/*"
-  ],
-  "dependencies": {
-    "@libsql/client": "^0.6.0"
-  }
+  ]
 }
