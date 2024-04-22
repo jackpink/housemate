@@ -37,6 +37,6 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts"
-, "../../stacks/env.js"  ],
+, "../../stacks/env.js", "../../drizzle.config.ts"  ],
   "exclude": ["node_modules"]
 }

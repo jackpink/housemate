@@ -1,4 +1,6 @@
 import Link from "next/link";
+import TestAddPost from "./_components/TestAddPost";
+import ShowPosts from "./_components/ShowPosts";
 
 export default function HomePage() {
   return (
@@ -30,6 +32,8 @@ export default function HomePage() {
               deploy it.
             </div>
           </Link>
+          <TestAddPost /> 
+          <ShowPosts />
         </div>
       </div>
     </main>

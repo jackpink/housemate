@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "sst dev && cd packages/web-2 && npm run dev",
+    "dev": "sst dev && cd packages/trade-site && npm run dev",
     "build": "sst build",
     "deploy": "sst deploy",
     "remove": "sst remove",
