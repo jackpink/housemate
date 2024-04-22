@@ -16,10 +16,10 @@
     "@tsconfig/node18": "^18.2.4",
     "aws-cdk-lib": "2.132.1",
     "constructs": "10.3.0",
-    "sst": "^2.41.4",
-    "typescript": "^5.4.5",
     "prettier": "^3.1.0",
-    "prettier-plugin-tailwindcss": "^0.5.7"
+    "prettier-plugin-tailwindcss": "^0.5.7",
+    "sst": "^2.41.4",
+    "typescript": "^5.4.5"
   },
   "workspaces": [
     "packages/*"
