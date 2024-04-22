@@ -1,0 +1,1 @@
+export const handler = async (event, context) => { const fn = await import("./packages/web-2/index.mjs"); return fn.handler(event, context);};
