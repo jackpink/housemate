@@ -1,4 +1,4 @@
-import { db } from "../../../../core/db";
+import { db } from "../../server/db";
 import { posts } from "../../../../core/db/schema";
 
 export default async function ShowPosts() {

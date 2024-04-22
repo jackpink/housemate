@@ -9,7 +9,7 @@ import DiscordProvider from "next-auth/providers/discord";
 import CognitoProvider from "next-auth/providers/cognito";
 
 import { env } from "../../../core/env.mjs";
-import { db } from "../../../core/db";
+import { db } from "../server/db";
 import { createTable } from "../../../core/db/schema";
 
 /**

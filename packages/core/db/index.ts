@@ -1,10 +1,3 @@
-import { drizzle } from "drizzle-orm/libsql";
-import { createClient } from "@libsql/client";
-import { env } from "../env.mjs";
-
-const client = createClient({
-  url: env.TURSO_CONNECTION_URL,
-  authToken: env.TURSO_AUTH_TOKEN,
-});
-
-export const db = drizzle(client);
+export * as schema from "./schema";
+export * from "../env.mjs";
+export * from "drizzle-orm/libsql";

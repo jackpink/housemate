@@ -32,7 +32,7 @@ export default function HomePage() {
               deploy it.
             </div>
           </Link>
-          <TestAddPost /> 
+          <TestAddPost />
           <ShowPosts />
         </div>
       </div>

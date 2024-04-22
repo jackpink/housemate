@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { db } from "../../../../core/db";
+import { db } from "../../server/db";
 import { posts } from "../../../../core/db/schema";
 
 async function createPost({ name }: { name: string }) {
