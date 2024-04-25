@@ -2,6 +2,7 @@
   "name": "trade-site",
   "version": "0.1.0",
   "private": true,
+  "type":"module",
   "scripts": {
     "build": "next build",
     "db:push": "drizzle-kit push:sqlite",
@@ -22,6 +23,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@libsql/client": "^0.3.3",
     "@types/better-sqlite3": "^7.6.9",
     "@types/eslint": "^8.56.2",
     "@types/node": "^20.11.20",
