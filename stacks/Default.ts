@@ -1,10 +1,8 @@
 import { StackContext, NextjsSite } from "sst/constructs";
-import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
-import { env } from "../packages/core/env.mjs";
 
 export function Default({ stack }: StackContext) {
   const site = new NextjsSite(stack, "site", {
-    path: "packages/trade-site",
+    path: "packages/homeowner-site",
   });
   stack.addOutputs({
     SiteUrl: site.url,
