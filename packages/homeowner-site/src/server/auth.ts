@@ -9,7 +9,7 @@ import DiscordProvider from "next-auth/providers/discord";
 
 import { env } from "../../../core/env.mjs";
 import { db } from "~/server/db";
-import { createTable } from "~/server/db/schema";
+import schema from "~/server/db/schema";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  adapter: DrizzleAdapter(db, createTable) as Adapter,
+  adapter: DrizzleAdapter(db, schema.createTable) as Adapter,
   providers: [
     /**
      * ...add more providers here.
