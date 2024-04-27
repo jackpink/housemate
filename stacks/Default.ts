@@ -1,8 +1,16 @@
 import { StackContext, NextjsSite } from "sst/constructs";
+import { env } from "../packages/core/env.mjs";
 
 export function Default({ stack }: StackContext) {
   const site = new NextjsSite(stack, "site", {
     path: "packages/homeowner-site",
+    environment: {
+      TURSO_CONNECTION_URL: env.TURSO_CONNECTION_URL,
+      TURSO_AUTH_TOKEN: env.TURSO_AUTH_TOKEN,
+      COGNITO_CLIENT_ID: env.COGNITO_CLIENT_ID,
+      COGNITO_CLIENT_SECRET: env.COGNITO_CLIENT_SECRET,
+      COGNITO_ISSUER: env.COGNITO_ISSUER,
+    },
   });
   stack.addOutputs({
     SiteUrl: site.url,
