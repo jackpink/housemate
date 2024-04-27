@@ -1,9 +1,14 @@
 import Logo from "../Atoms/Logo";
 import clsx from "clsx";
-import { Selected as HomeownerSelected } from "../Organisms/homeowner/Layout";
 import { ComponentType } from "react";
 
-export const MainMenuSide = ({
+export enum HomeownerSelected {
+  PROPERTIES,
+  ALERTS,
+  ACCOUNT,
+}
+
+export const SideMenu = ({
   selected,
   MainMenuButtons,
 }: {
@@ -26,7 +31,7 @@ export const MainMenuSide = ({
   );
 };
 
-export const MainMenuBottom = ({
+export const BottomMenu = ({
   selected,
   MainMenuButtons,
 }: {

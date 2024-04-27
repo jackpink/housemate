@@ -1,0 +1,14 @@
+{
+  "name": "ui-components",
+  "version": "1.0.0",
+  "description": "components to be used globally by seperate sites",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "clsx": "^2.1.1"
+  }
+}
