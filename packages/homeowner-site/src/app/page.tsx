@@ -1,39 +1,31 @@
 import Link from "next/link";
-import TestAddPost from "./_components/TestAddPost";
-import ShowPosts from "./_components/ShowPosts";
+import Logo from "../../../ui/Atoms/Logo";
+import { Text } from "../../../ui/Atoms/Text";
+import {
+  LargeButton,
+  LargeButtonContent,
+  LargeButtonTitle,
+} from "../../../ui/Atoms/Button";
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center">
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-        </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-            <div className="text-lg">
-              Just the basics - Everything you need to know to set up your
-              database and authentication.
-            </div>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <div className="text-lg">
-              Learn more about Create T3 App, the libraries it uses, and how to
-              deploy it.
-            </div>
-          </Link>
-          <TestAddPost />
-          <ShowPosts />
+        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+          <Logo width="300px" height="300px" colour="#c470e7" />
+          <div className="flex flex-col items-center justify-center gap-4 text-center ">
+            <Text>Welcome to Prop Doc the property maintenance app. </Text>
+            <Text>Management all of the work done on your home.</Text>
+            <Text>Search photos and documents for past work doe in rooms.</Text>
+            <Link href="/properties" className="">
+              <LargeButton>
+                <LargeButtonTitle>Homepage</LargeButtonTitle>
+                <LargeButtonContent>
+                  Explore your properties and latest jobs
+                </LargeButtonContent>
+              </LargeButton>
+            </Link>
+          </div>
         </div>
       </div>
     </main>
