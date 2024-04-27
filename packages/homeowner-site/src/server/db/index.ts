@@ -2,7 +2,7 @@ import { createClient, type Client } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 
 import { env } from "../../../../core/env.mjs";
-import * as schema from "./schema";
+import schema from "./schema";
 
 /**
  * Cache the database connection in development. This avoids creating a new connection on every HMR

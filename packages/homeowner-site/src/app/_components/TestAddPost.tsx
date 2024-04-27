@@ -1,12 +1,12 @@
 import { revalidatePath } from "next/cache";
 import { db } from "../../server/db";
-import { posts } from "~/server/db/schema";
+import schema from "~/server/db/schema";
 
 async function createPost({ name }: { name: string }) {
   const [created] = await db
-    .insert(posts)
+    .insert(schema.posts)
     .values({ name: name })
-    .returning({ id: posts.id });
+    .returning({ id: schema.posts.id });
   if (!created) throw new Error("Failed to create post");
   return created.id;
 }

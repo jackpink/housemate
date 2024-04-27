@@ -1,8 +1,8 @@
 import { db } from "../../server/db";
-import { posts } from "~/server/db/schema";
+import schema from "~/server/db/schema";
 
 export default async function ShowPosts() {
-  const post = await db.select().from(posts);
+  const post = await db.select().from(schema.posts);
   return (
     <div>
       <h1>ShowPosts</h1>
