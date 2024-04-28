@@ -15,6 +15,7 @@ export const env = createEnv({
     COGNITO_CLIENT_ID: z.string(),
     COGNITO_CLIENT_SECRET: z.string(),
     COGNITO_ISSUER: z.string(),
+    NEXTAUTH_SECRET: z.string(),
     // CLERK_SECRET_KEY: z.string(),
     // UPSTASH_REDIS_REST_URL: z.string(),
     // UPSTASH_REDIS_REST_TOKEN: z.string(),
@@ -48,6 +49,7 @@ export const env = createEnv({
     COGNITO_CLIENT_ID: process.env.COGNITO_CLIENT_ID,
     COGNITO_CLIENT_SECRET: process.env.COGNITO_CLIENT_SECRET,
     COGNITO_ISSUER: process.env.COGNITO_ISSUER,
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     // NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
     //   process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     // CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
