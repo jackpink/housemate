@@ -4,8 +4,8 @@ import { useFormState } from "react-dom";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import { signUpSchema } from "../../../../core/homeowner/forms";
-import * as User from "../../../../core/homeowner/user";
 import React from "react";
+import { signUp } from "../actions";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -125,7 +125,7 @@ const createUser = async (state: any, formData: FormData) => {
     // Create user with clerk
     //await createClerkUser(result.data);
 
-    await User.create(result.data);
+    await signUp(result.data);
 
     //void createUserInClerk(result.data);
     // Create Company with Clerk
