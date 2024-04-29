@@ -1,11 +1,11 @@
 "use client";
 
-import { z } from "zod";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import { useFormState } from "react-dom";
 import React from "react";
 import { CTAButton } from "../../../../ui/Atoms/Button";
-import { signIn } from "../../../../core/homeowner/user";
+import { signInSchema, signIn } from "../../../../core/homeowner/user";
+import Link from "next/link";
 
 export function SignInForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -42,17 +42,15 @@ export function SignInForm() {
         <label htmlFor="showPassword">Show Password</label>
       </button>
       <CTAButton rounded>Sign In</CTAButton>
+      <Link href="/sign-up" className="mt-2 block text-center">
+        Don't have an account? Sign up
+      </Link>
     </form>
   );
 }
 
-const SignInSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
-});
-
 const AttemptSignIn = async (state: any, formData: FormData) => {
-  const result = SignInSchema.safeParse({
+  const result = signInSchema.safeParse({
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   });
