@@ -6,6 +6,7 @@ import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import { signUpSchema } from "../../../../core/homeowner/forms";
 import React from "react";
 import { signUp } from "../actions";
+import Link from "next/link";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -77,6 +78,9 @@ export default function SignUpForm() {
         error={completeSignUpError.status}
         errorMessage={completeSignUpError.message}
       /> */}
+      <Link href="/sign-in" className="mt-2 block text-center">
+        Already have an account? Sign in
+      </Link>
     </>
   );
 }

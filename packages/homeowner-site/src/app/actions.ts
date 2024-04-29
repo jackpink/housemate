@@ -17,5 +17,20 @@ export async function signUp({
   email: string;
   password: string;
 }) {
-  User.create({ firstName, lastName, email, password });
+  // Check if user exists
+  const existingUser = await User.getByEmail(email);
+
+  if (existingUser) {
+    throw new Error("User already exists");
+  }
+
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  User.create({ firstName, lastName, email, hashedPassword });
+
+  // TODO: Send verification token email
+  return {
+    succes: "User created",
+  };
 }
