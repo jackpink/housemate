@@ -1,7 +1,5 @@
+import { SignInForm } from "~/app/_components/SignInForm";
+
 export default function SignInPage() {
-  return (
-    <div>
-      <h1>Sign In</h1>
-    </div>
-  );
+  return <SignInForm />;
 }
