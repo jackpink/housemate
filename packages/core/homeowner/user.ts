@@ -1,6 +1,5 @@
 export * as User from "./user";
-import { db } from "../db";
-import { homeownerUsers } from "db/schema";
+import { db, schema } from "../db";
 import { eq } from "drizzle-orm";
 
 export async function create({
@@ -15,6 +14,17 @@ export async function create({
   password: string;
 }) {
   console.log("Try to create user", firstName, lastName, email, password);
+  const [created] = await db
+    .insert(schema.homeownerUsers)
+    .values({
+      firstName,
+      lastName,
+      email,
+      password,
+    })
+    .returning({ id: schema.homeownerUsers.id });
+  if (!created) throw new Error("Failed to create user");
+  return created.id;
 }
 
 export async function getByCredentials(email: string, password: string) {
@@ -22,5 +32,9 @@ export async function getByCredentials(email: string, password: string) {
 }
 
 export async function getByEmail(email: string) {
-  db.select().from(homeownerUsers).where(eq(homeownerUsers.email, email));
+  const user = await db
+    .select()
+    .from(schema.homeownerUsers)
+    .where(eq(schema.homeownerUsers.email, email));
+  return user[0];
 }

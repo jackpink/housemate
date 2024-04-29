@@ -2,6 +2,7 @@
 
 import { useFormState } from "react-dom";
 import { CTAButton } from "../../../../ui/Atoms/Button";
+import { ErrorMessage } from "../../../../ui/Atoms/Text";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import { signUpSchema } from "../../../../core/homeowner/forms";
 import React from "react";
@@ -21,6 +22,8 @@ export default function SignUpForm() {
     passwordErrorMessage: "",
     confirmPasswordError: false,
     confirmPasswordErrorMessage: "",
+    createAccountError: false,
+    createAccountErrorMessage: "",
   });
 
   return (
@@ -74,10 +77,10 @@ export default function SignUpForm() {
         <CTAButton rounded>Create Account</CTAButton>
       </form>
 
-      {/* <ErrorMessage
-        error={completeSignUpError.status}
-        errorMessage={completeSignUpError.message}
-      /> */}
+      <ErrorMessage
+        error={state.createAccountError}
+        errorMessage={state.createAccountErrorMessage}
+      />
       <Link href="/sign-in" className="mt-2 block text-center">
         Already have an account? Sign in
       </Link>
@@ -123,13 +126,23 @@ const createUser = async (state: any, formData: FormData) => {
       passwordErrorMessage: passwordErrorMessage,
       confirmPasswordError: !!confirmPasswordErrorMessage,
       confirmPasswordErrorMessage: confirmPasswordErrorMessage,
+      createAccountError: false,
+      createAccountErrorMessage: "",
     };
   } else {
     console.log("new user", result.data.firstName);
     // Create user with clerk
     //await createClerkUser(result.data);
 
-    await signUp(result.data);
+    const signUpResult = await signUp(result.data);
+
+    let createAccountError = false;
+    let createAccountErrorMessage = "";
+
+    if (signUpResult.error) {
+      createAccountError = true;
+      createAccountErrorMessage = signUpResult.error;
+    }
 
     //void createUserInClerk(result.data);
     // Create Company with Clerk
@@ -146,6 +159,8 @@ const createUser = async (state: any, formData: FormData) => {
       passwordErrorMessage: "",
       confirmPasswordError: false,
       confirmPasswordErrorMessage: "",
+      createAccountError,
+      createAccountErrorMessage,
     };
   }
 };
