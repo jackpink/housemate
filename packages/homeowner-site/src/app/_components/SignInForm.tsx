@@ -6,7 +6,7 @@ import React from "react";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { signInSchema } from "../../../../core/homeowner/forms";
 import Link from "next/link";
-import { signIn } from "../actions";
+import { signInAction } from "../actions";
 
 export function SignInForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -72,7 +72,7 @@ const AttemptSignIn = async (state: any, formData: FormData) => {
     };
   } else {
     console.log("Try to sign in ", result.data.email, result.data.password);
-    await signIn(result.data.email, result.data.password);
+    await signInAction(result.data.email, result.data.password);
 
     return {
       emailError: false,

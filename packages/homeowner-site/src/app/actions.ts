@@ -2,9 +2,28 @@
 
 import bcrypt from "bcrypt";
 import { User } from "../../../core/homeowner/user";
+import { signIn } from "~/auth";
+import { AuthError } from "next-auth";
 
-export async function signIn(email: string, password: string) {
+export async function signInAction(email: string, password: string) {
   console.log("Try to sign in ", email, password);
+  try {
+    await signIn("credentials", {
+      email,
+      password,
+      redirectTo: "/properties",
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return { error: "Invalid email or password" };
+        default:
+          return { error: "Sign in failed" };
+      }
+    }
+    //throw error;
+  }
 }
 
 export async function signUp({
