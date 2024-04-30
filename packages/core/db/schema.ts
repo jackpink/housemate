@@ -21,6 +21,7 @@ export const homeownerUsers = sqliteTable("homeowner_user", {
     .$defaultFn(() => crypto.randomUUID()),
   firstName: text("first_name"),
   lastName: text("last_name"),
+  name: text("name"),
   email: text("email").notNull(),
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
