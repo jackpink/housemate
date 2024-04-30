@@ -1,28 +1,43 @@
 "use server";
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { User } from "../../../core/homeowner/user";
-import { signIn } from "~/auth";
+import { signIn, signOut } from "~/auth";
 import { AuthError } from "next-auth";
+import { isRedirectError } from "next/dist/client/components/redirect";
 
 export async function signInAction(email: string, password: string) {
   console.log("Try to sign in ", email, password);
   try {
     await signIn("credentials", {
-      email,
-      password,
-      redirectTo: "/properties",
+      email: email,
+      password: password,
+      redirectTo: "/",
     });
+    console.log("Sign in success");
   } catch (error) {
+    console.log("Sign in error");
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
+          console.log("Invalid email or password");
           return { error: "Invalid email or password" };
         default:
           return { error: "Sign in failed" };
       }
+    } else {
+      console.log("Error", error);
+      throw error;
     }
-    //throw error;
+  }
+}
+
+export async function signOutAction() {
+  try {
+    await signOut();
+  } catch (error) {
+    console.log("Sign out error", error);
+    throw error;
   }
 }
 
