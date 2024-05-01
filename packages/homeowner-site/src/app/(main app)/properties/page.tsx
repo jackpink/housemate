@@ -2,27 +2,28 @@ import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
 import { PageTitle } from "../../../../../ui/Atoms/Title";
 import { PageWithSingleColumn } from "../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
-import { signOutAction } from "~/app/actions";
+import { Property } from "../../../../../core/homeowner/property";
+import Properties from "~/app/_components/Properties";
+
+async function getProperties({ userId }: { userId: string }) {
+  return Property.getByHomeownerId(userId);
+}
 
 export default async function PropertiesPage() {
   const session = await auth();
   console.log("Session", session);
-  const onClickSignOut = () => {
-    signOutAction();
-  };
-  if (session?.user) {
-    return (
-      <form action={signOutAction}>
-        <button type="submit">Log out</button>
-      </form>
-    );
+
+  if (!session || !session.user) {
+    return <div>Not Authenticated</div>;
   }
+
+  const properties = await getProperties({ userId: session.user.id! });
   return (
     <>
       <PageTitle>Properties</PageTitle>
       <PropertiesBreadcrumbs />
       <PageWithSingleColumn>
-        Properties {JSON.stringify(session)}
+        <Properties properties={properties} />
       </PageWithSingleColumn>
     </>
   );
