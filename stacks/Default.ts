@@ -11,6 +11,7 @@ export function Default({ stack }: StackContext) {
       COGNITO_CLIENT_SECRET: env.COGNITO_CLIENT_SECRET,
       COGNITO_ISSUER: env.COGNITO_ISSUER,
       NEXTAUTH_SECRET: env.NEXTAUTH_SECRET,
+      NEXTAUTH_URL: env.NEXTAUTH_URL,
     },
   });
   stack.addOutputs({
