@@ -5,6 +5,7 @@ import { User } from "../../../core/homeowner/user";
 import { signIn, signOut } from "~/auth";
 import { AuthError } from "next-auth";
 import { isRedirectError } from "next/dist/client/components/redirect";
+import { redirect } from "next/navigation";
 
 export async function signInAction(email: string, password: string) {
   // console.log("Try to sign in ", email, password);
@@ -12,24 +13,29 @@ export async function signInAction(email: string, password: string) {
   await signIn("credentials", {
     email: email,
     password: password,
-    redirectTo: "/",
-  }).catch((error) => {
-    // console.log("Sign in success");
-    // } catch (error) {
-    console.log("Sign in error");
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case "CredentialsSignin":
-          console.log("Invalid email or password");
-          return { error: "Invalid email or password" };
-        default:
-          return { error: "Sign in failed" };
+    redirect: false,
+  })
+    .catch((error) => {
+      // console.log("Sign in success");
+      // } catch (error) {
+      console.log("Sign in error");
+      if (error instanceof AuthError) {
+        switch (error.type) {
+          case "CredentialsSignin":
+            console.log("Invalid email or password");
+            return { error: "Invalid email or password" };
+          default:
+            return { error: "Sign in failed" };
+        }
+      } else {
+        console.log("Error", error);
+        throw error;
       }
-    } else {
-      console.log("Error", error);
-      throw error;
-    }
-  });
+    })
+    .finally(() => {
+      console.log("Sign in finally");
+      redirect("/properties");
+    });
   //   }
   // }
 }
