@@ -7,15 +7,15 @@ import { AuthError } from "next-auth";
 import { isRedirectError } from "next/dist/client/components/redirect";
 
 export async function signInAction(email: string, password: string) {
-  console.log("Try to sign in ", email, password);
-  try {
-    await signIn("credentials", {
-      email: email,
-      password: password,
-      redirectTo: "/",
-    });
-    console.log("Sign in success");
-  } catch (error) {
+  // console.log("Try to sign in ", email, password);
+  // try {
+  await signIn("credentials", {
+    email: email,
+    password: password,
+    redirectTo: "/",
+  }).catch((error) => {
+    // console.log("Sign in success");
+    // } catch (error) {
     console.log("Sign in error");
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -29,7 +29,9 @@ export async function signInAction(email: string, password: string) {
       console.log("Error", error);
       throw error;
     }
-  }
+  });
+  //   }
+  // }
 }
 
 export async function signOutAction() {
