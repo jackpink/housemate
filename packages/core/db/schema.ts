@@ -71,3 +71,19 @@ export const homeownerVerificationTokens = sqliteTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
 );
+
+export const property = sqliteTable("property", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  apartment: text("apartment"),
+  streetNumber: text("street_number").notNull(),
+  streetName: text("street_name").notNull(),
+  suburb: text("suburb").notNull(),
+  state: text("state").notNull(),
+  postcode: text("postcode").notNull(),
+  country: text("country").notNull(),
+  homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
+    onDelete: "cascade",
+  }),
+});
