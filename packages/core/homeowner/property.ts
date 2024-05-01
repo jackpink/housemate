@@ -1,7 +1,9 @@
 export * as Property from "./property";
+import axios from "axios";
 import { property } from "db/schema";
 import { db, schema } from "../db";
 import { eq, InferSelectModel } from "drizzle-orm";
+import { env } from "env.mjs";
 
 export async function create({
   apartment,
@@ -77,3 +79,69 @@ export const concatAddress = (property: Property) => {
   }
   return address;
 };
+
+interface IAddress {
+  apartment: string | null;
+  streetNumber: string;
+  streetName: string;
+  suburb: string;
+  postcode: string;
+  state: string;
+  country: string;
+}
+
+function isKeyOfObject<T extends object>(
+  key: string | number | symbol,
+  object: T,
+): key is keyof T {
+  return key in object;
+}
+
+export async function getValidAddress({
+  addressSearchString,
+}: {
+  addressSearchString: string;
+}) {
+  const client = axios.create();
+  const googleAddressValidationEndpoint =
+    "https://addressvalidation.googleapis.com/v1:validateAddress?key=" +
+    env.GOOGLE_MAPS_API_KEY;
+  const requestBody = {
+    address: {
+      regionCode: "AU",
+      addressLines: [addressSearchString],
+    },
+  };
+  console.log("requestBody", requestBody);
+
+  const response = await client.post(
+    googleAddressValidationEndpoint,
+    requestBody,
+  );
+  const AddressObj: IAddress = {
+    apartment: null,
+    streetNumber: "",
+    streetName: "",
+    suburb: "",
+    postcode: "",
+    state: "",
+    country: "",
+  };
+  console.log("response", response);
+  const returnData = response.data as IGoogleApiData;
+  console.log("returnData", returnData);
+  const addressComponents = returnData.result.address.addressComponents;
+  console.log("addressComponents", addressComponents);
+  for (const addressComponent of addressComponents) {
+    const componentType = addressComponent.componentType;
+    // check that the componentType is corect
+    if (isKeyOfObject(componentType, googleAPINameMappings)) {
+      const field = googleAPINameMappings[componentType];
+      const value = addressComponent.componentName.text;
+      console.log("field", field, "value", value);
+      if (isKeyOfObject(field, AddressObj)) AddressObj[field] = value;
+    }
+  }
+  console.log("AddressObj", AddressObj);
+  return AddressObj;
+}

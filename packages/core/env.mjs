@@ -22,7 +22,7 @@ export const env = createEnv({
     // UPSTASH_REDIS_REST_URL: z.string(),
     // UPSTASH_REDIS_REST_TOKEN: z.string(),
     // WEBHOOK_SECRET: z.string(),
-    // GOOGLE_MAPS_API_KEY: z.string(),
+    GOOGLE_MAPS_API_KEY: z.string(),
     // AWS_SSL_CERTIFICATE_ARN: z.string(),
   },
 
@@ -67,7 +67,7 @@ export const env = createEnv({
     // NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
     //   process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
     // // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
-    // GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
     // AWS_SSL_CERTIFICATE_ARN: process.env.AWS_SSL_CERTIFICATE_ARN,
   },
   /**
