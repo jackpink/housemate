@@ -10,8 +10,9 @@ export function Default({ stack }: StackContext) {
       COGNITO_CLIENT_ID: env.COGNITO_CLIENT_ID,
       COGNITO_CLIENT_SECRET: env.COGNITO_CLIENT_SECRET,
       COGNITO_ISSUER: env.COGNITO_ISSUER,
-      NEXTAUTH_SECRET: env.NEXTAUTH_SECRET,
-      NEXTAUTH_URL: env.NEXTAUTH_URL,
+      AUTH_SECRET: env.AUTH_SECRET,
+      AUTH_URL: env.AUTH_URL,
+      AUTH_TRUST_HOST: env.AUTH_TRUST_HOST,
     },
   });
   stack.addOutputs({
