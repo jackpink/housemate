@@ -82,7 +82,7 @@ type NavPopoverProps = {
   className: string;
 };
 
-const Nav: React.FC = () => {
+const NavWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -101,13 +101,11 @@ const Nav: React.FC = () => {
               <CTAButton rounded>Sign In</CTAButton>
             </Link>
           </SignedOut> */}
-          <Link href="/sign-in">
-            <CTAButton rounded>Sign In</CTAButton>
-          </Link>
+          {children}
         </div>
       </div>
     </>
   );
 };
 
-export default Nav;
+export default NavWrapper;

@@ -1,4 +1,4 @@
-import Nav from "../../../../../ui/Molecules/Nav";
+import Nav from "~/app/_components/Nav";
 import { PropertiesPageWithSideMenu } from "~/app/_components/Layout";
 export default function MainAppLayout({
   children,
