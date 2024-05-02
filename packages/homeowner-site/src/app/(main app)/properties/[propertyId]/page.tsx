@@ -39,7 +39,7 @@ export default async function PropertyPage({
       <PageWithSingleColumn>
         <div className="p-10">
           <Link
-            href={`/properties/${params.propertyId}/add-item`}
+            href={`/properties/${params.propertyId}/items/add`}
             className="block"
           >
             <CTAButton rounded className="w-full">

@@ -5,7 +5,11 @@ type PropertiesBreadcrumbsProps = {
   propertyId?: string | undefined;
   propertyPage?: string;
 };
-
+/* 
+****************
+UGLY NEEDS REFACTOR
+****************
+*/
 export const PropertiesBreadcrumbs: React.FC<PropertiesBreadcrumbsProps> = ({
   address,
   propertyId,
