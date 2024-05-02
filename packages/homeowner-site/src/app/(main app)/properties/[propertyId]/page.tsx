@@ -19,9 +19,9 @@ export default async function PropertyPage({
 
   const property = await Property.get(params.propertyId);
 
-  const address = concatAddress(property);
-
   if (!property) return <div>Property not found</div>;
+
+  const address = concatAddress(property);
 
   if (
     !session ||
