@@ -59,6 +59,14 @@ export async function getByHomeownerId(homeownerId: string) {
   return properties;
 }
 
+export async function get(id: string) {
+  const [property] = await db
+    .select()
+    .from(schema.property)
+    .where(eq(schema.property.id, id));
+  return property;
+}
+
 type Property = InferSelectModel<typeof property>;
 
 export const concatAddress = (property: Property) => {
