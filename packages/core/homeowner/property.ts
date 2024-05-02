@@ -3,7 +3,7 @@ import axios from "axios";
 import { property } from "db/schema";
 import { db, schema } from "../db";
 import { eq, InferSelectModel } from "drizzle-orm";
-import { env } from "env.mjs";
+import { env } from "../env.mjs";
 
 export async function create({
   apartment,
@@ -80,7 +80,7 @@ export const concatAddress = (property: Property) => {
   return address;
 };
 
-interface IAddress {
+export interface IAddress {
   apartment: string | null;
   streetNumber: string;
   streetName: string;
@@ -95,6 +95,35 @@ function isKeyOfObject<T extends object>(
   object: T,
 ): key is keyof T {
   return key in object;
+}
+const googleAPINameMappings = {
+  subpremise: "apartment",
+  street_number: "streetNumber",
+  route: "streetName",
+  country: "country",
+  locality: "suburb",
+  administrative_area_level_1: "state",
+  postal_code: "postcode",
+};
+
+type IComponentName = {
+  text: string;
+};
+
+type IAddressComponent = {
+  componentType: string;
+  componentName: IComponentName;
+};
+
+interface IGoogleApiAddress {
+  addressComponents: IAddressComponent[];
+}
+
+interface IGoogleApiResult {
+  address: IGoogleApiAddress;
+}
+interface IGoogleApiData {
+  result: IGoogleApiResult;
 }
 
 export async function getValidAddress({
