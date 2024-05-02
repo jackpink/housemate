@@ -1,18 +1,19 @@
 import Nav from "~/app/_components/Nav";
 import { PropertiesPageWithSideMenu } from "~/app/_components/Layout";
 import { SessionProvider } from "next-auth/react";
-import { AppProps } from "next/app";
+import { auth } from "~/auth";
 
-export default function MainAppLayout({
-  Component,
-  pageProps: { session, ...pageProps },
-}: AppProps) {
+export default async function MainAppLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await auth();
+
   return (
     <SessionProvider session={session}>
       <Nav />
-      <PropertiesPageWithSideMenu>
-        <Component {...pageProps} />
-      </PropertiesPageWithSideMenu>
+      <PropertiesPageWithSideMenu>{children}</PropertiesPageWithSideMenu>
     </SessionProvider>
   );
 }

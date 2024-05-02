@@ -6,6 +6,8 @@ import { signIn, signOut } from "~/auth";
 import { AuthError } from "next-auth";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { redirect } from "next/navigation";
+import { IAddress, Property } from "../../../core/homeowner/property";
+import { revalidatePath } from "next/cache";
 
 export async function signInAction(email: string, password: string) {
   // console.log("Try to sign in ", email, password);
@@ -76,4 +78,47 @@ export async function signUp({
   return {
     success: "User created",
   };
+}
+
+export async function createProperty({
+  apartment,
+  streetNumber,
+  streetName,
+  suburb,
+  state,
+  postcode,
+  country,
+  homeownerId,
+}: {
+  apartment?: string;
+  streetNumber: string;
+  streetName: string;
+  suburb: string;
+  state: string;
+  postcode: string;
+  country: string;
+  homeownerId: string;
+}) {
+  const propertyId = await Property.create({
+    apartment,
+    streetNumber,
+    streetName,
+    suburb,
+    state,
+    postcode,
+    country,
+    homeownerId,
+  });
+  console.log("Property created", propertyId);
+  revalidatePath("/properties");
+  return propertyId;
+}
+
+export async function getValidAddress({
+  addressSearchString,
+}: {
+  addressSearchString: string;
+}) {
+  const address = await Property.getValidAddress({ addressSearchString });
+  return address;
 }

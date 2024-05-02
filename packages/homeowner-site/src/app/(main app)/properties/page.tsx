@@ -6,6 +6,7 @@ import { Property } from "../../../../../core/homeowner/property";
 import Properties from "~/app/_components/Properties";
 
 async function getProperties({ userId }: { userId: string }) {
+  console.log("Getting properties for user", userId);
   return Property.getByHomeownerId(userId);
 }
 
@@ -13,11 +14,11 @@ export default async function PropertiesPage() {
   const session = await auth();
   console.log("Session", session);
 
-  if (!session || !session.user) {
+  if (!session || !session.user || !session.user.id) {
     return <div>Not Authenticated</div>;
   }
 
-  const properties = await getProperties({ userId: session.user.id! });
+  const properties = await getProperties({ userId: session.user.id });
   return (
     <>
       <PageTitle>Properties</PageTitle>

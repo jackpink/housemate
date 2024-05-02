@@ -1,18 +1,16 @@
 "use client";
 
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
-import {
-  IAddress,
-  concatAddress,
-  getValidAddress,
-} from "../../../../core/homeowner/property";
+import { IAddress } from "../../../../core/homeowner/property";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { SearchIcon } from "../../../../ui/Atoms/Icons";
 import { ErrorMessage, Text } from "../../../../ui/Atoms/Text";
 import { useRouter } from "next/navigation";
-import { create as createProperty } from "../../../../core/homeowner/property";
+
 import { revalidatePath } from "next/cache";
 import { useSession } from "next-auth/react";
+import { createProperty, getValidAddress } from "../actions";
+import { concatAddress } from "~/utils/functions";
 
 type ValidAddress = Awaited<ReturnType<typeof getValidAddress>>;
 
@@ -20,15 +18,6 @@ export default function CreateProperty() {
   const [addressSearchTerm, setAddressSearchTerm] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
   const [validAddress, setValidAddress] = useState<ValidAddress | null>(null);
-
-  // const { mutate: getValidAddress, isLoading: isValidatingAddress } =
-  //   api.property.getValidAddress.useMutation({
-  //     onSuccess: (AddressObj) => {
-  //       // Redirect to new Job route
-
-  //       setValidAddress(AddressObj);
-  //     },
-  //   });
 
   const onClickSearch = useCallback(() => {
     setSearchLoading(true);
@@ -153,7 +142,6 @@ const AddressFound: React.FC<{
       .then(async (propertyId) => {
         setLoading(false);
         console.log("property", propertyId);
-        revalidatePath("/properties");
         router.push(`/properties/${propertyId}`);
       })
       .catch((error) => {
