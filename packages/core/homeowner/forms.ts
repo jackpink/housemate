@@ -1,4 +1,5 @@
 import { z, ZodError } from "zod";
+import { AuthError } from "next-auth";
 
 /* 
 **********************************************

@@ -3,11 +3,10 @@
 import bcrypt from "bcryptjs";
 import { User } from "../../../core/homeowner/user";
 import { signIn, signOut } from "~/auth";
-import { AuthError } from "next-auth";
-import { isRedirectError } from "next/dist/client/components/redirect";
 import { redirect } from "next/navigation";
 import { IAddress, Property } from "../../../core/homeowner/property";
 import { revalidatePath } from "next/cache";
+import { AuthError } from "next-auth";
 
 export async function signInAction(email: string, password: string) {
   // console.log("Try to sign in ", email, password);
@@ -17,6 +16,10 @@ export async function signInAction(email: string, password: string) {
     password: password,
     redirect: false,
   })
+    .then(() => {
+      console.log("Sign in finally");
+      redirect("/properties");
+    })
     .catch((error) => {
       // console.log("Sign in success");
       // } catch (error) {
@@ -25,19 +28,16 @@ export async function signInAction(email: string, password: string) {
         switch (error.type) {
           case "CredentialsSignin":
             console.log("Invalid email or password");
-            return { error: "Invalid email or password" };
+            throw new Error("Invalid email or password");
           default:
-            return { error: "Sign in failed" };
+            throw new Error("An authentication error occurred");
         }
       } else {
-        console.log("Error", error);
+        console.log("Error", error.message);
         throw error;
       }
-    })
-    .finally(() => {
-      console.log("Sign in finally");
-      redirect("/properties");
     });
+
   //   }
   // }
 }

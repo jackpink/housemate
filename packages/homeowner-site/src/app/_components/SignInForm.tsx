@@ -4,33 +4,34 @@ import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import { useFormState } from "react-dom";
 import React from "react";
 import { CTAButton } from "../../../../ui/Atoms/Button";
-import { signInSchema } from "../../../../core/homeowner/forms";
+import {
+  FormState,
+  emptyFormState,
+  fromErrorToFormState,
+  signInSchema,
+} from "../../../../core/homeowner/forms";
 import Link from "next/link";
 import { signInAction } from "../actions";
+import { ErrorMessage } from "../../../../ui/Atoms/Text";
 
 export function SignInForm() {
   const [showPassword, setShowPassword] = React.useState(false);
-  const [state, formAction] = useFormState(AttemptSignIn, {
-    emailError: false,
-    emailErrorMessage: "",
-    passwordError: false,
-    passwordErrorMessage: "",
-  });
+  const [state, formAction] = useFormState(AttemptSignIn, emptyFormState);
   return (
     <form action={formAction}>
       <TextInputWithError
         label="Email"
         name="email"
         type="email"
-        error={state.emailError}
-        errorMessage={state.emailErrorMessage}
+        error={!!state.fieldErrors["email"]?.[0]}
+        errorMessage={state.fieldErrors["email"]?.[0]}
       />
       <TextInputWithError
         label="Password"
         name="password"
         type={showPassword ? "text" : "password"}
-        error={state.passwordError}
-        errorMessage={state.passwordErrorMessage}
+        error={!!state.fieldErrors["password"]?.[0]}
+        errorMessage={state.fieldErrors["password"]?.[0]}
       />
       <button className="flex w-full justify-end p-2 text-slate-600">
         <input
@@ -43,6 +44,7 @@ export function SignInForm() {
         <label htmlFor="showPassword">Show Password</label>
       </button>
       <CTAButton rounded>Sign In</CTAButton>
+      <ErrorMessage error={state.error} errorMessage={state.message} />
       <Link href="/sign-up" className="mt-2 block text-center">
         Don't have an account? Sign up
       </Link>
@@ -50,35 +52,26 @@ export function SignInForm() {
   );
 }
 
-const AttemptSignIn = async (state: any, formData: FormData) => {
-  const result = signInSchema.safeParse({
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-  });
+const AttemptSignIn = async (
+  state: FormState,
+  formData: FormData,
+): Promise<FormState> => {
+  try {
+    const result = signInSchema.parse({
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    });
 
-  if (!result.success) {
-    const emailErrorMessage = result.error.issues.find(
-      (issue) => issue.path[0] === "email",
-    )?.message;
-    const passwordErrorMessage = result.error.issues.find(
-      (issue) => issue.path[0] === "password",
-    )?.message;
-
-    return {
-      emailError: !!emailErrorMessage,
-      emailErrorMessage: emailErrorMessage ?? "",
-      passwordError: !!passwordErrorMessage,
-      passwordErrorMessage: passwordErrorMessage ?? "",
-    };
-  } else {
-    console.log("Try to sign in ", result.data.email, result.data.password);
-    await signInAction(result.data.email, result.data.password);
-
-    return {
-      emailError: false,
-      emailErrorMessage: "",
-      passwordError: false,
-      passwordErrorMessage: "",
-    };
+    console.log("Try to sign in ", result.email, result.password);
+    await signInAction(result.email, result.password);
+  } catch (error) {
+    console.error("Error signing in", error);
+    return fromErrorToFormState(error);
   }
+
+  return {
+    error: false,
+    message: "Success",
+    fieldErrors: {},
+  };
 };
