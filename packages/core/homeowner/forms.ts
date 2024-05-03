@@ -1,4 +1,48 @@
-import { z } from "zod";
+import { z, ZodError } from "zod";
+
+/* 
+**********************************************
+Generic Form Handlers
+**********************************************
+*/
+export type FormState = {
+  error: boolean;
+  message?: string;
+  fieldErrors: Record<string, string[] | undefined>;
+};
+
+export const emptyFormState: FormState = {
+  error: false,
+  message: "",
+  fieldErrors: {},
+};
+
+export const fromErrorToFormState = (error: unknown) => {
+  if (error instanceof ZodError) {
+    return {
+      error: true,
+      fieldErrors: error.flatten().fieldErrors,
+    };
+  } else if (error instanceof Error) {
+    return {
+      error: true,
+      message: error.message,
+      fieldErrors: {},
+    };
+  } else {
+    return {
+      error: true,
+      message: "An unknown error occurred",
+      fieldErrors: {},
+    };
+  }
+};
+
+/* 
+**********************************************
+Schemas
+**********************************************
+*/
 
 export const signInSchema = z.object({
   email: z.string().email(),
@@ -46,3 +90,9 @@ export const signUpSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+export const addItemSchema = z.object({
+  title: z.string().min(1),
+  status: z.enum(["ToDo", "Completed"]),
+  category: z.enum(["Job", "Product", "Issue"]),
+});
