@@ -22,6 +22,7 @@ export const fromErrorToFormState = (error: unknown) => {
   if (error instanceof ZodError) {
     return {
       error: true,
+      message: "There are errors in the form",
       fieldErrors: error.flatten().fieldErrors,
     };
   } else if (error instanceof Error) {

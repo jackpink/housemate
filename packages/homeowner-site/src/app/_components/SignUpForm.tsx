@@ -4,27 +4,19 @@ import { useFormState } from "react-dom";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { ErrorMessage } from "../../../../ui/Atoms/Text";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
-import { signUpSchema } from "../../../../core/homeowner/forms";
+import {
+  FormState,
+  emptyFormState,
+  fromErrorToFormState,
+  signUpSchema,
+} from "../../../../core/homeowner/forms";
 import React from "react";
 import { signUp } from "../actions";
 import Link from "next/link";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = React.useState(false);
-  const [state, formAction] = useFormState(createUser, {
-    firstNameError: false,
-    firstNameErrorMessage: "",
-    lastNameError: false,
-    lastNameErrorMessage: "",
-    emailError: false,
-    emailErrorMessage: "",
-    passwordError: false,
-    passwordErrorMessage: "",
-    confirmPasswordError: false,
-    confirmPasswordErrorMessage: "",
-    createAccountError: false,
-    createAccountErrorMessage: "",
-  });
+  const [state, formAction] = useFormState(createUser, emptyFormState);
 
   return (
     <>
@@ -32,28 +24,28 @@ export default function SignUpForm() {
         <TextInputWithError
           label="First Name"
           name="firstName"
-          error={state.firstNameError}
-          errorMessage={state.firstNameErrorMessage}
+          error={!!state.fieldErrors["firstName"]?.[0]}
+          errorMessage={state.fieldErrors["firstName"]?.[0]}
         />
         <TextInputWithError
           label="Last Name"
           name="lastName"
-          error={state.lastNameError}
-          errorMessage={state.lastNameErrorMessage}
+          error={!!state.fieldErrors["lastName"]?.[0]}
+          errorMessage={state.fieldErrors["lastName"]?.[0]}
         />
         <TextInputWithError
           label="Email"
           name="email"
           type="email"
-          error={state.emailError}
-          errorMessage={state.emailErrorMessage}
+          error={!!state.fieldErrors["email"]?.[0]}
+          errorMessage={state.fieldErrors["email"]?.[0]}
         />
         <TextInputWithError
           label="Password"
           name="password"
           type={showPassword ? "text" : "password"}
-          error={state.passwordError}
-          errorMessage={state.passwordErrorMessage}
+          error={!!state.fieldErrors["password"]?.[0]}
+          errorMessage={state.fieldErrors["password"]?.[0]}
         />
 
         <button className="flex w-full justify-end p-2 text-slate-600">
@@ -70,17 +62,14 @@ export default function SignUpForm() {
           label="Confirm Password"
           name="confirmPassword"
           type={showPassword ? "text" : "password"}
-          error={state.confirmPasswordError}
-          errorMessage={state.confirmPasswordErrorMessage}
+          error={!!state.fieldErrors["confirmPassword"]?.[0]}
+          errorMessage={state.fieldErrors["confirmPassword"]?.[0]}
         />
 
         <CTAButton rounded>Create Account</CTAButton>
       </form>
 
-      <ErrorMessage
-        error={state.createAccountError}
-        errorMessage={state.createAccountErrorMessage}
-      />
+      <ErrorMessage error={state.error} errorMessage={state.message} />
       <Link href="/sign-in" className="mt-2 block text-center">
         Already have an account? Sign in
       </Link>
@@ -88,79 +77,30 @@ export default function SignUpForm() {
   );
 }
 
-const createUser = async (state: any, formData: FormData) => {
-  const result = signUpSchema.safeParse({
-    firstName: formData.get("firstName"),
-    lastName: formData.get("lastName"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    confirmPassword: formData.get("confirmPassword"),
-  });
+const createUser = async (
+  state: any,
+  formData: FormData,
+): Promise<FormState> => {
+  try {
+    const result = signUpSchema.parse({
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+    });
 
-  console.log(result);
-  if (!result.success) {
-    const firstNameErrorMessage = result.error.issues.find(
-      (issue) => issue.path[0] === "firstName",
-    )?.message;
-    const lastNameErrorMessage = result.error.issues.find(
-      (issue) => issue.path[0] === "lastName",
-    )?.message;
-    const emailErrorMessage = result.error.issues.find(
-      (issue) => issue.path[0] === "email",
-    )?.message;
-    const passwordErrorMessage = result.error.issues.find(
-      (issue) => issue.path[0] === "password",
-    )?.message;
-    const confirmPasswordErrorMessage = result.error.issues.find(
-      (issue) => issue.path[0] === "confirmPassword",
-    )?.message;
+    console.log("new user", result.firstName);
 
-    return {
-      firstNameError: !!firstNameErrorMessage,
-      firstNameErrorMessage: firstNameErrorMessage,
-      lastNameError: !!lastNameErrorMessage,
-      lastNameErrorMessage: lastNameErrorMessage,
-      emailError: !!emailErrorMessage,
-      emailErrorMessage: emailErrorMessage,
-      passwordError: !!passwordErrorMessage,
-      passwordErrorMessage: passwordErrorMessage,
-      confirmPasswordError: !!confirmPasswordErrorMessage,
-      confirmPasswordErrorMessage: confirmPasswordErrorMessage,
-      createAccountError: false,
-      createAccountErrorMessage: "",
-    };
-  } else {
-    console.log("new user", result.data.firstName);
-    // Create user with clerk
-    //await createClerkUser(result.data);
-
-    const signUpResult = await signUp(result.data);
-
-    let createAccountError = false;
-    let createAccountErrorMessage = "";
-
-    if (signUpResult.error) {
-      createAccountError = true;
-      createAccountErrorMessage = signUpResult.error;
-    }
-
-    //void createUserInClerk(result.data);
-    // Create Company with Clerk
-    // Create Trade in DB
-
-    return {
-      firstNameError: false,
-      firstNameErrorMessage: "",
-      lastNameError: false,
-      lastNameErrorMessage: "",
-      emailError: false,
-      emailErrorMessage: "",
-      passwordError: false,
-      passwordErrorMessage: "",
-      confirmPasswordError: false,
-      confirmPasswordErrorMessage: "",
-      createAccountError,
-      createAccountErrorMessage,
-    };
+    await signUp(result);
+  } catch (error) {
+    console.error("Error signing up", error);
+    return fromErrorToFormState(error);
   }
+
+  return {
+    error: false,
+    message: "Success",
+    fieldErrors: {},
+  };
 };
