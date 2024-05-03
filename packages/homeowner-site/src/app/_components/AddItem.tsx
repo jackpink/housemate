@@ -11,7 +11,7 @@ import {
 } from "../../../../core/homeowner/forms";
 import { createItemAction } from "../actions";
 import { ErrorMessage } from "../../../../ui/Atoms/Text";
-import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AddItem({
   homeownerId,
@@ -20,9 +20,41 @@ export default function AddItem({
   homeownerId: string;
   propertyId: string;
 }) {
-  const [state, formAction] = useFormState(createItem, emptyFormState);
   const { pending } = useFormStatus();
 
+  const router = useRouter();
+
+  const createItem = async (formState: FormState, formData: FormData) => {
+    try {
+      const result = addItemSchema.parse({
+        title: formData.get("title") as string,
+        status: formData.get("status") as string,
+        category: formData.get("category") as string,
+        homeownerId: formData.get("homeownerId") as string,
+        propertyId: formData.get("propertyId") as string,
+      });
+      console.log(result);
+      createItemAction(result)
+        .then((itemId) => {
+          router.push(
+            `/properties/${result.propertyId}/items/${result.status}/${itemId}`,
+          );
+        })
+        .catch((error) => {
+          throw error;
+        });
+    } catch (error) {
+      return fromErrorToFormState(error);
+    }
+
+    return {
+      error: false,
+      message: "Item created successfully",
+      fieldErrors: {},
+    };
+  };
+
+  const [state, formAction] = useFormState(createItem, emptyFormState);
   return (
     <form className="flex flex-col gap-4" action={formAction}>
       <TextInputWithError
@@ -82,25 +114,3 @@ function Category() {
     </>
   );
 }
-
-const createItem = async (formState: FormState, formData: FormData) => {
-  try {
-    const result = addItemSchema.parse({
-      title: formData.get("title") as string,
-      status: formData.get("status") as string,
-      category: formData.get("category") as string,
-      homeownerId: formData.get("homeownerId") as string,
-      propertyId: formData.get("propertyId") as string,
-    });
-    console.log(result);
-    await createItemAction(result);
-  } catch (error) {
-    return fromErrorToFormState(error);
-  }
-
-  return {
-    error: false,
-    message: "Item created successfully",
-    fieldErrors: {},
-  };
-};
