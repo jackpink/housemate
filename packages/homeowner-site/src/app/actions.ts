@@ -2,11 +2,13 @@
 
 import bcrypt from "bcryptjs";
 import { User } from "../../../core/homeowner/user";
+import { Item } from "../../../core/homeowner/item";
 import { signIn, signOut } from "~/auth";
 import { redirect } from "next/navigation";
 import { IAddress, Property } from "../../../core/homeowner/property";
 import { revalidatePath } from "next/cache";
 import { AuthError } from "next-auth";
+import { ItemCategory, ItemStatus } from "../../../core/db/schema";
 
 export async function signInAction(email: string, password: string) {
   // console.log("Try to sign in ", email, password);
@@ -121,4 +123,29 @@ export async function getValidAddress({
 }) {
   const address = await Property.getValidAddress({ addressSearchString });
   return address;
+}
+
+export async function createItemAction({
+  title,
+  status,
+  category,
+  homeownerId,
+  propertyId,
+}: {
+  title: string;
+  status: ItemStatus;
+  category: ItemCategory;
+  homeownerId: string;
+  propertyId: string;
+}) {
+  const itemId = await Item.create({
+    title,
+    status,
+    category,
+    homeownerId,
+    propertyId,
+  });
+  console.log("Item created", itemId);
+  revalidatePath(`/properties/${propertyId}`);
+  return itemId;
 }

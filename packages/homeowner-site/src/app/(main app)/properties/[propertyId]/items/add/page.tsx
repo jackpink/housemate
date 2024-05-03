@@ -34,7 +34,10 @@ export default async function AddItemPage({
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
         <div className="p-10">
-          <AddItem />
+          <AddItem
+            homeownerId={session.user.id}
+            propertyId={params.propertyId}
+          />
         </div>
       </PageWithSingleColumn>
     </>

@@ -87,3 +87,29 @@ export const property = sqliteTable("property", {
     onDelete: "cascade",
   }),
 });
+
+export enum ItemCategory {
+  JOB = "job",
+  PRODUCT = "product",
+  ISSUE = "issue",
+}
+
+export enum ItemStatus {
+  COMPLETED = "completed",
+  TODO = "todo",
+}
+
+export const itemyy = sqliteTable("item", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: text("title").notNull(),
+  status: text("status", { enum: ["completed", "todo"] }).notNull(),
+  category: text("category", { enum: ["job", "product", "issue"] }).notNull(),
+  homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
+    onDelete: "cascade",
+  }),
+  propertyId: text("propertyId").references(() => property.id, {
+    onDelete: "cascade",
+  }),
+});

@@ -1,40 +1,45 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useFormStatus, useFormState } from "react-dom";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
-import { addItemSchema } from "../../../../core/homeowner/forms";
-import { ZodError } from "zod";
+import {
+  FormState,
+  addItemSchema,
+  emptyFormState,
+  fromErrorToFormState,
+} from "../../../../core/homeowner/forms";
+import { createItemAction } from "../actions";
+import { ErrorMessage } from "../../../../ui/Atoms/Text";
+import { useTransition } from "react";
 
-type FormState = {
-  error: boolean;
-  message?: string;
-  fieldErrors: Record<string, string[] | undefined>;
-};
-
-const emptyFormState: FormState = {
-  error: false,
-  message: "",
-  fieldErrors: {},
-};
-
-export default function AddItem() {
+export default function AddItem({
+  homeownerId,
+  propertyId,
+}: {
+  homeownerId: string;
+  propertyId: string;
+}) {
   const [state, formAction] = useFormState(createItem, emptyFormState);
-  const title = "title";
+  const { pending } = useFormStatus();
 
   return (
     <form className="flex flex-col gap-4" action={formAction}>
       <TextInputWithError
         label="Title"
-        name={title}
+        name="title"
         error={!!state.fieldErrors["title"]?.[0]}
         errorMessage={state.fieldErrors["title"]?.[0]}
       />
       <Status />
+
       <Category />
-      <CTAButton rounded className="mt-8 w-full">
-        Add Item
+      <CTAButton rounded className="mt-8 w-full" loading={pending}>
+        {pending ? "Adding Item..." : "Add Item"}
       </CTAButton>
+      <ErrorMessage error={state.error} errorMessage={state.message} />
+      <input type="hidden" name="homeownerId" value={homeownerId} />
+      <input type="hidden" name="propertyId" value={propertyId} />
     </form>
   );
 }
@@ -51,8 +56,8 @@ function Status() {
         size={1}
         className="rounded-full bg-altSecondary/70 p-6"
       >
-        <option value="ToDo">To Do</option>
-        <option value="Completed">Completed</option>
+        <option value="todo">To Do</option>
+        <option value="completed">Completed</option>
       </select>
     </>
   );
@@ -70,34 +75,13 @@ function Category() {
         size={1}
         className="rounded-full bg-altSecondary/70 p-6"
       >
-        <option value="Job">Job</option>
-        <option value="Product">Product</option>
-        <option value="Issue">Issue</option>
+        <option value="job">Job</option>
+        <option value="product">Product</option>
+        <option value="issue">Issue</option>
       </select>
     </>
   );
 }
-
-const fromErrorToFormState = (error: unknown) => {
-  if (error instanceof ZodError) {
-    return {
-      error: true,
-      fieldErrors: error.flatten().fieldErrors,
-    };
-  } else if (error instanceof Error) {
-    return {
-      error: true,
-      message: error.message,
-      fieldErrors: {},
-    };
-  } else {
-    return {
-      error: true,
-      message: "An unknown error occurred",
-      fieldErrors: {},
-    };
-  }
-};
 
 const createItem = async (formState: FormState, formData: FormData) => {
   try {
@@ -105,8 +89,11 @@ const createItem = async (formState: FormState, formData: FormData) => {
       title: formData.get("title") as string,
       status: formData.get("status") as string,
       category: formData.get("category") as string,
+      homeownerId: formData.get("homeownerId") as string,
+      propertyId: formData.get("propertyId") as string,
     });
     console.log(result);
+    await createItemAction(result);
   } catch (error) {
     return fromErrorToFormState(error);
   }

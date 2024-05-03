@@ -1,5 +1,6 @@
 import { z, ZodError } from "zod";
 import { AuthError } from "next-auth";
+import { ItemCategory, ItemStatus } from "../db/schema";
 
 /* 
 **********************************************
@@ -95,6 +96,8 @@ export const signUpSchema = z
 
 export const addItemSchema = z.object({
   title: z.string().min(1),
-  status: z.enum(["ToDo", "Completed"]),
-  category: z.enum(["Job", "Product", "Issue"]),
+  status: z.nativeEnum(ItemStatus),
+  category: z.nativeEnum(ItemCategory),
+  homeownerId: z.string(),
+  propertyId: z.string(),
 });
