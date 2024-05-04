@@ -99,7 +99,7 @@ export enum ItemStatus {
   TODO = "todo",
 }
 
-export const itemyy = sqliteTable("item", {
+export const item = sqliteTable("item", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),

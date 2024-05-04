@@ -1,5 +1,5 @@
 export * as Item from "./item";
-import { ItemCategory, ItemStatus, itemyy } from "../db/schema";
+import { ItemCategory, ItemStatus, item } from "../db/schema";
 import { db } from "../db";
 import { eq, InferSelectModel } from "drizzle-orm";
 
@@ -17,14 +17,15 @@ export async function create({
   propertyId: string;
 }) {
   const [created] = await db
-    .insert(itemyy)
+    .insert(item)
     .values({ title, status, category, homeownerId, propertyId })
-    .returning({ id: itemyy.id });
+    .returning({ id: item.id });
 
   if (!created) throw new Error("Failed to create item");
   return created.id;
 }
 
-export function get(id: string) {
-  return db.select().from(itemyy).where(eq(itemyy.id, id));
+export async function get(id: string) {
+  const [itemObj] = await db.select().from(item).where(eq(item.id, id));
+  return itemObj;
 }
