@@ -1,10 +1,13 @@
 "use client";
 
-import { ParagraphText } from "../../../../ui/Atoms/Text";
+import { EditIconSmall } from "../../../../ui/Atoms/Icons";
+import { ParagraphText, Text } from "../../../../ui/Atoms/Text";
 import {
   InPlaceEditableComponent,
   InPlaceEditableComponentWithAdd,
+  EditableComponentLabel,
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
+import { useState } from "react";
 
 export default function EditItem({ title }: { title: string }) {
   return (
@@ -15,7 +18,7 @@ export default function EditItem({ title }: { title: string }) {
         onConfirmEdit={() => console.log("confirm edit")}
         editable
       />
-      <div className="w-full border-2 border-altSecondary"></div>
+      <Line />
       <div className="flex flex-wrap-reverse items-center justify-center">
         <div className="m-2 flex w-full flex-col items-center justify-center lg:w-96 2xl:w-128">
           <InPlaceEditableComponentWithAdd
@@ -26,10 +29,22 @@ export default function EditItem({ title }: { title: string }) {
             exists={false}
             editable
           />
+          <Line />
+          <Status status="todo" />
+          <Line />
+          <div className="w-full">
+            <EditableComponentLabel label="One Off / Recurring" />
+            <Recurring recurring={false} />
+            <Line />
+          </div>
         </div>
       </div>
     </>
   );
+}
+
+function Line() {
+  return <div className="w-full border-2 border-altSecondary"></div>;
 }
 
 function Title({ title }: { title: string }) {
@@ -63,10 +78,88 @@ function EditableDescription({ description }: { description: string }) {
   );
 }
 
-function JobStatus({ status }: { status: string }) {
+function Status({ status }: { status: string }) {
+  let statusFormatted = "";
+  switch (status) {
+    case "todo":
+      statusFormatted = "To Do";
+      break;
+    case "completed":
+      statusFormatted = "completed";
+      break;
+  }
+  return (
+    <div className="w-full">
+      <EditableComponentLabel label="Status" />
+      <div className="rounded-full bg-altSecondary/70 p-6 text-center">
+        {statusFormatted}
+      </div>
+      <button>
+        <Text>Mark as Complete? ✓</Text>
+      </button>
+      <Text></Text>
+    </div>
+  );
+}
+
+function Recurring({ recurring }: { recurring: boolean }) {
+  const [editMode, setEditMode] = useState(false);
+
+  if (editMode && recurring) {
+    return (
+      <>
+        <select
+          id="status"
+          name="status"
+          size={1}
+          className="rounded-full bg-altSecondary/70 p-6"
+        >
+          <option value="todo">One Off</option>
+          <option value="completed">Recurring</option>
+        </select>
+        <Schedule />
+      </>
+    );
+  } else if (editMode && !recurring) {
+    return (
+      <select
+        id="status"
+        name="status"
+        size={1}
+        className="w-full rounded-full bg-altSecondary/70 p-6 text-center"
+      >
+        <option value="todo">Recurring</option>
+        <option value="completed">One Off</option>
+      </select>
+    );
+  }
+  return (
+    <>
+      <div className="flex justify-between rounded-full bg-altSecondary/70 p-6 text-center">
+        <div></div>
+        <div>{recurring ? "Recurring" : "One Off"}</div>
+        <button onClick={() => setEditMode(true)}>
+          <EditIconSmall />
+        </button>
+      </div>
+      <Schedule />
+      <Text></Text>
+    </>
+  );
+}
+
+function Schedule() {
   return (
     <div>
-      <EditableComponentLabel label="Status" />
+      <select>
+        <option>Weekly</option>
+        <option>Fortnightly</option>
+        <option>Monthly</option>
+        <option>Quarterly</option>
+        <option>Biannually</option>
+        <option>Yearly</option>
+      </select>
+      <input type="date" />
     </div>
   );
 }
