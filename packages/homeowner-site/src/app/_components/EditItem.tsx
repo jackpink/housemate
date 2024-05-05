@@ -5,7 +5,7 @@ import { EditIconSmall } from "../../../../ui/Atoms/Icons";
 import { ParagraphText, Text } from "../../../../ui/Atoms/Text";
 import {
   EditableComponent,
-  InPlaceEditableComponentWithAdd,
+  InPlaceEditableComponent,
   EditableComponentLabel,
   type StandardComponent,
   type EditModeComponent,
@@ -16,7 +16,12 @@ import { item } from "../../../../core/db/schema";
 
 type Item = InferSelectModel<typeof item>;
 
-type UpdateItemServerAction = ({ title }: { title?: string }) => Promise<void>;
+export type UpdateItemServerAction = ({
+  title,
+}: {
+  title?: string;
+  description?: string;
+}) => Promise<void>;
 
 export default function EditItem({
   item,
@@ -37,12 +42,14 @@ export default function EditItem({
       <Line />
       <div className="flex flex-wrap-reverse items-center justify-center">
         <div className="m-2 flex w-full flex-col items-center justify-center lg:w-96 2xl:w-128">
-          <InPlaceEditableComponentWithAdd
+          <InPlaceEditableComponent
             title="Description"
-            EditableComponent={<EditableDescription description="sd" />}
-            StandardComponent={<Description description="sd" />}
-            onConfirmEdit={() => console.log("confirm edit")}
-            exists={false}
+            value={item.description}
+            EditModeComponent={EditableDescription}
+            StandardComponent={Description}
+            updateValue={async (value: string) =>
+              updateItem({ description: value })
+            }
             editable
           />
           <Line />
@@ -66,7 +73,7 @@ function Line() {
 const Title: StandardComponent = ({ value, pending }) => {
   console.log("pending", pending, value);
   return (
-    <h1 className={clsx("p-2 text-xl", pending && "text-slate-500")}>
+    <h1 className={clsx("p-2 text-xl font-bold", pending && "text-slate-500")}>
       {value}
     </h1>
   );
@@ -83,22 +90,29 @@ const EditableTitle: EditModeComponent = ({ value, setValue }) => {
   );
 };
 
-function Description({ description }: { description: string }) {
+const Description: StandardComponent = function ({ value, pending }) {
+  console.log("pending", pending, value);
   return (
-    <ParagraphText className="pl-10 text-xl font-normal">
-      {description}
+    <ParagraphText
+      className={clsx(
+        "pl-10 text-xl",
+        pending ? "text-slate-400" : "text-slate-700",
+      )}
+    >
+      {value}
     </ParagraphText>
   );
-}
+};
 
-function EditableDescription({ description }: { description: string }) {
+const EditableDescription: EditModeComponent = function ({ value, setValue }) {
   return (
     <textarea
       className="rounded-lg border-2 border-slate-400 p-2 text-xl"
-      value={description}
+      value={value}
+      onChange={(e) => setValue(e.currentTarget.value)}
     />
   );
-}
+};
 
 function Status({ status }: { status: string }) {
   let statusFormatted = "";

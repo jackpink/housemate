@@ -2,7 +2,7 @@ import { auth } from "~/auth";
 import { Item } from "../../../../../../../../../core/homeowner/item";
 import { concatAddress } from "~/utils/functions";
 import { Property } from "../../../../../../../../../core/homeowner/property";
-import EditItem from "~/app/_components/EditItem";
+import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
 import { PageTitle } from "../../../../../../../../../ui/Atoms/Title";
 import { CapitaliseText } from "../../../../../../../../../ui/Molecules/InPlaceEditableComponent";
 import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
@@ -37,9 +37,9 @@ export default async function TodoItemPage({
     return <div>Not Authenticated</div>;
   }
 
-  const updateItem = async ({ title }: { title?: string }) => {
+  const updateItem: UpdateItemServerAction = async ({ title, description }) => {
     "use server";
-    await Item.update({ id: params.itemId, title });
+    await Item.update({ id: params.itemId, title, description });
     revalidatePath(
       `/properties/${params.propertyId}/items/todo/${params.itemId}`,
     );

@@ -47,7 +47,7 @@ export function TextSpan({
 }: React.PropsWithChildren<TextSpanProps>) {
   return (
     <span
-      className={clsx("text-center font-sans text-lg text-dark", className)}
+      className={clsx("text-dark text-center font-sans text-lg", className)}
     >
       {children}
     </span>
@@ -62,12 +62,7 @@ export const ParagraphText: React.FC<
   React.PropsWithChildren<ParagraphTextProps>
 > = ({ className, children }) => {
   return (
-    <div
-      className={clsx(
-        "whitespace-pre-line px-4 text-base text-slate-700",
-        className,
-      )}
-    >
+    <div className={clsx("whitespace-pre-line px-4 text-base", className)}>
       {children}
     </div>
   );

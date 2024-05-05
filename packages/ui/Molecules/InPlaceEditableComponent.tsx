@@ -68,7 +68,72 @@ export function InPlaceEditableComponentWithAdd({
   );
 }
 
-export function InLineEditableComponent() {}
+export function InPlaceEditableComponent({
+  title,
+  value,
+  EditModeComponent,
+  updateValue,
+  StandardComponent,
+  editable = true,
+}: {
+  title: string;
+  value: string | null;
+  EditModeComponent: EditModeComponent;
+  updateValue: (value: string) => Promise<void>;
+  StandardComponent: StandardComponent;
+  editable?: boolean;
+}) {
+  const [editMode, setEditMode] = useState(false);
+
+  const [inputValue, setInputValue] = useState(value ?? "");
+
+  const [pending, startTransition] = React.useTransition();
+
+  const [optimisticValue, setOptimisticValue] = React.useOptimistic(
+    value,
+    (state, newValue: string) => {
+      return newValue;
+    },
+  );
+
+  const exists = optimisticValue !== null;
+
+  const onClickConfirmButton = () => {
+    console.log("input value", inputValue);
+    setEditMode(false);
+    startTransition(async () => {
+      setOptimisticValue(inputValue);
+      await updateValue(inputValue);
+    });
+  };
+
+  if (!exists && editMode) {
+    return (
+      <EditableComponentWrapper>
+        <EditMode
+          onClickConfirm={onClickConfirmButton}
+          onClickCancel={() => setEditMode(false)}
+          EditableComponent={
+            <EditModeComponent value={inputValue} setValue={setInputValue} />
+          }
+        />
+      </EditableComponentWrapper>
+    );
+  }
+  if (!exists && !editMode) {
+    return <AddButton title={title} onClick={() => setEditMode(true)} />;
+  }
+
+  return (
+    <EditableComponent
+      value={optimisticValue ?? ""}
+      EditModeComponent={EditModeComponent}
+      updateValue={updateValue}
+      StandardComponent={StandardComponent}
+      editable={editable}
+    />
+  );
+}
 
 export type StandardComponent = ({
   value,
@@ -149,7 +214,10 @@ export function EditableComponent({
     <EditableComponentWrapper>
       <StandardComponent value={optimisticValue} pending={pending} />
       <div className="justify-self-end">
-        <button onClick={() => setEditMode(true)} disabled={pending}>
+        <button
+          onClick={() => setEditMode(true)}
+          className={clsx(pending && "cursor-wait")}
+        >
           <EditIconSmall />
         </button>
       </div>
@@ -166,14 +234,26 @@ function EditableComponentWrapper({ children }: { children: ReactNode }) {
 export const AddButton = ({
   onClick,
   title,
+  editable = true,
 }: {
   onClick: () => void;
   title: string;
+  editable?: boolean;
 }) => {
+  let colour = "#c470e7";
+  if (!editable) {
+    colour = "#c4c4c4";
+  }
   return (
-    <button className="text-brandSecondary text-xl" onClick={onClick}>
+    <button
+      className={clsx(
+        "text-brandSecondary p-6 text-xl",
+        !editable && "cursor-not-allowed text-slate-500",
+      )}
+      onClick={onClick}
+    >
       <div className="flex items-center justify-center">
-        <PlusIcon width={25} height={25} colour="#c470e7" />
+        <PlusIcon width={25} height={25} colour={colour} />
         <span className="pl-4">Add {title}</span>
       </div>
     </button>
