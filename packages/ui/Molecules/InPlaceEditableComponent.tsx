@@ -68,6 +68,8 @@ export function InPlaceEditableComponentWithAdd({
   );
 }
 
+export function InLineEditableComponent() {}
+
 export type StandardComponent = ({
   value,
   pending,
