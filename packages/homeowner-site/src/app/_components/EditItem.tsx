@@ -1,21 +1,37 @@
 "use client";
 
+import clsx from "clsx";
 import { EditIconSmall } from "../../../../ui/Atoms/Icons";
 import { ParagraphText, Text } from "../../../../ui/Atoms/Text";
 import {
-  InPlaceEditableComponent,
+  EditableComponent,
   InPlaceEditableComponentWithAdd,
   EditableComponentLabel,
+  type StandardComponent,
+  type EditModeComponent,
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { InferSelectModel } from "drizzle-orm";
+import { item } from "../../../../core/db/schema";
 
-export default function EditItem({ title }: { title: string }) {
+type Item = InferSelectModel<typeof item>;
+
+type UpdateItemServerAction = ({ title }: { title?: string }) => Promise<void>;
+
+export default function EditItem({
+  item,
+  updateItem,
+}: {
+  item: Item;
+  updateItem: UpdateItemServerAction;
+}) {
   return (
     <>
-      <InPlaceEditableComponent
-        EditableComponent={<EditableTitle title={title} />}
-        StandardComponent={<Title title={title} />}
-        onConfirmEdit={() => console.log("confirm edit")}
+      <EditableComponent
+        value={item.title}
+        EditModeComponent={EditableTitle}
+        StandardComponent={Title}
+        updateValue={async (value: string) => updateItem({ title: value })}
         editable
       />
       <Line />
@@ -47,19 +63,25 @@ function Line() {
   return <div className="w-full border-2 border-altSecondary"></div>;
 }
 
-function Title({ title }: { title: string }) {
-  return <h1 className="p-2 text-xl">{title}</h1>;
-}
+const Title: StandardComponent = ({ value, pending }) => {
+  console.log("pending", pending, value);
+  return (
+    <h1 className={clsx("p-2 text-xl", pending && "text-slate-500")}>
+      {value}
+    </h1>
+  );
+};
 
-function EditableTitle({ title }: { title: string }) {
+const EditableTitle: EditModeComponent = ({ value, setValue }) => {
   return (
     <input
       type="text"
       className="rounded-lg border-2 border-slate-400 p-2 text-xl"
-      value={title}
+      value={value}
+      onChange={(e) => setValue(e.currentTarget.value)}
     />
   );
-}
+};
 
 function Description({ description }: { description: string }) {
   return (

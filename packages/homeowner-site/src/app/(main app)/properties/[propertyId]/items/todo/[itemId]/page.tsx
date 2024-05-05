@@ -7,6 +7,7 @@ import { PageTitle } from "../../../../../../../../../ui/Atoms/Title";
 import { CapitaliseText } from "../../../../../../../../../ui/Molecules/InPlaceEditableComponent";
 import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
 import { PageWithSingleColumn } from "../../../../../../../../../ui/Atoms/PageLayout";
+import { revalidatePath } from "next/cache";
 
 export default async function TodoItemPage({
   params,
@@ -35,6 +36,15 @@ export default async function TodoItemPage({
   ) {
     return <div>Not Authenticated</div>;
   }
+
+  const updateItem = async ({ title }: { title?: string }) => {
+    "use server";
+    await Item.update({ id: params.itemId, title });
+    revalidatePath(
+      `/properties/${params.propertyId}/items/todo/${params.itemId}`,
+    );
+  };
+
   return (
     <div>
       <PageTitle>
@@ -43,7 +53,7 @@ export default async function TodoItemPage({
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
         <div className="p-10">
-          <EditItem title={item.title} />
+          <EditItem item={item} updateItem={updateItem} />
           <p>{item.status}</p>
         </div>
       </PageWithSingleColumn>

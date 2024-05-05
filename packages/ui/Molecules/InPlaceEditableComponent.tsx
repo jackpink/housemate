@@ -68,54 +68,96 @@ export function InPlaceEditableComponentWithAdd({
   );
 }
 
-export function InPlaceEditableComponent({
-  EditableComponent,
-  onConfirmEdit,
+export type StandardComponent = ({
+  value,
+  pending,
+}: {
+  value: string;
+  pending?: boolean;
+}) => ReactNode;
+
+export type EditModeComponent = ({
+  value,
+  setValue,
+}: {
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+}) => ReactNode;
+
+export function EditableComponent({
+  value,
+  EditModeComponent,
+  updateValue,
   StandardComponent,
   editable,
-  loading,
 }: {
-  EditableComponent: ReactNode;
-  onConfirmEdit: () => void;
-  StandardComponent: ReactNode;
+  value: string;
+  EditModeComponent: EditModeComponent;
+  updateValue: (value: string) => Promise<void>;
+  StandardComponent: StandardComponent;
   editable?: boolean;
-  loading?: boolean;
 }) {
   const [editMode, setEditMode] = useState(false);
 
+  const [inputValue, setInputValue] = useState(value);
+
+  const [pending, startTransition] = React.useTransition();
+
+  const [optimisticValue, setOptimisticValue] = React.useOptimistic(
+    value,
+    (state, newValue: string) => {
+      return newValue;
+    },
+  );
+
   const onClickConfirmButton = () => {
+    console.log("input value", inputValue);
     setEditMode(false);
-    onConfirmEdit();
+    startTransition(async () => {
+      setOptimisticValue(inputValue);
+      await updateValue(inputValue);
+    });
   };
+  console.log("pending", pending);
+
+  if (editMode) {
+    return (
+      <EditableComponentWrapper>
+        <EditMode
+          onClickConfirm={onClickConfirmButton}
+          onClickCancel={() => setEditMode(false)}
+          EditableComponent={
+            <EditModeComponent value={inputValue} setValue={setInputValue} />
+          }
+        />
+      </EditableComponentWrapper>
+    );
+  }
+
+  if (!editable) {
+    return (
+      <EditableComponentWrapper>
+        <StandardComponent value={optimisticValue} pending={pending} />
+        <div className="justify-self-end"></div>
+      </EditableComponentWrapper>
+    );
+  }
 
   return (
-    <div className="flex w-full justify-between py-5 pl-6">
-      {editMode ? (
-        <>
-          <EditMode
-            onClickConfirm={onClickConfirmButton}
-            onClickCancel={() => setEditMode(false)}
-            EditableComponent={EditableComponent}
-          />
-        </>
-      ) : !editable ? (
-        <>
-          <div>{StandardComponent}</div>
-          <div className="justify-self-end"></div>
-        </>
-      ) : (
-        <>
-          <div className={clsx(loading && "animate-pulse")}>
-            {StandardComponent}
-          </div>
-          <div className="justify-self-end">
-            <button onClick={() => setEditMode(true)} disabled={loading}>
-              <EditIconSmall />
-            </button>
-          </div>
-        </>
-      )}
-    </div>
+    <EditableComponentWrapper>
+      <StandardComponent value={optimisticValue} pending={pending} />
+      <div className="justify-self-end">
+        <button onClick={() => setEditMode(true)} disabled={pending}>
+          <EditIconSmall />
+        </button>
+      </div>
+    </EditableComponentWrapper>
+  );
+}
+
+function EditableComponentWrapper({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex w-full justify-between py-5 pl-6">{children}</div>
   );
 }
 
