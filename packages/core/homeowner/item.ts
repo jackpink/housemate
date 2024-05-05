@@ -29,3 +29,7 @@ export async function get(id: string) {
   const [itemObj] = await db.select().from(item).where(eq(item.id, id));
   return itemObj;
 }
+
+export async function update({ id, title }: { id: string; title?: string }) {
+  await db.update(item).set({ title }).where(eq(item.id, id));
+}
