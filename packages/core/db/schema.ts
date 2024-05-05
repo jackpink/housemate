@@ -104,6 +104,7 @@ export const item = sqliteTable("item", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   title: text("title").notNull(),
+  description: text("description"),
   status: text("status", { enum: ["completed", "todo"] }).notNull(),
   category: text("category", { enum: ["job", "product", "issue"] }).notNull(),
   homeownerId: text("homeownerId").references(() => homeownerUsers.id, {

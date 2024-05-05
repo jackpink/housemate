@@ -30,6 +30,14 @@ export async function get(id: string) {
   return itemObj;
 }
 
-export async function update({ id, title }: { id: string; title?: string }) {
-  await db.update(item).set({ title }).where(eq(item.id, id));
+export async function update({
+  id,
+  title,
+  description,
+}: {
+  id: string;
+  title?: string;
+  description?: string;
+}) {
+  await db.update(item).set({ title, description }).where(eq(item.id, id));
 }
