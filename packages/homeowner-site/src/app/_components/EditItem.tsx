@@ -93,24 +93,31 @@ const EditableTitle: EditModeComponent = ({ value, setValue }) => {
 const Description: StandardComponent = function ({ value, pending }) {
   console.log("pending", pending, value);
   return (
-    <ParagraphText
-      className={clsx(
-        "pl-10 text-xl",
-        pending ? "text-slate-400" : "text-slate-700",
-      )}
-    >
-      {value}
-    </ParagraphText>
+    <div>
+      <EditableComponentLabel label="Description" />
+
+      <ParagraphText
+        className={clsx(
+          "p-4 text-xl",
+          pending ? "text-slate-400" : "text-slate-700",
+        )}
+      >
+        {value}
+      </ParagraphText>
+    </div>
   );
 };
 
 const EditableDescription: EditModeComponent = function ({ value, setValue }) {
   return (
-    <textarea
-      className="rounded-lg border-2 border-slate-400 p-2 text-xl"
-      value={value}
-      onChange={(e) => setValue(e.currentTarget.value)}
-    />
+    <div>
+      <EditableComponentLabel label="Description" />
+      <textarea
+        className="rounded-lg border-2 border-slate-400 p-2 p-4 text-xl"
+        value={value}
+        onChange={(e) => setValue(e.currentTarget.value)}
+      />
+    </div>
   );
 };
 
