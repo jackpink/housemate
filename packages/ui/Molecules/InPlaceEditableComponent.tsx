@@ -11,63 +11,6 @@ import { TextSpan, ParagraphText } from "../Atoms/Text";
 import clsx from "clsx";
 import React from "react";
 
-export function InPlaceEditableComponentWithAdd({
-  title,
-  EditableComponent,
-  onConfirmEdit,
-  StandardComponent,
-  exists,
-  editable = true,
-  loading = false,
-}: {
-  title: string;
-  EditableComponent: ReactNode;
-  onConfirmEdit: () => void;
-  StandardComponent: ReactNode;
-  exists: boolean;
-  editable?: boolean;
-  loading?: boolean;
-}) {
-  const [editMode, setEditMode] = useState(false);
-
-  const onClickConfirmButton = () => {
-    setEditMode(false);
-    onConfirmEdit();
-  };
-
-  return (
-    <div className="flex w-full justify-between py-5 pl-6">
-      {editMode ? (
-        <>
-          <EditMode
-            onClickConfirm={onClickConfirmButton}
-            onClickCancel={() => setEditMode(false)}
-            EditableComponent={EditableComponent}
-          />
-        </>
-      ) : !exists ? (
-        <AddButton title={title} onClick={() => setEditMode(true)} />
-      ) : !editable ? (
-        <>
-          <div>{StandardComponent}</div>
-          <div className="justify-self-end"></div>
-        </>
-      ) : (
-        <>
-          <div className={clsx(loading && "animate-pulse")}>
-            {StandardComponent}
-          </div>
-          <div className="justify-self-end">
-            <button onClick={() => setEditMode(true)} disabled={loading}>
-              <EditIconSmall />
-            </button>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
 export function InPlaceEditableComponent({
   title,
   value,
@@ -293,12 +236,8 @@ export function CapitaliseText({
 }) {
   return (
     <>
-      <TextSpan className="pl-10 text-xl font-normal">
-        {capitalise ? value.charAt(0).toUpperCase() : value}
-      </TextSpan>
-      <TextSpan className=" text-xl font-normal">
-        {capitalise ? value.slice(1) : ""}
-      </TextSpan>
+      <span>{capitalise ? value.charAt(0).toUpperCase() : value}</span>
+      <span>{capitalise ? value.slice(1) : ""}</span>
     </>
   );
 }
