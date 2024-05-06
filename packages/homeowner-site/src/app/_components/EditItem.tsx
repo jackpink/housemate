@@ -11,6 +11,7 @@ import {
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { InferSelectModel } from "drizzle-orm";
 import { item } from "../../../../core/db/schema";
+import ImageUploader from "../../../../ui/Molecules/ImageUploader";
 
 type Item = InferSelectModel<typeof item>;
 
@@ -99,7 +100,7 @@ export default function EditItem({
             />
             <Line />
           </div>
-          <PhotosAndDocuments />
+          <PhotosAndDocuments itemId={item.id} />
         </div>
       </div>
     </>
@@ -288,10 +289,15 @@ const EditableDateOfItem: EditModeComponent = function ({ value, setValue }) {
   );
 };
 
-function PhotosAndDocuments() {
+function PhotosAndDocuments({ itemId }: { itemId: string }) {
   return (
     <div className="w-full p-2">
       <EditableComponentLabel label="Photos and Documents" />
+      <ImageUploader
+        bucketKeyFolder={`${itemId}/`}
+        deviceType="desktop"
+        onUploadComplete={() => console.log("upload complete")}
+      />
     </div>
   );
 }

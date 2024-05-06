@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import axios from "axios";
 import clsx from "clsx";
 import { useState } from "react";
@@ -15,86 +16,93 @@ export default function ImageUploader({
   deviceType: string;
   onUploadComplete: ({ key }: { key: string }) => void;
 }) {
-  const [currentFile, setCurrentFile] = useState<File | null>(null);
+  const [currentFiles, setCurrentFiles] = useState<File[] | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [filePreviewUrl, setFilePreviewUrl] = useState<string | undefined>(
+
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string[] | undefined>(
     undefined,
   );
 
-  if (currentFile) {
+  if (currentFiles) {
     return (
-      <UploadSelectedImage
-        filePreviewUrl={filePreviewUrl}
-        fileName={currentFile.name}
-        setCurrentFile={setCurrentFile}
-        progress={progress}
-        bucketKeyFolder={bucketKeyFolder}
-        setUploading={setUploading}
-        currentFile={currentFile}
-        uploading={uploading}
-        setProgress={setProgress}
-        onUploadComplete={onUploadComplete}
-      />
+      <>
+        {currentFiles.map((file, index) => (
+          <UploadSelectedImage
+            filePreviewUrl={filePreviewUrl?.[index] ?? ""}
+            fileName={file.name}
+            setCurrentFiles={setCurrentFiles}
+            bucketKeyFolder={bucketKeyFolder}
+            setUploading={setUploading}
+            currentFile={file}
+            uploading={uploading}
+            onUploadComplete={onUploadComplete}
+          />
+        ))}
+        <UploadButton
+          setCurrentFiles={setCurrentFiles}
+          uploading={uploading}
+          setUploading={setUploading}
+        />
+      </>
     );
   }
   return (
     <SelectImageToUpload
-      setCurrentFile={setCurrentFile}
+      setCurrentFiles={setCurrentFiles}
       setFilePreviewUrl={setFilePreviewUrl}
-      setProgress={setProgress}
       deviceType={deviceType}
     />
   );
 }
 
 function SelectImageToUpload({
-  setCurrentFile,
+  setCurrentFiles,
   setFilePreviewUrl,
-  setProgress,
+  // setProgress,
   deviceType,
 }: {
-  setCurrentFile: React.Dispatch<React.SetStateAction<File | null>>;
-  setProgress: React.Dispatch<React.SetStateAction<number>>;
-  setFilePreviewUrl: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setCurrentFiles: React.Dispatch<React.SetStateAction<File[] | null>>;
+  // setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setFilePreviewUrl: React.Dispatch<React.SetStateAction<string[] | undefined>>;
   deviceType: string;
 }) {
-  const selectFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) {
-      throw new Error("No file");
+  const selectFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList) {
+      throw new Error("No files");
     }
-    setCurrentFile(file);
-    setFilePreviewUrl(URL.createObjectURL(file));
-    setProgress(0);
+    const files = Array.from(fileList);
+    setCurrentFiles(files);
+    setFilePreviewUrl(files.map((file) => URL.createObjectURL(file)));
+    // setProgress(0);
   };
 
   return (
     <>
       {deviceType === "desktop" ? (
         <SelectImageToUploadForDesktop
-          setCurrentFile={setCurrentFile}
-          setProgress={setProgress}
+          setCurrentFiles={setCurrentFiles}
+          // setProgress={setProgress}
           setFilePreviewUrl={setFilePreviewUrl}
-          selectFile={selectFile}
+          selectFiles={selectFiles}
         />
       ) : (
-        <SelectImageToUploadForMobile selectFile={selectFile} />
+        <SelectImageToUploadForMobile selectFile={selectFiles} />
       )}
     </>
   );
 }
 
 function SelectImageToUploadForDesktop({
-  setCurrentFile,
-  setProgress,
+  setCurrentFiles,
+  // setProgress,
   setFilePreviewUrl,
-  selectFile,
+  selectFiles,
 }: {
-  setCurrentFile: React.Dispatch<React.SetStateAction<File | null>>;
-  setProgress: React.Dispatch<React.SetStateAction<number>>;
-  setFilePreviewUrl: React.Dispatch<React.SetStateAction<string | undefined>>;
-  selectFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setCurrentFiles: React.Dispatch<React.SetStateAction<File[] | null>>;
+  // setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setFilePreviewUrl: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  selectFiles: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   const [dragActive, setDragActive] = useState(false);
   const [dragError, setDragError] = useState({
@@ -127,28 +135,32 @@ function SelectImageToUploadForDesktop({
     e.stopPropagation();
     setDragActive(false);
     const droppedFiles = Array.from(e.dataTransfer.files);
-    if (droppedFiles.length != 1) {
-      console.error("Multiple files not allowed");
-      setDragError({
-        error: true,
-        errorMessage: "Only one file allowed",
-      });
-      return;
-    }
+    // if (droppedFiles.length != 1) {
+    //   console.error("Multiple files not allowed");
+    //   setDragError({
+    //     error: true,
+    //     errorMessage: "Only one file allowed",
+    //   });
+    //   return;
+    // }
 
     // add file as current andf set image url'
-    const file = droppedFiles[0];
-    if (!file) {
-      throw new Error("No file");
+    // const file = droppedFiles
+    // if (!file) {
+    //   throw new Error("No file");
+    // }
+    for (let index = 0; index < droppedFiles.length; index++) {
+      const file = droppedFiles[index];
+      if (!!file && !file.type.includes("image/")) {
+        setDragError({ error: true, errorMessage: "Must be an image" });
+        console.error("Must be an image");
+        return;
+      }
     }
-    if (!file.type.includes("image/")) {
-      setDragError({ error: true, errorMessage: "Must be an image" });
-      console.error("Must be an image");
-      return;
-    }
-    setCurrentFile(file);
-    setProgress(0);
-    setFilePreviewUrl(URL.createObjectURL(file));
+
+    setCurrentFiles(droppedFiles);
+    // setProgress(0);
+    setFilePreviewUrl(droppedFiles.map((file) => URL.createObjectURL(file)));
   };
   return (
     <form
@@ -157,7 +169,7 @@ function SelectImageToUploadForDesktop({
     >
       <div
         className={clsx(
-          "flex h-48 w-full flex-col justify-center border-2 border-dashed border-dark",
+          "border-dark flex h-48 w-full flex-col justify-center border-2 border-dashed",
           dragActive ? "border-brand" : "border-gray-400",
           dragError.error && "border-red-500",
         )}
@@ -177,11 +189,11 @@ function SelectImageToUploadForDesktop({
         htmlFor="upload-cover-image-desktop"
         className="mb-4 place-self-center"
       >
-        <div className="rounded-full border-0 bg-brand p-6 text-xl font-extrabold text-dark hover:bg-brand/70">
+        <div className="bg-brand text-dark hover:bg-brand/70 rounded-full border-0 p-6 text-xl font-extrabold">
           Browse Files
         </div>
         <input
-          onChange={selectFile}
+          onChange={selectFiles}
           name="file"
           type="file"
           accept="capture=camera,image/*"
@@ -208,7 +220,7 @@ function SelectImageToUploadForMobile({
         htmlFor="upload-cover-image-mobile"
         className="mb-4 flex h-full flex-col items-center justify-center"
       >
-        <div className="cursor-pointer rounded-full border-0 bg-brand p-6 text-xl font-extrabold text-dark hover:bg-brand/70">
+        <div className="bg-brand text-dark hover:bg-brand/70 cursor-pointer rounded-full border-0 p-6 text-xl font-extrabold">
           Choose Image To Upload
         </div>
         <input
@@ -216,7 +228,7 @@ function SelectImageToUploadForMobile({
           name="file"
           type="file"
           accept="capture=camera,image/*"
-          multiple={false}
+          multiple={true}
           id="upload-cover-image-mobile"
           hidden
         />
@@ -228,35 +240,32 @@ function SelectImageToUploadForMobile({
 function UploadSelectedImage({
   filePreviewUrl,
   fileName,
-  setCurrentFile,
+  setCurrentFiles,
   currentFile,
   bucketKeyFolder,
   setUploading,
-  progress,
+
   uploading,
-  setProgress,
+
   onUploadComplete,
 }: {
-  currentFile: File | null;
-  progress: number;
+  currentFile: File;
   uploading: boolean;
   bucketKeyFolder: string;
   filePreviewUrl: string | undefined;
   fileName: string;
-  setCurrentFile: React.Dispatch<React.SetStateAction<File | null>>;
+  setCurrentFiles: React.Dispatch<React.SetStateAction<File[] | null>>;
   setUploading: React.Dispatch<React.SetStateAction<boolean>>;
-  setProgress: React.Dispatch<React.SetStateAction<number>>;
   onUploadComplete: ({ key }: { key: string }) => void;
 }) {
-  const uploadImageToBucket = async () => {
-    if (!currentFile) {
+  const [progress, setProgress] = useState(0);
+
+  const uploadImageToBucket = async (file: File | undefined) => {
+    if (!file) {
       throw new Error("No file");
     }
     const res = await fetch(
-      "/api/presigned-url?file=" +
-        currentFile.name +
-        "&propertyId=" +
-        bucketKeyFolder,
+      "/api/presigned-url?file=" + file.name + "&propertyId=" + bucketKeyFolder,
     );
 
     const { presignedUrl, key } = (await res.json()) as {
@@ -268,8 +277,8 @@ function UploadSelectedImage({
     axios
       .put(presignedUrl, currentFile, {
         headers: {
-          "Content-Type": currentFile.type,
-          "Content-Disposition": `attachment; filename="${currentFile.name}"`,
+          "Content-Type": file.type,
+          "Content-Disposition": `attachment; filename="${file.name}"`,
         },
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
@@ -294,40 +303,38 @@ function UploadSelectedImage({
       });
   };
 
+  if (uploading) {
+    uploadImageToBucket(currentFile);
+    return <UploadingBar progress={progress} />;
+  }
+
   return (
     <div className="flex h-full flex-col items-center justify-center">
       <img src={filePreviewUrl} width={120} height={120} />
       <Text>{fileName}</Text>
-      <UploadButton
-        setCurrentFile={setCurrentFile}
-        uploading={uploading}
-        progress={progress}
-        uploadImageToBucket={uploadImageToBucket}
-      />
     </div>
   );
 }
 
 function UploadButton({
-  setCurrentFile,
-  progress,
+  setCurrentFiles,
   uploading,
-  uploadImageToBucket,
+  setUploading,
 }: {
-  setCurrentFile: React.Dispatch<React.SetStateAction<File | null>>;
+  setCurrentFiles: React.Dispatch<React.SetStateAction<File[] | null>>;
   uploading: boolean;
-  progress: number;
-  uploadImageToBucket: () => void;
+
+  setUploading: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   if (uploading) {
-    return <UploadingBar progress={progress} />;
+    return null;
   }
   return (
     <div>
-      <CTAButton onClick={uploadImageToBucket} rounded>
+      <CTAButton onClick={() => setUploading(true)} rounded>
         Upload
       </CTAButton>
-      <CTAButton rounded secondary onClick={() => setCurrentFile(null)}>
+      <CTAButton rounded secondary onClick={() => setCurrentFiles(null)}>
         Cancel
       </CTAButton>
     </div>
@@ -342,31 +349,31 @@ function UploadingBar({ progress }: { progress: number }) {
       disabled={false}
       loading={true}
       className={clsx(
-        progress < 10 && "bg-gradient-to-r from-brand from-10% to-white",
+        progress < 10 && "from-brand bg-gradient-to-r from-10% to-white",
         progress >= 10 &&
           progress < 20 &&
-          "bg-gradient-to-r from-brand from-20% to-white",
+          "from-brand bg-gradient-to-r from-20% to-white",
         progress >= 20 &&
           progress < 30 &&
-          "bg-gradient-to-r from-brand from-30% to-white",
+          "from-brand bg-gradient-to-r from-30% to-white",
         progress >= 30 &&
           progress < 40 &&
-          "bg-gradient-to-r from-brand from-40% to-white",
+          "from-brand bg-gradient-to-r from-40% to-white",
         progress >= 40 &&
           progress < 50 &&
-          "bg-gradient-to-r from-brand from-50% to-white",
+          "from-brand bg-gradient-to-r from-50% to-white",
         progress >= 50 &&
           progress < 60 &&
-          "bg-gradient-to-r from-brand from-60% to-white",
+          "from-brand bg-gradient-to-r from-60% to-white",
         progress >= 60 &&
           progress < 70 &&
-          "bg-gradient-to-r from-brand from-70% to-white",
+          "from-brand bg-gradient-to-r from-70% to-white",
         progress >= 70 &&
           progress < 80 &&
-          "bg-gradient-to-r from-brand from-80% to-white",
+          "from-brand bg-gradient-to-r from-80% to-white",
         progress >= 80 &&
           progress < 90 &&
-          "bg-gradient-to-r from-brand from-90% to-white",
+          "from-brand bg-gradient-to-r from-90% to-white",
       )}
     >
       Uploading
