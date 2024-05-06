@@ -34,10 +34,17 @@ export async function update({
   id,
   title,
   description,
+  recurring,
+  date,
 }: {
   id: string;
   title?: string;
   description?: string;
+  recurring?: boolean;
+  date?: string;
 }) {
-  await db.update(item).set({ title, description }).where(eq(item.id, id));
+  await db
+    .update(item)
+    .set({ title, description, recurring, date })
+    .where(eq(item.id, id));
 }

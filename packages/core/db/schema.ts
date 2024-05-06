@@ -107,6 +107,10 @@ export const item = sqliteTable("item", {
   description: text("description"),
   status: text("status", { enum: ["completed", "todo"] }).notNull(),
   category: text("category", { enum: ["job", "product", "issue"] }).notNull(),
+  recurring: integer("recurring", { mode: "boolean" }),
+  date: text("date")
+    .notNull()
+    .default(sql`(current_timestamp)`),
   homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
     onDelete: "cascade",
   }),
