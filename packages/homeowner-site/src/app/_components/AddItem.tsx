@@ -36,9 +36,7 @@ export default function AddItem({
       console.log(result);
       createItemAction(result)
         .then((itemId) => {
-          router.push(
-            `/properties/${result.propertyId}/items/${result.status}/${itemId}`,
-          );
+          router.push(`/properties/${result.propertyId}/items/${itemId}`);
         })
         .catch((error) => {
           throw error;

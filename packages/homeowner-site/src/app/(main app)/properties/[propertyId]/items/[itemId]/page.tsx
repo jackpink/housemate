@@ -1,12 +1,12 @@
 import { auth } from "~/auth";
-import { Item } from "../../../../../../../../../core/homeowner/item";
+import { Item } from "../../../../../../../../core/homeowner/item";
 import { concatAddress } from "~/utils/functions";
-import { Property } from "../../../../../../../../../core/homeowner/property";
+import { Property } from "../../../../../../../../core/homeowner/property";
 import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
-import { PageTitle } from "../../../../../../../../../ui/Atoms/Title";
-import { CapitaliseText } from "../../../../../../../../../ui/Molecules/InPlaceEditableComponent";
+import { PageTitle } from "../../../../../../../../ui/Atoms/Title";
+import { CapitaliseText } from "../../../../../../../../ui/Molecules/InPlaceEditableComponent";
 import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
-import { PageWithSingleColumn } from "../../../../../../../../../ui/Atoms/PageLayout";
+import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayout";
 import { revalidatePath } from "next/cache";
 
 export default async function TodoItemPage({
@@ -37,12 +37,22 @@ export default async function TodoItemPage({
     return <div>Not Authenticated</div>;
   }
 
-  const updateItem: UpdateItemServerAction = async ({ title, description }) => {
+  const updateItem: UpdateItemServerAction = async ({
+    title,
+    description,
+    recurring,
+    date,
+  }) => {
     "use server";
-    await Item.update({ id: params.itemId, title, description });
-    revalidatePath(
-      `/properties/${params.propertyId}/items/todo/${params.itemId}`,
-    );
+    console.log("updateItem", title, description, recurring);
+    await Item.update({
+      id: params.itemId,
+      title,
+      description,
+      recurring,
+      date,
+    });
+    revalidatePath(`/properties/${params.propertyId}/items/${params.itemId}`);
   };
 
   return (

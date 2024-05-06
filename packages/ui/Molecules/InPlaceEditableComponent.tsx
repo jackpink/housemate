@@ -128,14 +128,18 @@ export function EditableComponent({
       await updateValue(inputValue);
     });
   };
-  console.log("pending", pending);
+
+  const onClickCancelButton = () => {
+    setEditMode(false);
+    setInputValue(optimisticValue ?? "");
+  };
 
   if (editMode) {
     return (
       <EditableComponentWrapper>
         <EditMode
           onClickConfirm={onClickConfirmButton}
-          onClickCancel={() => setEditMode(false)}
+          onClickCancel={onClickCancelButton}
           EditableComponent={
             <EditModeComponent value={inputValue} setValue={setInputValue} />
           }
@@ -169,9 +173,7 @@ export function EditableComponent({
 }
 
 function EditableComponentWrapper({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex w-full justify-between py-5 pl-6">{children}</div>
-  );
+  return <div className="flex w-full justify-between p-2">{children}</div>;
 }
 
 export const AddButton = ({

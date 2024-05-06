@@ -1,7 +1,6 @@
 "use client";
 
 import clsx from "clsx";
-import { EditIconSmall } from "../../../../ui/Atoms/Icons";
 import { ParagraphText, Text } from "../../../../ui/Atoms/Text";
 import {
   EditableComponent,
@@ -10,17 +9,23 @@ import {
   type StandardComponent,
   type EditModeComponent,
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
-import { useState } from "react";
 import { InferSelectModel } from "drizzle-orm";
 import { item } from "../../../../core/db/schema";
 
 type Item = InferSelectModel<typeof item>;
+
+const createDateString = (date: Date) => {
+  const dateString = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : "1"}${date.getDate()}`;
+  return dateString;
+};
 
 export type UpdateItemServerAction = ({
   title,
 }: {
   title?: string;
   description?: string;
+  recurring?: boolean;
+  date?: string;
 }) => Promise<void>;
 
 export default function EditItem({
@@ -30,18 +35,22 @@ export default function EditItem({
   item: Item;
   updateItem: UpdateItemServerAction;
 }) {
+  const date = new Date(item.date);
+  console.log("dat from DB", date.toDateString());
   return (
     <>
-      <EditableComponent
-        value={item.title}
-        EditModeComponent={EditableTitle}
-        StandardComponent={Title}
-        updateValue={async (value: string) => updateItem({ title: value })}
-        editable
-      />
+      <div className="py-4 pl-10">
+        <EditableComponent
+          value={item.title}
+          EditModeComponent={EditableTitle}
+          StandardComponent={Title}
+          updateValue={async (value: string) => updateItem({ title: value })}
+          editable
+        />
+      </div>
       <Line />
       <div className="flex flex-wrap-reverse items-center justify-center">
-        <div className="m-2 flex w-full flex-col items-center justify-center lg:w-96 2xl:w-128">
+        <div className="flex w-full flex-col items-center justify-center lg:w-96 2xl:w-128">
           <InPlaceEditableComponent
             title="Description"
             value={item.description}
@@ -55,11 +64,42 @@ export default function EditItem({
           <Line />
           <Status status="todo" />
           <Line />
+          <EditableComponent
+            value={date.toDateString()}
+            EditModeComponent={EditableDateOfItem}
+            StandardComponent={DateOfItem}
+            updateValue={async (value: string) => {
+              console.log("value before add", value);
+
+              updateItem({ date: value });
+            }}
+            editable
+          />
+
           <div className="w-full">
-            <EditableComponentLabel label="One Off / Recurring" />
-            <Recurring recurring={false} />
+            <EditableComponent
+              value={item.recurring ? "recurring" : "one-off"}
+              EditModeComponent={EditableOneOffRecurring}
+              StandardComponent={OneOffRecurring}
+              updateValue={async (value: string) => {
+                console.log("value", value);
+
+                let recurring = value === "recurring" ? true : false;
+                console.log("recurring", recurring);
+                updateItem({ recurring: recurring });
+              }}
+              editable
+            />
+            <EditableComponent
+              value="Weekly"
+              EditModeComponent={EditableSchedule}
+              StandardComponent={Schedule}
+              updateValue={async (value) => console.log("value", value)}
+              editable
+            />
             <Line />
           </div>
+          <PhotosAndDocuments />
         </div>
       </div>
     </>
@@ -71,7 +111,6 @@ function Line() {
 }
 
 const Title: StandardComponent = ({ value, pending }) => {
-  console.log("pending", pending, value);
   return (
     <h1 className={clsx("p-2 text-xl font-bold", pending && "text-slate-500")}>
       {value}
@@ -91,7 +130,6 @@ const EditableTitle: EditModeComponent = ({ value, setValue }) => {
 };
 
 const Description: StandardComponent = function ({ value, pending }) {
-  console.log("pending", pending, value);
   return (
     <div>
       <EditableComponentLabel label="Description" />
@@ -121,6 +159,46 @@ const EditableDescription: EditModeComponent = function ({ value, setValue }) {
   );
 };
 
+const OneOffRecurring: StandardComponent = function ({ value, pending }) {
+  const displayText = value === "recurring" ? "Recurring" : "One Off";
+  const date = item;
+  return (
+    <div className="w-full">
+      <EditableComponentLabel label="One Off / Recurring" />
+      <div
+        className={clsx(
+          "w-full rounded-full bg-altSecondary/70 p-6 text-center",
+          pending && "text-slate-500",
+        )}
+      >
+        {displayText}
+      </div>
+    </div>
+  );
+};
+
+const EditableOneOffRecurring: EditModeComponent = function ({
+  value,
+  setValue,
+}) {
+  return (
+    <div>
+      <EditableComponentLabel label="One Off / Recurring" />
+      <select
+        id="status"
+        name="status"
+        size={1}
+        className="w-full rounded-full bg-altSecondary/70 p-6"
+        value={value}
+        onChange={(e) => setValue(e.currentTarget.value)}
+      >
+        <option value="one-off">One Off</option>
+        <option value="recurring">Recurring</option>
+      </select>
+    </div>
+  );
+};
+
 function Status({ status }: { status: string }) {
   let statusFormatted = "";
   switch (status) {
@@ -145,64 +223,75 @@ function Status({ status }: { status: string }) {
   );
 }
 
-function Recurring({ recurring }: { recurring: boolean }) {
-  const [editMode, setEditMode] = useState(false);
-
-  if (editMode && recurring) {
-    return (
-      <>
-        <select
-          id="status"
-          name="status"
-          size={1}
-          className="rounded-full bg-altSecondary/70 p-6"
-        >
-          <option value="todo">One Off</option>
-          <option value="completed">Recurring</option>
-        </select>
-        <Schedule />
-      </>
-    );
-  } else if (editMode && !recurring) {
-    return (
-      <select
-        id="status"
-        name="status"
-        size={1}
-        className="w-full rounded-full bg-altSecondary/70 p-6 text-center"
-      >
-        <option value="todo">Recurring</option>
-        <option value="completed">One Off</option>
-      </select>
-    );
-  }
+const Schedule: StandardComponent = function ({ value, pending }) {
   return (
-    <>
-      <div className="flex justify-between rounded-full bg-altSecondary/70 p-6 text-center">
-        <div></div>
-        <div>{recurring ? "Recurring" : "One Off"}</div>
-        <button onClick={() => setEditMode(true)}>
-          <EditIconSmall />
-        </button>
-      </div>
-      <Schedule />
-      <Text></Text>
-    </>
+    <div className="w-full">
+      <EditableComponentLabel label="Schedule" />
+      <p className={clsx("w-full pt-2 text-lg", pending && "text-slate-500")}>
+        {value}
+      </p>
+    </div>
   );
-}
+};
 
-function Schedule() {
+const EditableSchedule: EditModeComponent = function ({ value, setValue }) {
   return (
-    <div>
-      <select>
-        <option>Weekly</option>
-        <option>Fortnightly</option>
-        <option>Monthly</option>
-        <option>Quarterly</option>
-        <option>Biannually</option>
-        <option>Yearly</option>
+    <div className="w-full">
+      <EditableComponentLabel label="Schedule" />
+      <select
+        id="schedule"
+        name="schedule"
+        size={1}
+        className="w-full rounded-full bg-altSecondary/70 p-6"
+        value={value}
+        onChange={(e) => setValue(e.currentTarget.value)}
+      >
+        <option value="weekly">Weekly</option>
+        <option value="fortnightly">Fortnightly</option>
+        <option value="monthly">Monthly</option>
+        <option value="quarterly">Quarterly</option>
+        <option value="biannually">Biannually</option>
+        <option value="yearly">Yearly</option>
       </select>
-      <input type="date" />
+    </div>
+  );
+};
+
+const DateOfItem: StandardComponent = function ({ value, pending }) {
+  const date = new Date(value);
+  console.log("date", date.toDateString());
+  return (
+    <div className="w-full">
+      <EditableComponentLabel label="Date" />
+      <p className={clsx("w-full pt-2 text-lg", pending && "text-slate-500")}>
+        {date.toDateString()}
+      </p>
+    </div>
+  );
+};
+
+const EditableDateOfItem: EditModeComponent = function ({ value, setValue }) {
+  const date = new Date(value);
+  const dateString = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : "1"}${date.getDate()}`;
+  console.log("date editable", dateString);
+  return (
+    <div className="w-full">
+      <EditableComponentLabel label="Date" />
+      <div className="w-full pt-2 text-lg">
+        <input
+          type="date"
+          value={dateString}
+          onChange={(e) => setValue(e.currentTarget.value)}
+        />
+      </div>
+    </div>
+  );
+};
+
+function PhotosAndDocuments() {
+  return (
+    <div className="w-full p-2">
+      <EditableComponentLabel label="Photos and Documents" />
     </div>
   );
 }
