@@ -12,16 +12,16 @@ export async function GET(request: NextRequest) {
     return new Response("No file", { status: 400 });
   }
 
-  const propertyId = searchParams.get("propertyId");
+  const bucketKey = searchParams.get("bucketKey");
 
-  if (!propertyId) {
-    return new Response("No propertyId", { status: 400 });
+  if (!bucketKey) {
+    return new Response("No bucket key folder name", { status: 400 });
   }
 
   const fileExtension = file.split(".").pop();
 
   const bucketName = Bucket.ItemUploads.bucketName;
-  const key = `${propertyId}/${crypto.randomUUID()}.${fileExtension}`;
+  const key = `${bucketKey}/${crypto.randomUUID()}.${fileExtension}`;
   const command = new PutObjectCommand({
     ACL: "private",
     Key: key,
