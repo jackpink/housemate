@@ -7,84 +7,89 @@ import { useState } from "react";
 import { CTAButton } from "../Atoms/Button";
 import { ErrorMessage, Text } from "../Atoms/Text";
 
+type Upload = {
+  file: File;
+  progress: number;
+  uploading: boolean;
+};
+
 export default function ImageUploader({
-  bucketKeyFolder,
+  bucketKey,
   deviceType,
   onUploadComplete,
 }: {
-  bucketKeyFolder: string;
+  bucketKey: string;
+
   deviceType: string;
   onUploadComplete: ({ key }: { key: string }) => void;
 }) {
-  const [currentFiles, setCurrentFiles] = useState<File[] | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [currentUploads, setCurrentUploads] = useState<Upload[]>([]);
 
-  const [filePreviewUrl, setFilePreviewUrl] = useState<string[] | undefined>(
-    undefined,
-  );
-
-  if (currentFiles) {
+  if (currentUploads.length > 0) {
     return (
       <>
-        {currentFiles.map((file, index) => (
+        {currentUploads.map((upload, index) => (
           <UploadSelectedImage
-            filePreviewUrl={filePreviewUrl?.[index] ?? ""}
-            fileName={file.name}
-            setCurrentFiles={setCurrentFiles}
-            bucketKeyFolder={bucketKeyFolder}
-            setUploading={setUploading}
-            currentFile={file}
-            uploading={uploading}
-            onUploadComplete={onUploadComplete}
+            filePreviewUrl={URL.createObjectURL(upload.file)}
+            fileName={upload.file.name}
+            key={index}
+            uploading={upload.uploading}
+            progress={upload.progress}
           />
         ))}
         <UploadButton
-          setCurrentFiles={setCurrentFiles}
-          uploading={uploading}
-          setUploading={setUploading}
+          currentUploads={currentUploads}
+          setCurrentUploads={setCurrentUploads}
+          onUploadComplete={onUploadComplete}
+          bucketKey={bucketKey}
         />
       </>
     );
   }
   return (
     <SelectImageToUpload
-      setCurrentFiles={setCurrentFiles}
-      setFilePreviewUrl={setFilePreviewUrl}
+      setCurrentUploads={setCurrentUploads}
       deviceType={deviceType}
     />
   );
 }
 
 function SelectImageToUpload({
-  setCurrentFiles,
-  setFilePreviewUrl,
-  // setProgress,
+  setCurrentUploads,
   deviceType,
 }: {
-  setCurrentFiles: React.Dispatch<React.SetStateAction<File[] | null>>;
-  // setProgress: React.Dispatch<React.SetStateAction<number>>;
-  setFilePreviewUrl: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  setCurrentUploads: React.Dispatch<React.SetStateAction<Upload[]>>;
   deviceType: string;
 }) {
   const selectFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
+    setUploadsFromFileList(fileList);
+  };
+
+  const setUploadsFromFileList = (fileList: FileList | File[] | null) => {
     if (!fileList) {
       throw new Error("No files");
     }
-    const files = Array.from(fileList);
-    setCurrentFiles(files);
-    setFilePreviewUrl(files.map((file) => URL.createObjectURL(file)));
-    // setProgress(0);
+    for (let index = 0; index < fileList.length; index++) {
+      const file = fileList[index];
+      if (!file) {
+        console.error("No File");
+        return;
+      }
+      // check file type
+      setCurrentUploads((currentUploads) => [
+        ...currentUploads,
+        { file, progress: 0, uploading: false },
+      ]);
+    }
   };
 
   return (
     <>
       {deviceType === "desktop" ? (
         <SelectImageToUploadForDesktop
-          setCurrentFiles={setCurrentFiles}
-          // setProgress={setProgress}
-          setFilePreviewUrl={setFilePreviewUrl}
           selectFiles={selectFiles}
+          setUploadsFromFileList={setUploadsFromFileList}
         />
       ) : (
         <SelectImageToUploadForMobile selectFile={selectFiles} />
@@ -94,14 +99,10 @@ function SelectImageToUpload({
 }
 
 function SelectImageToUploadForDesktop({
-  setCurrentFiles,
-  // setProgress,
-  setFilePreviewUrl,
+  setUploadsFromFileList,
   selectFiles,
 }: {
-  setCurrentFiles: React.Dispatch<React.SetStateAction<File[] | null>>;
-  // setProgress: React.Dispatch<React.SetStateAction<number>>;
-  setFilePreviewUrl: React.Dispatch<React.SetStateAction<string[] | undefined>>;
+  setUploadsFromFileList: (fileList: FileList | File[] | null) => void;
   selectFiles: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   const [dragActive, setDragActive] = useState(false);
@@ -149,18 +150,7 @@ function SelectImageToUploadForDesktop({
     // if (!file) {
     //   throw new Error("No file");
     // }
-    for (let index = 0; index < droppedFiles.length; index++) {
-      const file = droppedFiles[index];
-      if (!!file && !file.type.includes("image/")) {
-        setDragError({ error: true, errorMessage: "Must be an image" });
-        console.error("Must be an image");
-        return;
-      }
-    }
-
-    setCurrentFiles(droppedFiles);
-    // setProgress(0);
-    setFilePreviewUrl(droppedFiles.map((file) => URL.createObjectURL(file)));
+    setUploadsFromFileList(droppedFiles);
   };
   return (
     <form
@@ -240,53 +230,80 @@ function SelectImageToUploadForMobile({
 function UploadSelectedImage({
   filePreviewUrl,
   fileName,
-  setCurrentFiles,
-  currentFile,
-  bucketKeyFolder,
-  setUploading,
-
   uploading,
-
-  onUploadComplete,
+  progress,
 }: {
-  currentFile: File;
   uploading: boolean;
-  bucketKeyFolder: string;
   filePreviewUrl: string | undefined;
   fileName: string;
-  setCurrentFiles: React.Dispatch<React.SetStateAction<File[] | null>>;
-  setUploading: React.Dispatch<React.SetStateAction<boolean>>;
-  onUploadComplete: ({ key }: { key: string }) => void;
+  progress: number;
 }) {
-  const [progress, setProgress] = useState(0);
+  console.log("progress", progress);
+  console.log("uploading", uploading);
+  return (
+    <div className="flex h-full flex-col items-center justify-center">
+      <img src={filePreviewUrl} width={120} height={120} />
+      <Text>{fileName}</Text>
+      {uploading && <ProgressBar progress={progress} />}
+    </div>
+  );
+}
 
-  const uploadImageToBucket = async (file: File | undefined) => {
-    if (!file) {
+function ProgressBar({ progress }: { progress: number }) {
+  return <progress value={progress} max={100} />;
+}
+
+function UploadButton({
+  currentUploads,
+  setCurrentUploads,
+  onUploadComplete,
+  bucketKey,
+}: {
+  currentUploads: Upload[];
+  setCurrentUploads: React.Dispatch<React.SetStateAction<Upload[]>>;
+  onUploadComplete: ({ key }: { key: string }) => void;
+  bucketKey: string;
+}) {
+  const uploadImageToBucket = async (index: number) => {
+    const upload = currentUploads[index];
+    if (!upload) {
       throw new Error("No file");
     }
     const res = await fetch(
-      "/api/presigned-url?file=" + file.name + "&propertyId=" + bucketKeyFolder,
+      "/api/presigned-url?file=" + upload.file.name + "&bucketKey=" + bucketKey,
     );
 
     const { presignedUrl, key } = (await res.json()) as {
       presignedUrl: string;
       key: string;
     };
+    console.log(currentUploads[index]!.uploading);
+    setCurrentUploads((currentUploads) => {
+      const newCurrentUploads = currentUploads.slice();
+      newCurrentUploads[index]!.uploading = true;
+      return newCurrentUploads;
+    });
+    console.log(`setting uploading to true for index ${index}`);
+    console.log(currentUploads[index]!.uploading);
 
-    setUploading(true);
     axios
-      .put(presignedUrl, currentFile, {
+      .put(presignedUrl, upload.file, {
         headers: {
-          "Content-Type": file.type,
-          "Content-Disposition": `attachment; filename="${file.name}"`,
+          "Content-Type": upload.file.type,
+          "Content-Disposition": `attachment; filename="${upload.file.name}"`,
         },
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
             const progress = Math.round(
               (progressEvent.loaded / progressEvent.total) * 100,
             );
-            console.log("progress", progress);
-            setProgress(progress);
+            console.log("checkout progress", progress);
+
+            setCurrentUploads((currentUploads) => {
+              const newCurrentUploads = currentUploads.slice();
+              newCurrentUploads[index]!.progress = progress;
+              return newCurrentUploads;
+            });
           }
         },
       })
@@ -295,46 +312,34 @@ function UploadSelectedImage({
         // add to db
         onUploadComplete({ key: key });
         // await updateProperty({ coverImageKey: key, propertyId: propertyId });
-        setUploading(false);
+        setCurrentUploads((currentUploads) => {
+          const newCurrentUploads = currentUploads.slice();
+          newCurrentUploads[index]!.uploading = true;
+          return newCurrentUploads;
+        });
       })
       .catch((error) => {
         console.error("error", error);
-        setUploading(false);
+        setCurrentUploads((currentUploads) => {
+          const newCurrentUploads = currentUploads.slice();
+          newCurrentUploads[index]!.uploading = true;
+          return newCurrentUploads;
+        });
       });
   };
 
-  if (uploading) {
-    uploadImageToBucket(currentFile);
-    return <UploadingBar progress={progress} />;
-  }
+  const onClickUpload = () => {
+    currentUploads.forEach((upload, index) => {
+      uploadImageToBucket(index);
+    });
+  };
 
-  return (
-    <div className="flex h-full flex-col items-center justify-center">
-      <img src={filePreviewUrl} width={120} height={120} />
-      <Text>{fileName}</Text>
-    </div>
-  );
-}
-
-function UploadButton({
-  setCurrentFiles,
-  uploading,
-  setUploading,
-}: {
-  setCurrentFiles: React.Dispatch<React.SetStateAction<File[] | null>>;
-  uploading: boolean;
-
-  setUploading: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  if (uploading) {
-    return null;
-  }
   return (
     <div>
-      <CTAButton onClick={() => setUploading(true)} rounded>
+      <CTAButton onClick={onClickUpload} rounded>
         Upload
       </CTAButton>
-      <CTAButton rounded secondary onClick={() => setCurrentFiles(null)}>
+      <CTAButton rounded secondary onClick={() => setCurrentUploads([])}>
         Cancel
       </CTAButton>
     </div>
