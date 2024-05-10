@@ -37,7 +37,7 @@ export default async function PropertyPage({
       <PageTitle>{address}</PageTitle>
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
-        <div className="p-10">
+        <div className="flex flex-col gap-8 p-10">
           <Link
             href={`/properties/${params.propertyId}/items/add`}
             className="block"
@@ -48,6 +48,28 @@ export default async function PropertyPage({
                 <Text className="ml-10 text-xl">Add Item</Text>
               </div>
             </CTAButton>
+          </Link>
+          <Link
+            href={`/properties/${params.propertyId}/items/todo`}
+            className="block"
+          >
+            <div className="rounded-full bg-altSecondary p-7 hover:bg-altSecondary/80">
+              <div className="flex w-full items-center justify-center">
+                <Text className="ml-10 text-xl font-bold">To Do Items</Text>
+              </div>
+            </div>
+          </Link>
+          <Link
+            href={`/properties/${params.propertyId}/items/completed`}
+            className="block"
+          >
+            <div className="rounded-full bg-altSecondary p-7 hover:bg-altSecondary/80">
+              <div className="flex w-full items-center justify-center">
+                <Text className="ml-10 text-xl font-bold ">
+                  Completed Items
+                </Text>
+              </div>
+            </div>
           </Link>
         </div>
       </PageWithSingleColumn>
