@@ -20,11 +20,11 @@ export const PropertiesBreadcrumbs: React.FC<PropertiesBreadcrumbsProps> = ({
       ? [
           { href: "/properties", text: "Properties" },
           {
-            href: `/property/${encodeURIComponent(propertyId)}`,
+            href: `/properties/${encodeURIComponent(propertyId)}`,
             text: address.split(",")[0] ?? address,
           },
           {
-            href: `/property/${encodeURIComponent(
+            href: `/properties/${encodeURIComponent(
               propertyId,
             )}/${propertyPage.toLowerCase()}`,
             text: propertyPage,
@@ -34,7 +34,7 @@ export const PropertiesBreadcrumbs: React.FC<PropertiesBreadcrumbsProps> = ({
         ? [
             { href: "/properties", text: "Properties" },
             {
-              href: `/property/${encodeURIComponent(propertyId)}`,
+            href: `/properties/${encodeURIComponent(propertyId)}`,
               text: address.split(",")[0] ?? address,
             },
           ]
