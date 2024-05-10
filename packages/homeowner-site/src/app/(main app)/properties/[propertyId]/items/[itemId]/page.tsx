@@ -59,6 +59,7 @@ export default async function TodoItemPage({
 
   console.log("BucketResources", Bucket);
 
+  // @ts-ignore
   const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";
 
   return (
