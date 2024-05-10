@@ -18,9 +18,14 @@ export async function GET(request: NextRequest) {
     return new Response("No bucket key folder name", { status: 400 });
   }
 
+  const bucketName = searchParams.get("bucketName");
+
+  if (!bucketName) {
+    return new Response("No bucket name", { status: 400 });
+  }
+
   const fileExtension = file.split(".").pop();
 
-  const bucketName = Bucket.ItemUploads.bucketName;
   const key = `${bucketKey}/${crypto.randomUUID()}.${fileExtension}`;
   const command = new PutObjectCommand({
     ACL: "private",
