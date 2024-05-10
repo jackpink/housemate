@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 import { IAddress, Property } from "../../../core/homeowner/property";
 import { revalidatePath } from "next/cache";
 import { AuthError } from "next-auth";
-import { ItemCategory, ItemStatus } from "../../../core/db/schema";
+import { ItemCategory, ItemStatus, property } from "../../../core/db/schema";
 
 export async function signInAction(email: string, password: string) {
   // console.log("Try to sign in ", email, password);
@@ -148,4 +148,24 @@ export async function createItemAction({
   console.log("Item created", itemId);
   revalidatePath(`/properties/${propertyId}`);
   return itemId;
+}
+
+export async function addFileToItemAction({
+  itemId,
+  name,
+  key,
+  bucket,
+  propertyId,
+  type,
+}: {
+  itemId: string;
+  name: string;
+  key: string;
+  bucket: string;
+  propertyId: string;
+  type: string;
+}) {
+  const itemFileId = Item.addFile({ itemId, name, key, bucket, type });
+  revalidatePath(`/properties/${propertyId}/items/${itemId}`);
+  return itemFileId;
 }
