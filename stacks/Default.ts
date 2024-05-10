@@ -17,6 +17,7 @@ export function Default({ stack }: StackContext) {
       AUTH_URL: env.AUTH_URL,
       AUTH_TRUST_HOST: env.AUTH_TRUST_HOST,
       NEXT_PUBLIC_COVER_IMAGE_BUCKET: itemUploadsBucket.bucketName,
+      GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
     },
   });
   stack.addOutputs({
