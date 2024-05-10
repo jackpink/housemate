@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useId } from "react";
+import React, { useId, useCallback } from "react";
 import axios from "axios";
 import clsx from "clsx";
 import { useState } from "react";
@@ -38,15 +38,32 @@ export default function ImageUploader({
   bucketKey: string;
   bucketName: string;
   deviceType: string;
-  onUploadComplete: ({ key }: { key: string }) => void;
+  onUploadComplete: ({
+    key,
+    name,
+    type,
+  }: {
+    key: string;
+    name: string;
+    type: string;
+  }) => void;
 }) {
   const [currentUploads, setCurrentUploads] = useState<Upload[]>([]);
+
+  const checkIfAllUploadsAreComplete = useCallback(() => {
+    for (const upload of currentUploads) {
+      console.log("upload", upload);
+      if (upload.status !== "success") return false;
+    }
+    return true;
+  }, [currentUploads]);
 
   const uploadImageToBucket = async (index: number) => {
     const upload = currentUploads[index];
     if (!upload) {
       throw new Error("No file");
     }
+
     const res = await fetch(
       `/api/presigned-url?file=${upload.file.name}&bucketKey=${bucketKey}&bucketName=${bucketName}`,
     );
@@ -55,14 +72,12 @@ export default function ImageUploader({
       presignedUrl: string;
       key: string;
     };
-    console.log(currentUploads[index]!.status);
+
     setCurrentUploads((currentUploads) => {
       const newCurrentUploads = currentUploads.slice();
       newCurrentUploads[index]!.status = "uploading";
       return newCurrentUploads;
     });
-    console.log(`setting uploading to true for index ${index}`);
-    console.log(currentUploads[index]!.status);
 
     axios
       .put(presignedUrl, upload.file, {
@@ -75,7 +90,6 @@ export default function ImageUploader({
             const progress = Math.round(
               (progressEvent.loaded / progressEvent.total) * 100,
             );
-            console.log("checkout progress", progress);
 
             setCurrentUploads((currentUploads) => {
               const newCurrentUploads = currentUploads.slice();
@@ -86,9 +100,12 @@ export default function ImageUploader({
         },
       })
       .then(async (response) => {
-        console.log("response", response);
         // add to db
-        onUploadComplete({ key: key });
+        onUploadComplete({
+          key: key,
+          name: upload.file.name,
+          type: upload.file.type,
+        });
         // await updateProperty({ coverImageKey: key, propertyId: propertyId });
         setCurrentUploads((currentUploads) => {
           const newCurrentUploads = currentUploads.slice();
@@ -103,6 +120,14 @@ export default function ImageUploader({
           newCurrentUploads[index]!.status = "error";
           return newCurrentUploads;
         });
+      })
+      .finally(() => {
+        const uploadsComplete = checkIfAllUploadsAreComplete();
+        console.log("uploadsComplete", uploadsComplete);
+        if (checkIfAllUploadsAreComplete()) {
+          console.log("all uploads are complete");
+          setCurrentUploads([]);
+        }
       });
   };
 
@@ -208,7 +233,6 @@ function SelectImageToUploadForDesktop({
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("drag event", e.type);
 
     setDragActive(true);
   };
@@ -216,7 +240,6 @@ function SelectImageToUploadForDesktop({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    console.log("dragleave");
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -225,7 +248,6 @@ function SelectImageToUploadForDesktop({
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    console.log("DROPPPED");
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -277,7 +299,7 @@ function SelectImageToUploadForDesktop({
           onChange={selectFiles}
           name="file"
           type="file"
-          accept="capture=camera,image/*"
+          accept="capture=camera,image/*,application/pdf"
           multiple={true}
           id={uploadInputButtonId}
           hidden
@@ -309,7 +331,7 @@ function SelectImageToUploadForMobile({
           onChange={selectFile}
           name="file"
           type="file"
-          accept="capture=camera,image/*"
+          accept="capture=camera,image/*,application/pdf"
           multiple={true}
           id={uploadMobileInputButtonId}
           hidden
@@ -477,7 +499,6 @@ function UploadButton({
 }
 
 function UploadingBar({ progress }: { progress: number }) {
-  console.log("progress uploading bar", progress);
   return (
     <CTAButton
       rounded
