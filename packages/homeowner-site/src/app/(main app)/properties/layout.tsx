@@ -14,6 +14,7 @@ export default async function MainAppLayout({
     <SessionProvider session={session}>
       <Nav />
       <PropertiesPageWithSideMenu>{children}</PropertiesPageWithSideMenu>
+      <div className="h-48"></div>
     </SessionProvider>
   );
 }
