@@ -108,6 +108,11 @@ export default function ImageUploader({
   if (currentUploads.length > 0) {
     return (
       <>
+        <UploadButton
+          currentUploads={currentUploads}
+          setCurrentUploads={setCurrentUploads}
+          uploadImageToBucket={uploadImageToBucket}
+        />
         <div className="flex w-full flex-wrap justify-center gap-8 py-4">
           {currentUploads.map((upload, index) => (
             <UploadSelectedImage
@@ -121,11 +126,6 @@ export default function ImageUploader({
             />
           ))}
         </div>
-        <UploadButton
-          currentUploads={currentUploads}
-          setCurrentUploads={setCurrentUploads}
-          uploadImageToBucket={uploadImageToBucket}
-        />
       </>
     );
   }
@@ -461,12 +461,15 @@ function UploadButton({
   };
 
   return (
-    <div>
+    <div className="flex justify-around">
       <CTAButton onClick={onClickUpload} rounded>
-        Upload
+        <div className="flex">
+          <UploadIcon />
+          <Text className="pl-2">Upload All</Text>
+        </div>
       </CTAButton>
       <CTAButton rounded secondary onClick={() => setCurrentUploads([])}>
-        Cancel
+        Clear
       </CTAButton>
     </div>
   );
