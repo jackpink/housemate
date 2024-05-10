@@ -11,10 +11,8 @@ import {
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { item } from "../../../../core/db/schema";
 import ImageUploader from "../../../../ui/Molecules/ImageUploader";
-import { ImageFromBucket } from "../../../../ui/Molecules/Image";
 import { addFileToItemAction } from "../actions";
 import { type ItemWithFiles } from "../../../../core/homeowner/item";
-import { Bucket } from "sst/node/bucket";
 import React from "react";
 
 const createDateString = (date: Date) => {
