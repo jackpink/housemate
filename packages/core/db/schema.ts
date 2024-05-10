@@ -118,3 +118,27 @@ export const item = sqliteTable("item", {
     onDelete: "cascade",
   }),
 });
+
+export const itemRelations = relations(item, ({ many }) => ({
+  files: many(itemFile),
+}));
+
+export const itemFile = sqliteTable("item_file", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  key: text("key").notNull(),
+  type: text("type").notNull(),
+  bucket: text("bucket").notNull(),
+  itemId: text("itemId").references(() => item.id, {
+    onDelete: "cascade",
+  }),
+});
+
+export const itemFileRelations = relations(itemFile, ({ one }) => ({
+  item: one(item, {
+    fields: [itemFile.itemId],
+    references: [item.id],
+  }),
+}));
