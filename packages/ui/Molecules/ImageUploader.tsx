@@ -33,9 +33,10 @@ export default function ImageUploader({
   bucketKey,
   deviceType,
   onUploadComplete,
+  bucketName,
 }: {
   bucketKey: string;
-
+  bucketName: string;
   deviceType: string;
   onUploadComplete: ({ key }: { key: string }) => void;
 }) {
@@ -47,7 +48,7 @@ export default function ImageUploader({
       throw new Error("No file");
     }
     const res = await fetch(
-      "/api/presigned-url?file=" + upload.file.name + "&bucketKey=" + bucketKey,
+      `/api/presigned-url?file=${upload.file.name}&bucketKey=${bucketKey}&bucketName=${bucketName}`,
     );
 
     const { presignedUrl, key } = (await res.json()) as {
