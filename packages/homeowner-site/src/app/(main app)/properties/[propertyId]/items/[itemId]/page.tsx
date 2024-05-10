@@ -8,6 +8,8 @@ import { CapitaliseText } from "../../../../../../../../ui/Molecules/InPlaceEdit
 import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
 import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayout";
 import { revalidatePath } from "next/cache";
+import { Bucket } from "sst/node/bucket";
+import Files from "~/app/_components/Files";
 
 export default async function TodoItemPage({
   params,
@@ -55,6 +57,10 @@ export default async function TodoItemPage({
     revalidatePath(`/properties/${params.propertyId}/items/${params.itemId}`);
   };
 
+  console.log("BucketResources", Bucket);
+
+  const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";
+
   return (
     <div>
       <PageTitle>
@@ -63,7 +69,13 @@ export default async function TodoItemPage({
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
         <div className="p-10">
-          <EditItem item={item} updateItem={updateItem} />
+          <EditItem
+            item={item}
+            updateItem={updateItem}
+            propertyId={params.propertyId}
+            bucketName={bucketName}
+            Files={<Files files={item.files} />}
+          />
           <p>{item.status}</p>
         </div>
       </PageWithSingleColumn>

@@ -9,11 +9,13 @@ import {
   type StandardComponent,
   type EditModeComponent,
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
-import { InferSelectModel } from "drizzle-orm";
 import { item } from "../../../../core/db/schema";
 import ImageUploader from "../../../../ui/Molecules/ImageUploader";
-
-type Item = InferSelectModel<typeof item>;
+import { ImageFromBucket } from "../../../../ui/Molecules/Image";
+import { addFileToItemAction } from "../actions";
+import { type ItemWithFiles } from "../../../../core/homeowner/item";
+import { Bucket } from "sst/node/bucket";
+import React from "react";
 
 const createDateString = (date: Date) => {
   const dateString = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : "1"}${date.getDate()}`;
@@ -32,9 +34,15 @@ export type UpdateItemServerAction = ({
 export default function EditItem({
   item,
   updateItem,
+  bucketName,
+  propertyId,
+  Files,
 }: {
-  item: Item;
+  item: ItemWithFiles;
   updateItem: UpdateItemServerAction;
+  bucketName: string;
+  propertyId: string;
+  Files: React.ReactNode;
 }) {
   const date = new Date(item.date);
   console.log("dat from DB", date.toDateString());
@@ -100,7 +108,12 @@ export default function EditItem({
             />
             <Line />
           </div>
-          <PhotosAndDocuments itemId={item.id} />
+          <PhotosAndDocuments
+            itemId={item.id}
+            bucketName={bucketName}
+            propertyId={propertyId}
+            Files={Files}
+          />
         </div>
       </div>
     </>
@@ -289,15 +302,45 @@ const EditableDateOfItem: EditModeComponent = function ({ value, setValue }) {
   );
 };
 
-function PhotosAndDocuments({ itemId }: { itemId: string }) {
+function PhotosAndDocuments({
+  itemId,
+  bucketName,
+  propertyId,
+  Files,
+}: {
+  itemId: string;
+  bucketName: string;
+  propertyId: string;
+  Files: React.ReactNode;
+}) {
+  const onUploadComplete = ({
+    name,
+    key,
+    type,
+  }: {
+    name: string;
+    key: string;
+    type: string;
+  }) => {
+    addFileToItemAction({
+      itemId,
+      name,
+      key,
+      bucket: bucketName,
+      propertyId,
+      type,
+    });
+  };
   return (
     <div className="w-full p-2">
       <EditableComponentLabel label="Photos and Documents" />
       <ImageUploader
-        bucketKeyFolder={`${itemId}/`}
+        bucketKey={`${itemId}/`}
         deviceType="desktop"
-        onUploadComplete={() => console.log("upload complete")}
+        onUploadComplete={onUploadComplete}
+        bucketName={bucketName}
       />
+      {Files}
     </div>
   );
 }
