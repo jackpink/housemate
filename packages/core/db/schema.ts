@@ -111,6 +111,7 @@ export const item = sqliteTable("item", {
   date: text("date")
     .notNull()
     .default(sql`(current_timestamp)`),
+  toDoPriority: integer("toDoPriority"),
   homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
     onDelete: "cascade",
   }),
