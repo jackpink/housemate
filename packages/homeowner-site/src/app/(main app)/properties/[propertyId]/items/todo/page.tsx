@@ -5,6 +5,8 @@ import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayou
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
 import { concatAddress } from "~/utils/functions";
+import { Item } from "../../../../../../../../core/homeowner/item";
+import ToDos from "~/app/_components/ToDos";
 
 export default async function ToDoPage({
   params,
@@ -27,13 +29,19 @@ export default async function ToDoPage({
   ) {
     return <div>Not Authenticated</div>;
   }
+
+  const toDos = await Item.getToDos(session.user.id);
+
+  console.log(toDos);
   return (
     <div>
       <PageTitle>
         <CapitaliseText value={"To Do Items"} />
       </PageTitle>
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
-      <PageWithSingleColumn></PageWithSingleColumn>
+      <PageWithSingleColumn>
+        <ToDos toDos={toDos} />
+      </PageWithSingleColumn>
     </div>
   );
 }
