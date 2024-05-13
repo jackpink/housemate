@@ -1,7 +1,7 @@
 export * as Item from "./item";
 import { ItemCategory, ItemStatus, item, itemFile } from "../db/schema";
 import { db } from "../db";
-import { eq, InferSelectModel } from "drizzle-orm";
+import { eq, InferSelectModel, and } from "drizzle-orm";
 
 export async function create({
   title,
@@ -73,3 +73,15 @@ export async function addFile({
     .values({ itemId, name, key, bucket, type })
     .returning({ id: itemFile.id });
 }
+
+export async function getToDos(homeownerId: string) {
+  const items = await db.query.item.findMany({
+    where: (item, { eq }) =>
+      and(eq(item.homeownerId, homeownerId), eq(item.status, ItemStatus.TODO)),
+
+    with: { files: true },
+  });
+  return items;
+}
+
+export type ToDos = Awaited<ReturnType<typeof getToDos>>;
