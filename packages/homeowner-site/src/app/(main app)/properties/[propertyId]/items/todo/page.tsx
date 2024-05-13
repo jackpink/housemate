@@ -6,7 +6,8 @@ import { auth } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
 import { concatAddress } from "~/utils/functions";
 import { Item } from "../../../../../../../../core/homeowner/item";
-import ToDos from "~/app/_components/ToDos";
+import ToDos, { UpdateItemPriorityServerAction } from "~/app/_components/ToDos";
+import { revalidatePath } from "next/cache";
 
 export default async function ToDoPage({
   params,
@@ -30,6 +31,19 @@ export default async function ToDoPage({
     return <div>Not Authenticated</div>;
   }
 
+  const updateItem: UpdateItemPriorityServerAction = async ({
+    id,
+    priority,
+  }) => {
+    "use server";
+    console.log("updateItem priority", priority);
+    await Item.update({
+      id,
+      priority,
+    });
+    revalidatePath(`/properties/${params.propertyId}/items/todo`);
+  };
+
   const toDos = await Item.getToDos(session.user.id);
 
   console.log(toDos);
@@ -40,7 +54,7 @@ export default async function ToDoPage({
       </PageTitle>
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
-        <ToDos toDos={toDos} />
+        <ToDos toDos={toDos} updateItem={updateItem} />
       </PageWithSingleColumn>
     </div>
   );
