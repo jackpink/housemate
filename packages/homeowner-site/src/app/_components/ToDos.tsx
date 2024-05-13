@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { type ToDos } from "../../../../core/homeowner/item";
 import { Text } from "../../../../ui/Atoms/Text";
-import { DragEventHandler } from "react";
+import React, { DragEventHandler } from "react";
 
 export type UpdateItemPriorityServerAction = ({
   priority,
@@ -20,6 +20,16 @@ export default function ToDos({
   toDos: ToDos;
   updateItem: UpdateItemPriorityServerAction;
 }) {
+  const [pending, startTransition] = React.useTransition();
+
+  const [optimisticToDos, setOptimisticValue] = React.useOptimistic(
+    toDos,
+    (state, newToDos: ToDos) => {
+      console.log("newToDos in optimiistic", newToDos);
+      return newToDos;
+    },
+  );
+
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     toDoId: string,
@@ -54,7 +64,42 @@ export default function ToDos({
     if (droppedOnId !== toDoId) {
       console.log("reorder", toDoId, droppedOnPriority);
       // get update priority to droppeOnPriority +1
-      updateItem({ id: toDoId, priority: parseInt(droppedOnPriority) + 1 });
+      let newToDos = [...toDos];
+      //   for (let index = 0; index < toDos.length; index++) {
+      //     if (toDos[index]?.id === toDoId) {
+      //         // this is the item we are moving
+      //         newToDos.push(toDos[index+1]);
+      //     }
+      //     else if (toDos[index]?.id === droppedOnId) {
+      //         // this is where we are moving the item
+      //         newToDos.push(toDos.find(toDo => toDo.id === toDoId));
+      //     } else {
+      //         newToDos.push(toDos[index]);
+      //     }
+      //       const toDo = toDos[i];
+      //       toDos.splice(i, 1);
+      //       toDos.splice(parseInt(droppedOnPriority), 0, toDo);
+      //       break;
+      //     }
+
+      const originalPriority =
+        newToDos.find((toDo) => toDo.id === toDoId)!.toDoPriority || -1;
+      if (parseInt(droppedOnPriority) > originalPriority) {
+        newToDos.find((toDo) => toDo.id === toDoId)!.toDoPriority =
+          parseInt(droppedOnPriority) + 1;
+      } else {
+        newToDos.find((toDo) => toDo.id === toDoId)!.toDoPriority =
+          parseInt(droppedOnPriority) - 1;
+      }
+      newToDos.sort((a, b) => (b.toDoPriority || -1) - (a.toDoPriority || -1));
+      console.log("newToDos", newToDos);
+      startTransition(async () => {
+        setOptimisticValue(newToDos);
+        await updateItem({
+          id: toDoId,
+          priority: parseInt(droppedOnPriority) + 1,
+        });
+      });
     }
   };
 
@@ -98,7 +143,7 @@ export default function ToDos({
 
   return (
     <div className="p-4">
-      {toDos.map((toDo) => (
+      {optimisticToDos.map((toDo) => (
         <ToDo
           key={toDo.id}
           toDo={toDo}
@@ -107,7 +152,7 @@ export default function ToDos({
           handleDragStart={handleDragStart}
         />
       ))}
-      <DropIndicator toDoId="-2" toDoPriority="-2" />
+      <DropIndicator toDoId="-2" toDoPriority="-4" />
     </div>
   );
 }
