@@ -4,6 +4,7 @@ import Link from "next/link";
 import { type ToDos } from "../../../../core/homeowner/item";
 import { Text } from "../../../../ui/Atoms/Text";
 import React, { DragEventHandler } from "react";
+import clsx from "clsx";
 
 export type UpdateItemPriorityServerAction = ({
   priority,
@@ -14,6 +15,69 @@ export type UpdateItemPriorityServerAction = ({
 }) => Promise<void>;
 
 export default function ToDos({
+  toDos,
+  updateItem,
+}: {
+  toDos: ToDos;
+  updateItem: UpdateItemPriorityServerAction;
+}) {
+  const [interval, setInterval] = React.useState("week");
+
+  // filter todos based on interval
+  // if interval is day, show only todos that are due today
+  // if interval is week, show only todos that are due this week
+  // if interval is month, show only todos that are due this month
+  // if interval is all, show all todos
+  const filteredToDos = toDos.filter((toDo) => {
+    const todaysDate = new Date();
+    const toDoDate = new Date(toDo.date);
+    const timeDiff = Math.abs(toDoDate.getTime() - todaysDate.getTime());
+    const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    if (interval === "day") {
+      return diffDays === 0;
+    } else if (interval === "week") {
+      return diffDays <= 7;
+    } else if (interval === "month") {
+      return diffDays <= 30;
+    } else {
+      return true;
+    }
+  });
+  console.log("filteredToDos", filteredToDos);
+  return (
+    <div>
+      <div className="flex">
+        <Selector
+          onClick={() => setInterval("day")}
+          selected={interval === "day"}
+        >
+          Day
+        </Selector>
+        <Selector
+          onClick={() => setInterval("week")}
+          selected={interval === "week"}
+        >
+          Week
+        </Selector>
+        <Selector
+          onClick={() => setInterval("month")}
+          selected={interval === "month"}
+        >
+          Month
+        </Selector>
+        <Selector
+          onClick={() => setInterval("all")}
+          selected={interval === "all"}
+        >
+          All
+        </Selector>
+      </div>
+      <DraggableToDos toDos={filteredToDos} updateItem={updateItem} />
+    </div>
+  );
+}
+
+function DraggableToDos({
   toDos,
   updateItem,
 }: {
@@ -59,7 +123,9 @@ export default function ToDos({
 
     const droppedOnId = element?.getAttribute("data-id") || "-1";
 
-    const droppedOnPriority = element?.getAttribute("data-priority") || "-1";
+    const droppedOnPriority = parseInt(
+      element?.getAttribute("data-priority") || "-1",
+    );
 
     if (droppedOnId !== toDoId) {
       console.log("reorder", toDoId, droppedOnPriority);
@@ -84,20 +150,28 @@ export default function ToDos({
 
       const originalPriority =
         newToDos.find((toDo) => toDo.id === toDoId)!.toDoPriority || -1;
-      if (parseInt(droppedOnPriority) > originalPriority) {
-        newToDos.find((toDo) => toDo.id === toDoId)!.toDoPriority =
-          parseInt(droppedOnPriority) + 1;
+
+      const movingDown = originalPriority > droppedOnPriority;
+      let newPriority: number;
+      if (movingDown) {
+        newPriority = droppedOnPriority + 1;
       } else {
-        newToDos.find((toDo) => toDo.id === toDoId)!.toDoPriority =
-          parseInt(droppedOnPriority) - 1;
+        newPriority = droppedOnPriority + 1;
       }
+      console.log(
+        "newPriority",
+        newPriority,
+        droppedOnPriority,
+        originalPriority,
+      );
+      newToDos.find((toDo) => toDo.id === toDoId)!.toDoPriority = newPriority;
       newToDos.sort((a, b) => (b.toDoPriority || -1) - (a.toDoPriority || -1));
       console.log("newToDos", newToDos);
       startTransition(async () => {
         setOptimisticValue(newToDos);
         await updateItem({
           id: toDoId,
-          priority: parseInt(droppedOnPriority) + 1,
+          priority: newPriority,
         });
       });
     }
@@ -217,5 +291,27 @@ function DropIndicator({
       data-priority={toDoPriority || "-1"}
       className="my-0.5 h-2 w-full bg-brand opacity-0"
     />
+  );
+}
+
+function Selector({
+  selected = false,
+  onClick,
+  children,
+}: {
+  selected?: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      className={clsx(
+        " rounded-lg border-2 border-gray-500 p-3",
+        selected && "bg-gray-500",
+      )}
+      onClick={onClick}
+    >
+      {children}
+    </button>
   );
 }
