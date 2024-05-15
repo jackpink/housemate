@@ -68,7 +68,7 @@ export async function signUp({
   const existingUser = await User.getByEmail(email);
 
   if (existingUser) {
-    return { error: "User already exists" };
+    throw new Error("User already exists");
   }
 
   // Hash the password
