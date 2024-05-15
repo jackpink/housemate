@@ -103,6 +103,10 @@ function DraggableToDos({
     console.log("dataTransfer", e.dataTransfer.getData("todo"));
   };
 
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    console.log("touch move", e);
+  };
+
   const handleDragOver: React.DragEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
     highlightIndicator(e.clientY);
@@ -224,6 +228,7 @@ function DraggableToDos({
           handleDragOver={handleDragOver}
           handleDragEnd={handleDragEnd}
           handleDragStart={handleDragStart}
+          handleTouchMove={handleTouchMove}
         />
       ))}
       <DropIndicator toDoId="-2" toDoPriority="-4" />
@@ -235,10 +240,12 @@ function ToDo({
   toDo,
   handleDragOver,
   handleDragEnd,
+  handleTouchMove,
   handleDragStart,
 }: {
   toDo: ToDos[0];
   handleDragOver: DragEventHandler<HTMLDivElement>;
+  handleTouchMove: (e: React.TouchEvent<HTMLDivElement>) => void;
   handleDragEnd: DragEventHandler<HTMLDivElement>;
   handleDragStart: (e: React.DragEvent<HTMLDivElement>, toDoId: string) => void;
 }) {
@@ -253,6 +260,7 @@ function ToDo({
         onDragStart={(e) => handleDragStart(e, toDo.id)}
         onDragOver={handleDragOver}
         onDrop={handleDragEnd}
+        onTouchMove={handleTouchMove}
         className="cursor-grab rounded-lg border-2 border-altSecondary bg-brand/50 p-2 active:cursor-grabbing"
       >
         <div className="flex justify-between">
