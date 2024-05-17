@@ -459,14 +459,14 @@ function MobileTodo({
 }) {
   return (
     <div className="flex rounded-lg border-2 border-altSecondary bg-brand/50 p-2">
-      <div className="flex h-full flex-col items-center gap-3 rounded-sm bg-altSecondary/70">
+      <div className="flex h-full flex-col items-center gap-3 rounded-sm">
         <button
           onClick={() => moveUp(toDo)}
-          className="flex w-full flex-col items-center rounded-sm bg-altSecondary p-1 hover:bg-altSecondary/30"
+          className="flex w-full flex-col items-center rounded-sm bg-altSecondary p-1 px-5 py-1 hover:bg-altSecondary/30"
         >
           <UpArrowIcon width={30} height={30} />
         </button>
-        <div className="p-1 text-xs">Move Priority</div>
+
         <button
           onClick={() => moveDown(toDo)}
           className="flex w-full flex-col items-center rounded-sm bg-altSecondary p-1"

@@ -52,13 +52,13 @@ const MainMenuButtons = ({ selected }: { selected: Selected }) => {
 export function PropertiesPageWithSideMenu({ children }: PropsWithChildren) {
   return (
     <div className="flex w-full flex-nowrap">
-      <div className="border-altPrimary bg-altPrimary fixed top-0 hidden h-full w-40 flex-none overflow-hidden  border border-r-4 md:block">
+      <div className="fixed top-0 hidden h-full w-40 flex-none overflow-hidden border border-r-4  border-altPrimary bg-altPrimary md:block">
         <SideMenu
           selected={Selected.PROPERTIES}
           MainMenuButtons={MainMenuButtons}
         />
       </div>
-      <div className="h-34 border-altPrimary bg-altPrimary fixed  bottom-0  z-40 w-full overflow-hidden border border-t-4 py-8  md:hidden">
+      <div className="h-26 fixed bottom-0 z-40  w-full  overflow-hidden border border-t-4 border-altPrimary bg-altPrimary py-3  md:hidden">
         <BottomMenu
           selected={Selected.PROPERTIES}
           MainMenuButtons={MainMenuButtons}

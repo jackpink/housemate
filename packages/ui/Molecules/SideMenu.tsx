@@ -52,7 +52,7 @@ export const MainMenuButton: React.FC<
 > = ({ children, selected = true }) => (
   <button
     className={clsx(
-      "w-28 rounded-lg border border-2 p-3 hover:bg-black/20",
+      "w-24 rounded-lg border border-2 p-1 hover:bg-black/20",
       selected ? "border-brand" : "border-light",
     )}
   >
