@@ -444,28 +444,38 @@ function ToDoFilter({
   setFilter: React.Dispatch<React.SetStateAction<Filter>>;
 }) {
   return (
-    <div className="flex w-full justify-around p-2">
-      <Selector
-        onClick={() => setFilter("overdue")}
-        selected={filter === "overdue"}
-      >
-        Overdue
-      </Selector>
-      <Selector onClick={() => setFilter("day")} selected={filter === "day"}>
-        Day
-      </Selector>
-      <Selector onClick={() => setFilter("week")} selected={filter === "week"}>
-        Week
-      </Selector>
-      <Selector
-        onClick={() => setFilter("month")}
-        selected={filter === "month"}
-      >
-        Month
-      </Selector>
-      <Selector onClick={() => setFilter("all")} selected={filter === "all"}>
-        All
-      </Selector>
+    <div className="p-1">
+      <p className="pl-2 text-left text-lg font-medium">Filter Items</p>
+      <div className="flex w-full justify-around p-1">
+        <Selector
+          onClick={() => setFilter("overdue")}
+          selected={filter === "overdue"}
+        >
+          Overdue
+        </Selector>
+        <Selector onClick={() => setFilter("day")} selected={filter === "day"}>
+          Today
+        </Selector>
+        <Selector
+          onClick={() => setFilter("week")}
+          selected={filter === "week"}
+        >
+          This
+          <br />
+          Week
+        </Selector>
+        <Selector
+          onClick={() => setFilter("month")}
+          selected={filter === "month"}
+        >
+          This
+          <br />
+          Month
+        </Selector>
+        <Selector onClick={() => setFilter("all")} selected={filter === "all"}>
+          All
+        </Selector>
+      </div>
     </div>
   );
 }
@@ -482,7 +492,7 @@ function Selector({
   return (
     <button
       className={clsx(
-        " rounded-lg border-2 border-dark p-3",
+        " rounded-lg border-2 border-dark p-2",
         selected && "bg-brand",
       )}
       onClick={onClick}
