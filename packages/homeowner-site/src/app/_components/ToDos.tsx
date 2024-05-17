@@ -435,7 +435,7 @@ function MobileToDos({
   console.log("mobile");
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-3 p-4">
       {optimisticToDos.map((toDo) => (
         <MobileTodo
           toDo={toDo}
@@ -459,7 +459,7 @@ function MobileTodo({
 }) {
   return (
     <div className="flex rounded-lg border-2 border-altSecondary bg-brand/50 p-2">
-      <div className="flex h-full flex-col items-center gap-3 rounded-sm">
+      <div className="flex h-full flex-col items-center gap-2 rounded-sm">
         <button
           onClick={() => moveUp(toDo)}
           className="flex w-full flex-col items-center rounded-sm bg-altSecondary p-1 px-5 py-1 hover:bg-altSecondary/30"
