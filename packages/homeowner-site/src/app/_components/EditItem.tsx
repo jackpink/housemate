@@ -27,7 +27,6 @@ export type UpdateItemServerAction = ({
   description?: string;
   recurring?: boolean;
   date?: string;
-  priority?: number;
 }) => Promise<void>;
 
 export default function EditItem({

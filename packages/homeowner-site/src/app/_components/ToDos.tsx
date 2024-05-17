@@ -3,8 +3,13 @@
 import Link from "next/link";
 import { type ToDos } from "../../../../core/homeowner/item";
 import { Text } from "../../../../ui/Atoms/Text";
-import React, { DragEventHandler } from "react";
+import React, { DragEventHandler, useCallback } from "react";
 import clsx from "clsx";
+import {
+  DownArrowIcon,
+  UpArrowIcon,
+  ViewIcon,
+} from "../../../../ui/Atoms/Icons";
 
 export type UpdateItemPriorityServerAction = ({
   priority,
@@ -17,9 +22,11 @@ export type UpdateItemPriorityServerAction = ({
 export default function ToDos({
   toDos,
   updateItem,
+  deviceType,
 }: {
   toDos: ToDos;
   updateItem: UpdateItemPriorityServerAction;
+  deviceType: "mobile" | "desktop";
 }) {
   const [interval, setInterval] = React.useState("week");
 
@@ -44,6 +51,39 @@ export default function ToDos({
     }
   });
   console.log("filteredToDos", filteredToDos);
+  if (deviceType === "mobile") {
+    return (
+      <div>
+        <div className="flex">
+          <Selector
+            onClick={() => setInterval("day")}
+            selected={interval === "day"}
+          >
+            Day
+          </Selector>
+          <Selector
+            onClick={() => setInterval("week")}
+            selected={interval === "week"}
+          >
+            Week
+          </Selector>
+          <Selector
+            onClick={() => setInterval("month")}
+            selected={interval === "month"}
+          >
+            Month
+          </Selector>
+          <Selector
+            onClick={() => setInterval("all")}
+            selected={interval === "all"}
+          >
+            All
+          </Selector>
+        </div>
+        <MobileToDos toDos={filteredToDos} updateItem={updateItem} />
+      </div>
+    );
+  }
   return (
     <div>
       <div className="flex">
@@ -222,7 +262,7 @@ function DraggableToDos({
   return (
     <div className="p-4">
       {optimisticToDos.map((toDo) => (
-        <ToDo
+        <DraggableToDo
           key={toDo.id}
           toDo={toDo}
           handleDragOver={handleDragOver}
@@ -236,7 +276,7 @@ function DraggableToDos({
   );
 }
 
-function ToDo({
+function DraggableToDo({
   toDo,
   handleDragOver,
   handleDragEnd,
@@ -261,25 +301,34 @@ function ToDo({
         onDragOver={handleDragOver}
         onDrop={handleDragEnd}
         onTouchMove={handleTouchMove}
-        className="cursor-grab rounded-lg border-2 border-altSecondary bg-brand/50 p-2 active:cursor-grabbing"
+        className="flex cursor-grab rounded-lg border-2 border-altSecondary bg-brand/50 p-2 active:cursor-grabbing"
       >
-        <div className="flex justify-between">
+        <div className="grow justify-between">
           <Text>{toDo.title}</Text>
         </div>
-        <div className="flex justify-between">
+
+        <div className="grow-0">
+          <button className="w-20 rounded-sm bg-green-300 p-2 hover:bg-green-400">
+            <div>✔</div>
+            <div className="text-xs">Mark as Completed</div>
+          </button>
+        </div>
+        <div className="grow-0">
           <Link href={`/properties/${toDo.propertyId}/items/${toDo.id}`}>
-            <button className="rounded-full bg-altSecondary p-2 hover:bg-altSecondary/70">
-              Go To{" "}
-              {toDo.category === "job"
-                ? "Job"
-                : toDo.category === "product"
-                  ? "Product"
-                  : "Issue"}
+            <button className="h-full rounded-sm bg-altSecondary p-2 hover:bg-altSecondary/70">
+              <div className="flex justify-center">
+                <ViewIcon />
+              </div>
+              <div className="text-xs">
+                View{" "}
+                {toDo.category === "job"
+                  ? "Job"
+                  : toDo.category === "product"
+                    ? "Product"
+                    : "Issue"}
+              </div>
             </button>
           </Link>
-          <button className="rounded-full bg-green-300 p-2 hover:bg-green-400">
-            Mark as Completed
-          </button>
         </div>
       </div>
     </>
@@ -321,5 +370,136 @@ function Selector({
     >
       {children}
     </button>
+  );
+}
+
+function MobileToDos({
+  toDos,
+  updateItem,
+}: {
+  toDos: ToDos;
+  updateItem: UpdateItemPriorityServerAction;
+}) {
+  const [pending, startTransition] = React.useTransition();
+
+  const [optimisticToDos, setOptimisticValue] = React.useOptimistic(
+    toDos,
+    (state, newToDos: ToDos) => {
+      console.log("newToDos in optimiistic", newToDos);
+      return newToDos;
+    },
+  );
+
+  const moveUp = useCallback(
+    (clickedToDo: ToDos[0]) => {
+      let newToDos = [...toDos];
+
+      const newPriority = clickedToDo.toDoPriority! + 3;
+
+      newToDos.find((toDo) => toDo.id === clickedToDo.id)!.toDoPriority =
+        newPriority;
+      newToDos.sort((a, b) => (b.toDoPriority || -1) - (a.toDoPriority || -1));
+
+      startTransition(async () => {
+        setOptimisticValue(newToDos);
+        await updateItem({
+          id: clickedToDo.id,
+          priority: newPriority,
+        });
+      });
+    },
+    [toDos],
+  );
+
+  const moveDown = useCallback(
+    (clickedToDo: ToDos[0]) => {
+      let newToDos = [...toDos];
+
+      const newPriority = clickedToDo.toDoPriority! - 3;
+
+      newToDos.find((toDo) => toDo.id === clickedToDo.id)!.toDoPriority =
+        newPriority;
+      newToDos.sort((a, b) => (b.toDoPriority || -1) - (a.toDoPriority || -1));
+
+      startTransition(async () => {
+        setOptimisticValue(newToDos);
+        await updateItem({
+          id: clickedToDo.id,
+          priority: newPriority,
+        });
+      });
+    },
+    [toDos],
+  );
+
+  console.log("mobile");
+
+  return (
+    <div className="flex flex-col gap-4 p-4">
+      {optimisticToDos.map((toDo) => (
+        <MobileTodo
+          toDo={toDo}
+          key={toDo.id}
+          moveUp={moveUp}
+          moveDown={moveDown}
+        />
+      ))}
+    </div>
+  );
+}
+
+function MobileTodo({
+  toDo,
+  moveUp,
+  moveDown,
+}: {
+  toDo: ToDos[0];
+  moveUp: (toDo: ToDos[0]) => void;
+  moveDown: (toDo: ToDos[0]) => void;
+}) {
+  return (
+    <div className="flex rounded-lg border-2 border-altSecondary bg-brand/50 p-2">
+      <div className="flex h-full flex-col items-center gap-3 rounded-sm bg-altSecondary/70">
+        <button
+          onClick={() => moveUp(toDo)}
+          className="flex w-full flex-col items-center rounded-sm bg-altSecondary p-1 hover:bg-altSecondary/30"
+        >
+          <UpArrowIcon width={30} height={30} />
+        </button>
+        <div className="p-1 text-xs">Move Priority</div>
+        <button
+          onClick={() => moveDown(toDo)}
+          className="flex w-full flex-col items-center rounded-sm bg-altSecondary p-1"
+        >
+          <DownArrowIcon width={30} height={30} />
+        </button>
+      </div>
+      <div className="flex grow items-center justify-center">
+        <Text className="text-xl">{toDo.title}</Text>
+      </div>
+      <div className="grow-0">
+        <button className="h-full w-20 rounded-sm bg-green-300 p-2 hover:bg-green-400">
+          <div>✔</div>
+          <div className="text-xs">Mark as Completed</div>
+        </button>
+      </div>
+      <div className="grow-0">
+        <Link href={`/properties/${toDo.propertyId}/items/${toDo.id}`}>
+          <button className="h-full rounded-sm bg-altSecondary p-2 hover:bg-altSecondary/70">
+            <div className="flex justify-center">
+              <ViewIcon />
+            </div>
+            <div className="text-xs">
+              View{" "}
+              {toDo.category === "job"
+                ? "Job"
+                : toDo.category === "product"
+                  ? "Product"
+                  : "Issue"}
+            </div>
+          </button>
+        </Link>
+      </div>
+    </div>
   );
 }

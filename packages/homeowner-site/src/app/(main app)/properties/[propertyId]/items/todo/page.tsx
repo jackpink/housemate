@@ -4,11 +4,10 @@ import { CapitaliseText } from "../../../../../../../../ui/Molecules/InPlaceEdit
 import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
-import { concatAddress } from "~/utils/functions";
+import { concatAddress, getDeviceType } from "~/utils/functions";
 import { Item } from "../../../../../../../../core/homeowner/item";
 import ToDos, { UpdateItemPriorityServerAction } from "~/app/_components/ToDos";
 import { revalidatePath } from "next/cache";
-import clsx from "clsx";
 import React from "react";
 
 export default async function ToDoPage({
@@ -17,6 +16,8 @@ export default async function ToDoPage({
   params: { propertyId: string };
 }) {
   const session = await auth();
+
+  const deviceType = await getDeviceType();
 
   const property = await Property.get(params.propertyId);
 
@@ -56,7 +57,7 @@ export default async function ToDoPage({
       </PageTitle>
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
-        <ToDos toDos={toDos} updateItem={updateItem} />
+        <ToDos toDos={toDos} updateItem={updateItem} deviceType={deviceType} />
       </PageWithSingleColumn>
     </div>
   );
