@@ -1,7 +1,7 @@
 export * as Item from "./item";
 import { ItemCategory, ItemStatus, item, itemFile } from "../db/schema";
 import { db } from "../db";
-import { eq, InferSelectModel, and, asc, desc } from "drizzle-orm";
+import { eq, InferSelectModel, and, asc, desc, lte, gte } from "drizzle-orm";
 
 export async function create({
   title,
@@ -43,6 +43,7 @@ export async function update({
   recurring,
   date,
   priority,
+  status,
 }: {
   id: string;
   title?: string;
@@ -50,10 +51,18 @@ export async function update({
   recurring?: boolean;
   date?: string;
   priority?: number;
+  status?: ItemStatus;
 }) {
   await db
     .update(item)
-    .set({ title, description, recurring, date, toDoPriority: priority })
+    .set({
+      title,
+      description,
+      recurring,
+      date,
+      toDoPriority: priority,
+      status,
+    })
     .where(eq(item.id, id));
 }
 
@@ -88,6 +97,28 @@ export async function getToDos(homeownerId: string) {
     orderBy: [desc(item.toDoPriority)],
   });
   console.log("items", items);
+  return items;
+}
+
+export async function getToDosCompletedThisWeek(homeownerId: string) {
+  const items = await db.query.item.findMany({
+    where: (item, {}) =>
+      and(
+        eq(item.homeownerId, homeownerId),
+        eq(item.status, ItemStatus.COMPLETED),
+      ),
+    with: { files: true },
+  });
+  const todaysDate = new Date();
+  items.filter((item) => {
+    const toDoDate = new Date(item.date);
+    const timeDiff = Math.abs(toDoDate.getTime() - todaysDate.getTime());
+    const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    if (diffDays < 7) {
+      return true;
+    }
+    return false;
+  });
   return items;
 }
 
