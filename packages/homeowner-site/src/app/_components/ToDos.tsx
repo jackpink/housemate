@@ -475,7 +475,8 @@ function MobileTodo({
               <ViewIcon />
             </div>
             <div className="text-xs">
-              View{" "}
+              View
+              <br />
               {toDo.category === "job"
                 ? "Job"
                 : toDo.category === "product"
