@@ -11,6 +11,8 @@ import {
   ViewIcon,
 } from "../../../../ui/Atoms/Icons";
 
+type Filter = "overdue" | "day" | "week" | "month" | "all";
+
 export type UpdateItemPriorityServerAction = ({
   priority,
   id,
@@ -28,7 +30,7 @@ export default function ToDos({
   updateItem: UpdateItemPriorityServerAction;
   deviceType: "mobile" | "desktop";
 }) {
-  const [interval, setInterval] = React.useState("week");
+  const [filter, setfilter] = React.useState<Filter>("overdue");
 
   // filter todos based on interval
   // if interval is day, show only todos that are due today
@@ -40,12 +42,14 @@ export default function ToDos({
     const toDoDate = new Date(toDo.date);
     const timeDiff = Math.abs(toDoDate.getTime() - todaysDate.getTime());
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    if (interval === "day") {
+    if (filter === "day") {
       return diffDays === 0;
-    } else if (interval === "week") {
+    } else if (filter === "week") {
       return diffDays <= 7;
-    } else if (interval === "month") {
+    } else if (filter === "month") {
       return diffDays <= 30;
+    } else if (filter === "overdue") {
+      return diffDays < 0;
     } else {
       return true;
     }
@@ -54,64 +58,14 @@ export default function ToDos({
   if (deviceType === "mobile") {
     return (
       <div>
-        <div className="flex">
-          <Selector
-            onClick={() => setInterval("day")}
-            selected={interval === "day"}
-          >
-            Day
-          </Selector>
-          <Selector
-            onClick={() => setInterval("week")}
-            selected={interval === "week"}
-          >
-            Week
-          </Selector>
-          <Selector
-            onClick={() => setInterval("month")}
-            selected={interval === "month"}
-          >
-            Month
-          </Selector>
-          <Selector
-            onClick={() => setInterval("all")}
-            selected={interval === "all"}
-          >
-            All
-          </Selector>
-        </div>
+        <ToDoFilter filter={filter} setFilter={setfilter} />
         <MobileToDos toDos={filteredToDos} updateItem={updateItem} />
       </div>
     );
   }
   return (
     <div>
-      <div className="flex">
-        <Selector
-          onClick={() => setInterval("day")}
-          selected={interval === "day"}
-        >
-          Day
-        </Selector>
-        <Selector
-          onClick={() => setInterval("week")}
-          selected={interval === "week"}
-        >
-          Week
-        </Selector>
-        <Selector
-          onClick={() => setInterval("month")}
-          selected={interval === "month"}
-        >
-          Month
-        </Selector>
-        <Selector
-          onClick={() => setInterval("all")}
-          selected={interval === "all"}
-        >
-          All
-        </Selector>
-      </div>
+      <ToDoFilter filter={filter} setFilter={setfilter} />
       <DraggableToDos toDos={filteredToDos} updateItem={updateItem} />
     </div>
   );
@@ -351,28 +305,6 @@ function DropIndicator({
   );
 }
 
-function Selector({
-  selected = false,
-  onClick,
-  children,
-}: {
-  selected?: boolean;
-  onClick?: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      className={clsx(
-        " rounded-lg border-2 border-gray-500 p-3",
-        selected && "bg-gray-500",
-      )}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-}
-
 function MobileToDos({
   toDos,
   updateItem,
@@ -475,7 +407,7 @@ function MobileTodo({
         </button>
       </div>
       <div className="flex grow items-center justify-center">
-        <Text className="text-xl">{toDo.title}</Text>
+        <Text className="text-xl font-semibold">{toDo.title}</Text>
       </div>
       <div className="grow-0">
         <button className="h-full w-20 rounded-sm bg-green-300 p-2 hover:bg-green-400">
@@ -501,5 +433,61 @@ function MobileTodo({
         </Link>
       </div>
     </div>
+  );
+}
+
+function ToDoFilter({
+  filter,
+  setFilter,
+}: {
+  filter: Filter;
+  setFilter: React.Dispatch<React.SetStateAction<Filter>>;
+}) {
+  return (
+    <div className="flex w-full justify-around p-2">
+      <Selector
+        onClick={() => setFilter("overdue")}
+        selected={filter === "overdue"}
+      >
+        Overdue
+      </Selector>
+      <Selector onClick={() => setFilter("day")} selected={filter === "day"}>
+        Day
+      </Selector>
+      <Selector onClick={() => setFilter("week")} selected={filter === "week"}>
+        Week
+      </Selector>
+      <Selector
+        onClick={() => setFilter("month")}
+        selected={filter === "month"}
+      >
+        Month
+      </Selector>
+      <Selector onClick={() => setFilter("all")} selected={filter === "all"}>
+        All
+      </Selector>
+    </div>
+  );
+}
+
+function Selector({
+  selected = false,
+  onClick,
+  children,
+}: {
+  selected?: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      className={clsx(
+        " rounded-lg border-2 border-dark p-3",
+        selected && "bg-brand",
+      )}
+      onClick={onClick}
+    >
+      {children}
+    </button>
   );
 }
