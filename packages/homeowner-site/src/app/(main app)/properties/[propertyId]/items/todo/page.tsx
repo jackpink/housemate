@@ -4,11 +4,12 @@ import { CapitaliseText } from "../../../../../../../../ui/Molecules/InPlaceEdit
 import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
-import { concatAddress, getDeviceType } from "~/utils/functions";
+import { concatAddress } from "~/utils/functions";
 import { Item } from "../../../../../../../../core/homeowner/item";
 import ToDos, { UpdateItemPriorityServerAction } from "~/app/_components/ToDos";
 import { revalidatePath } from "next/cache";
 import React from "react";
+import { getDeviceType } from "~/app/actions";
 
 export default async function ToDoPage({
   params,

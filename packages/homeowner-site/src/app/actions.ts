@@ -9,6 +9,7 @@ import { IAddress, Property } from "../../../core/homeowner/property";
 import { revalidatePath } from "next/cache";
 import { AuthError } from "next-auth";
 import { ItemCategory, ItemStatus, property } from "../../../core/db/schema";
+import { headers } from "next/headers";
 
 export async function signInAction(email: string, password: string) {
   // console.log("Try to sign in ", email, password);
@@ -168,4 +169,19 @@ export async function addFileToItemAction({
   const itemFileId = Item.addFile({ itemId, name, key, bucket, type });
   revalidatePath(`/properties/${propertyId}/items/${itemId}`);
   return itemFileId;
+}
+
+export async function getDeviceType() {
+  const headersList = headers();
+  const userAgent = headersList.get("user-agent");
+  const mobile = userAgent!.match(
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i,
+  );
+  if (mobile) {
+    console.log("mobile");
+    return "mobile";
+  } else {
+    console.log("desktop");
+    return "desktop";
+  }
 }
