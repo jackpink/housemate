@@ -8,7 +8,9 @@ import {
 import {
   AccountIcon,
   AlertsIcon,
+  LargeSearchIcon,
   PropertiesIcon,
+  SearchIcon,
 } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
 import { PropsWithChildren } from "react";
@@ -16,7 +18,7 @@ import { PropsWithChildren } from "react";
 const MainMenuButtons = ({ selected }: { selected: Selected }) => {
   const propertiesSelected = selected === Selected.PROPERTIES;
   const alertsSelected = selected === Selected.ALERTS;
-  const accountSelected = selected === Selected.ACCOUNT;
+  const accountSelected = selected === Selected.SEARCH;
 
   return (
     <>
@@ -37,11 +39,15 @@ const MainMenuButtons = ({ selected }: { selected: Selected }) => {
           </Text>
         </MainMenuButton>
       </Link>
-      <Link href="/account">
+      <Link href="/search">
         <MainMenuButton selected={accountSelected}>
-          <AccountIcon selected={accountSelected} />
+          <LargeSearchIcon
+            width={55}
+            height={60}
+            colour={accountSelected ? "#7df2cd" : "#f7ece1"}
+          />
           <Text colour={accountSelected ? "text-brand" : "text-light"}>
-            Account
+            Search
           </Text>
         </MainMenuButton>
       </Link>

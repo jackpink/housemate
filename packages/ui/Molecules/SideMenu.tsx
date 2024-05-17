@@ -5,7 +5,7 @@ import { ComponentType } from "react";
 export enum HomeownerSelected {
   PROPERTIES,
   ALERTS,
-  ACCOUNT,
+  SEARCH,
 }
 
 export const SideMenu = ({

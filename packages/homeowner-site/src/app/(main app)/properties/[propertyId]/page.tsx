@@ -6,7 +6,14 @@ import { Property } from "../../../../../../core/homeowner/property";
 import { Text } from "../../../../../../ui/Atoms/Text";
 import Link from "next/link";
 import { CTAButton } from "../../../../../../ui/Atoms/Button";
-import { PlusIcon } from "../../../../../../ui/Atoms/Icons";
+import {
+  LargeAddIcon,
+  PastIcon,
+  PlusIcon,
+  ScheduleIcon,
+  ToDoListIcon,
+  TradeRequestIcon,
+} from "../../../../../../ui/Atoms/Icons";
 import { concatAddress } from "~/utils/functions";
 
 export default async function PropertyPage({
@@ -37,37 +44,59 @@ export default async function PropertyPage({
       <PageTitle>{address}</PageTitle>
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
-        <div className="flex flex-col gap-8 p-10">
-          <Link
-            href={`/properties/${params.propertyId}/items/add`}
-            className="block"
-          >
-            <CTAButton rounded className="w-full">
-              <div className="flex w-full items-center justify-center">
-                <PlusIcon width={28} />{" "}
-                <Text className="ml-10 text-xl">Add Item</Text>
-              </div>
-            </CTAButton>
-          </Link>
+        <div className="grid grid-cols-2 gap-2  p-10">
           <Link
             href={`/properties/${params.propertyId}/items/todo`}
             className="block"
           >
-            <div className="rounded-full bg-altSecondary p-7 hover:bg-altSecondary/80">
-              <div className="flex w-full items-center justify-center">
-                <Text className="ml-10 text-xl font-bold">To Do Items</Text>
+            <div className="h-full w-full  p-7">
+              <div className="flex w-full flex-col items-center justify-center">
+                <ToDoListIcon width={45} height={45} />
+                <Text className="text-xl font-bold">To Do List</Text>
               </div>
             </div>
           </Link>
           <Link
-            href={`/properties/${params.propertyId}/items/completed`}
+            href={`/properties/${params.propertyId}/items/schedule`}
             className="block"
           >
-            <div className="rounded-full bg-altSecondary p-7 hover:bg-altSecondary/80">
-              <div className="flex w-full items-center justify-center">
-                <Text className="ml-10 text-xl font-bold ">
-                  Completed Items
-                </Text>
+            <div className="h-full w-full p-7">
+              <div className="flex w-full flex-col items-center justify-center">
+                <ScheduleIcon width={45} height={45} />
+                <Text className="text-xl font-bold">Schedule</Text>
+              </div>
+            </div>
+          </Link>
+          <Link
+            href={`/properties/${params.propertyId}/trade-requests`}
+            className="block"
+          >
+            <div className="h-full w-full  p-7">
+              <div className="flex w-full flex-col items-center justify-center">
+                <TradeRequestIcon width={45} height={45} />
+                <Text className="text-xl font-bold">Trade Request</Text>
+              </div>
+            </div>
+          </Link>
+          <Link
+            href={`/properties/${params.propertyId}/items/past`}
+            className="block"
+          >
+            <div className="h-full w-full  p-7">
+              <div className="flex w-full flex-col items-center justify-center">
+                <PastIcon width={45} height={45} />
+                <Text className="text-xl font-bold">Past Items</Text>
+              </div>
+            </div>
+          </Link>
+          <Link
+            href={`/properties/${params.propertyId}/items/add`}
+            className="block"
+          >
+            <div className="h-full w-full  p-7">
+              <div className="flex w-full flex-col items-center justify-center">
+                <LargeAddIcon width={45} height={45} />
+                <Text className="text-xl font-bold">Add Item</Text>
               </div>
             </div>
           </Link>
