@@ -38,17 +38,22 @@ export default async function ToDoPage({
   const updateItem: UpdateItemPriorityServerAction = async ({
     id,
     priority,
+    status,
   }) => {
     "use server";
     console.log("updateItem priority", priority);
+    console.log("updateItem status", status);
     await Item.update({
       id,
       priority,
+      status,
     });
     revalidatePath(`/properties/${params.propertyId}/items/todo`);
   };
 
   const toDos = await Item.getToDos(session.user.id);
+
+  const completedToDos = await Item.getToDosCompletedThisWeek(session.user.id);
 
   console.log(toDos);
   return (
@@ -58,7 +63,12 @@ export default async function ToDoPage({
       </PageTitle>
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
-        <ToDos toDos={toDos} updateItem={updateItem} deviceType={deviceType} />
+        <ToDos
+          toDos={toDos}
+          completedToDos={completedToDos}
+          updateItem={updateItem}
+          deviceType={deviceType}
+        />
       </PageWithSingleColumn>
     </div>
   );

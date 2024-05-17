@@ -10,6 +10,8 @@ import {
   UpArrowIcon,
   ViewIcon,
 } from "../../../../ui/Atoms/Icons";
+import { ItemStatus } from "../../../../core/db/schema";
+import { time } from "drizzle-orm/pg-core";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -19,18 +21,21 @@ export type UpdateItemPriorityServerAction = ({
 }: {
   id: string;
   priority: number;
+  status?: ItemStatus;
 }) => Promise<void>;
 
 export default function ToDos({
   toDos,
+  completedToDos,
   updateItem,
   deviceType,
 }: {
   toDos: ToDos;
+  completedToDos: ToDos;
   updateItem: UpdateItemPriorityServerAction;
   deviceType: "mobile" | "desktop";
 }) {
-  const [filter, setfilter] = React.useState<Filter>("overdue");
+  const [filter, setfilter] = React.useState<Filter>("all");
 
   // filter todos based on interval
   // if interval is day, show only todos that are due today
@@ -40,16 +45,19 @@ export default function ToDos({
   const filteredToDos = toDos.filter((toDo) => {
     const todaysDate = new Date();
     const toDoDate = new Date(toDo.date);
-    const timeDiff = Math.abs(toDoDate.getTime() - todaysDate.getTime());
-    const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    const timeDiff = toDoDate.getTime() - todaysDate.getTime();
+    console.log(toDo.title);
+    console.log("timeDiff", timeDiff);
+    const diffDays = Math.abs(timeDiff) / (1000 * 3600 * 24);
+    console.log("diffDays", diffDays);
     if (filter === "day") {
-      return diffDays === 0;
+      return diffDays < 1;
     } else if (filter === "week") {
-      return diffDays <= 7;
+      return diffDays <= 7 && timeDiff > 0;
     } else if (filter === "month") {
-      return diffDays <= 30;
+      return diffDays <= 30 && timeDiff > 0;
     } else if (filter === "overdue") {
-      return diffDays < 0;
+      return timeDiff < 0;
     } else {
       return true;
     }
@@ -60,6 +68,7 @@ export default function ToDos({
       <div>
         <ToDoFilter filter={filter} setFilter={setfilter} />
         <MobileToDos toDos={filteredToDos} updateItem={updateItem} />
+        <CompletedToDos toDos={completedToDos} updateItem={updateItem} />
       </div>
     );
   }
@@ -364,6 +373,23 @@ function MobileToDos({
     [toDos],
   );
 
+  const markAsCompleted = useCallback(
+    (clickedToDo: ToDos[0]) => {
+      console.log("mark as completed", clickedToDo);
+      let newToDos = [...toDos];
+      newToDos = newToDos.filter((toDo) => toDo.id !== clickedToDo.id);
+      startTransition(async () => {
+        setOptimisticValue(newToDos);
+        await updateItem({
+          id: clickedToDo.id,
+          status: "completed" as ItemStatus,
+          priority: clickedToDo.toDoPriority!,
+        });
+      });
+    },
+    [toDos],
+  );
+
   console.log("mobile");
 
   return (
@@ -374,6 +400,7 @@ function MobileToDos({
           key={toDo.id}
           moveUp={moveUp}
           moveDown={moveDown}
+          markAsCompleted={markAsCompleted}
         />
       ))}
     </div>
@@ -384,24 +411,47 @@ function MobileTodo({
   toDo,
   moveUp,
   moveDown,
+  markAsCompleted,
 }: {
   toDo: ToDos[0];
   moveUp: (toDo: ToDos[0]) => void;
   moveDown: (toDo: ToDos[0]) => void;
+  markAsCompleted: (toDo: ToDos[0]) => void;
 }) {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const toDoDate = new Date(toDo.date);
+  console.log("toDoDate", toDoDate);
+  console.log("startOfToday", startOfToday);
+  const isOverdue = new Date(toDo.date) <= startOfToday;
   return (
-    <div className="flex rounded-lg border-2 border-altSecondary bg-brand/50 p-2">
+    <div
+      className={clsx(
+        "flex rounded-lg border-2 border-dark p-2",
+        isOverdue ? "bg-red-300" : " bg-brand/50",
+      )}
+    >
       <div className="flex h-full flex-col items-center gap-2 rounded-sm">
         <button
           onClick={() => moveUp(toDo)}
-          className="flex w-full flex-col items-center rounded-sm bg-altSecondary p-1 px-5 py-1 hover:bg-altSecondary/30"
+          className={clsx(
+            "flex w-full flex-col items-center rounded-md  p-1 px-5 py-1 ",
+            isOverdue
+              ? "bg-red-400 active:bg-red-600"
+              : "bg-altSecondary active:bg-altSecondary/30",
+          )}
         >
           <UpArrowIcon width={30} height={30} />
         </button>
 
         <button
           onClick={() => moveDown(toDo)}
-          className="flex w-full flex-col items-center rounded-sm bg-altSecondary p-1"
+          className={clsx(
+            "flex w-full flex-col items-center rounded-md bg-altSecondary p-1",
+            isOverdue
+              ? "bg-red-400 active:bg-red-600"
+              : "bg-altSecondary active:bg-altSecondary/30",
+          )}
         >
           <DownArrowIcon width={30} height={30} />
         </button>
@@ -410,14 +460,17 @@ function MobileTodo({
         <Text className="text-xl font-semibold">{toDo.title}</Text>
       </div>
       <div className="grow-0">
-        <button className="h-full w-20 rounded-sm bg-green-300 p-2 hover:bg-green-400">
+        <button
+          onClick={() => markAsCompleted(toDo)}
+          className="h-full w-20 rounded-sm bg-green-300 p-2 active:bg-green-400"
+        >
           <div>✔</div>
           <div className="text-xs">Mark as Completed</div>
         </button>
       </div>
       <div className="grow-0">
         <Link href={`/properties/${toDo.propertyId}/items/${toDo.id}`}>
-          <button className="h-full rounded-sm bg-altSecondary p-2 hover:bg-altSecondary/70">
+          <button className="h-full rounded-sm bg-altSecondary p-2 active:bg-altSecondary/70">
             <div className="flex justify-center">
               <ViewIcon />
             </div>
@@ -447,6 +500,9 @@ function ToDoFilter({
     <div className="p-1">
       <p className="pl-2 text-left text-lg font-medium">Filter Items</p>
       <div className="flex w-full justify-around p-1">
+        <Selector onClick={() => setFilter("all")} selected={filter === "all"}>
+          All
+        </Selector>
         <Selector
           onClick={() => setFilter("overdue")}
           selected={filter === "overdue"}
@@ -472,9 +528,6 @@ function ToDoFilter({
           <br />
           Month
         </Selector>
-        <Selector onClick={() => setFilter("all")} selected={filter === "all"}>
-          All
-        </Selector>
       </div>
     </div>
   );
@@ -499,5 +552,81 @@ function Selector({
     >
       {children}
     </button>
+  );
+}
+
+function CompletedToDos({
+  toDos,
+  updateItem,
+}: {
+  toDos: ToDos;
+  updateItem: UpdateItemPriorityServerAction;
+}) {
+  const [pending, startTransition] = React.useTransition();
+
+  const [optimisticToDos, setOptimisticValue] = React.useOptimistic(
+    toDos,
+    (state, newToDos: ToDos) => {
+      console.log("newToDos in optimiistic", newToDos);
+      return newToDos;
+    },
+  );
+
+  const markAsToDo = useCallback(
+    (clickedToDo: ToDos[0]) => {
+      console.log("mark as completed", clickedToDo);
+      let newToDos = [...toDos];
+      newToDos = newToDos.filter((toDo) => toDo.id !== clickedToDo.id);
+      startTransition(async () => {
+        setOptimisticValue(newToDos);
+        await updateItem({
+          id: clickedToDo.id,
+          status: "todo" as ItemStatus,
+          priority: clickedToDo.toDoPriority!,
+        });
+      });
+    },
+    [toDos],
+  );
+
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <p className="text-lg font-medium">Completed To Dos</p>
+      {optimisticToDos.map((toDo) => (
+        <CompletedToDo key={toDo.id} toDo={toDo} markAsToDo={markAsToDo} />
+      ))}
+    </div>
+  );
+}
+
+function CompletedToDo({
+  toDo,
+  markAsToDo,
+}: {
+  toDo: ToDos[0];
+  markAsToDo: (toDo: ToDos[0]) => void;
+}) {
+  return (
+    <div className="flex rounded-lg border-2 border-altSecondary bg-green-300 p-2">
+      <div className="flex grow items-center justify-center">
+        <Text className="text-xl font-semibold">{toDo.title}</Text>
+      </div>
+      <div className="grow-0">
+        <button
+          onClick={() => markAsToDo(toDo)}
+          className="h-20 w-20 rounded-sm border-2 border-dark bg-brand p-2 hover:bg-green-400"
+        >
+          {/* <div className="flex justify-center">
+            <div className="h-5 w-5 border-2 border-dark"></div>
+          </div> */}
+          <div className="text-xs">
+            <div className="text-xl">⇧</div>
+            Mark as
+            <br />
+            To Do
+          </div>
+        </button>
+      </div>
+    </div>
   );
 }
