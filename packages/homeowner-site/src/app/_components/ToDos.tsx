@@ -11,7 +11,6 @@ import {
   ViewIcon,
 } from "../../../../ui/Atoms/Icons";
 import { ItemStatus } from "../../../../core/db/schema";
-import { time } from "drizzle-orm/pg-core";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -66,19 +65,34 @@ export default function ToDos({
   if (deviceType === "mobile") {
     return (
       <div>
-        <ToDoFilter filter={filter} setFilter={setfilter} />
+        <ToDoFilter
+          filter={filter}
+          setFilter={setfilter}
+          filteredToDos={filteredToDos}
+        />
         <MobileToDos toDos={filteredToDos} updateItem={updateItem} />
+        <Line />
         <CompletedToDos toDos={completedToDos} updateItem={updateItem} />
       </div>
     );
   }
   return (
     <div>
-      <ToDoFilter filter={filter} setFilter={setfilter} />
+      <ToDoFilter
+        filter={filter}
+        setFilter={setfilter}
+        filteredToDos={filteredToDos}
+      />
       <DraggableToDos toDos={filteredToDos} updateItem={updateItem} />
     </div>
   );
 }
+
+/*
+############################################################################
+DESKTOP TODOS
+############################################################################
+*/
 
 function DraggableToDos({
   toDos,
@@ -314,6 +328,12 @@ function DropIndicator({
   );
 }
 
+/*
+############################################################################
+MOBILE TODOS
+############################################################################
+*/
+
 function MobileToDos({
   toDos,
   updateItem,
@@ -438,7 +458,7 @@ function MobileTodo({
             "flex w-full flex-col items-center rounded-md  p-1 px-5 py-1 ",
             isOverdue
               ? "bg-red-400 active:bg-red-600"
-              : "bg-altSecondary active:bg-altSecondary/30",
+              : "bg-brand active:bg-brand/30",
           )}
         >
           <UpArrowIcon width={30} height={30} />
@@ -450,7 +470,7 @@ function MobileTodo({
             "flex w-full flex-col items-center rounded-md bg-altSecondary p-1",
             isOverdue
               ? "bg-red-400 active:bg-red-600"
-              : "bg-altSecondary active:bg-altSecondary/30",
+              : "bg-brand active:bg-brand/30",
           )}
         >
           <DownArrowIcon width={30} height={30} />
@@ -470,7 +490,14 @@ function MobileTodo({
       </div>
       <div className="grow-0">
         <Link href={`/properties/${toDo.propertyId}/items/${toDo.id}`}>
-          <button className="h-full rounded-sm bg-altSecondary p-2 active:bg-altSecondary/70">
+          <button
+            className={clsx(
+              "h-full rounded-sm  p-2",
+              isOverdue
+                ? "bg-red-400 active:bg-red-600"
+                : "bg-brand active:bg-brand/30",
+            )}
+          >
             <div className="flex justify-center">
               <ViewIcon />
             </div>
@@ -490,16 +517,24 @@ function MobileTodo({
   );
 }
 
+/*
+############################################################################
+FILTER TODOS
+############################################################################
+*/
+
 function ToDoFilter({
   filter,
   setFilter,
+  filteredToDos,
 }: {
   filter: Filter;
   setFilter: React.Dispatch<React.SetStateAction<Filter>>;
+  filteredToDos: ToDos;
 }) {
   return (
     <div className="p-1">
-      <p className="pl-2 text-left text-lg font-medium">Filter Items</p>
+      <p className="p-3 pl-2 text-center text-xl font-semibold">Filter Items</p>
       <div className="flex w-full justify-around p-1">
         <Selector onClick={() => setFilter("all")} selected={filter === "all"}>
           All
@@ -530,6 +565,7 @@ function ToDoFilter({
           Month
         </Selector>
       </div>
+      <FilterMessage filter={filter} filteredToDos={filteredToDos} />
     </div>
   );
 }
@@ -555,6 +591,41 @@ function Selector({
     </button>
   );
 }
+
+function FilterMessage({
+  filter,
+  filteredToDos,
+}: {
+  filter: Filter;
+  filteredToDos: ToDos;
+}) {
+  if (filteredToDos.length === 0) {
+    return (
+      <p className="p-3 text-center text-xl font-semibold">
+        {filter === "all" && <p>There are no incomplete tasks</p>}
+        {filter === "overdue" && <p>There are no overdue tasks</p>}
+        {filter === "day" && <p>There are no incomplete tasks today</p>}
+        {filter === "week" && <p>There are no incomplete tasks this week</p>}
+        {filter === "month" && <p>There are no incomplete tasks this month</p>}
+      </p>
+    );
+  }
+  return (
+    <div className="p-3 pt-5 text-lg font-medium">
+      {filter === "all" && <p>Showing all tasks</p>}
+      {filter === "overdue" && <p>Showing overdue tasks</p>}
+      {filter === "day" && <p>Showing tasks due Today</p>}
+      {filter === "week" && <p>Showing tasks due This Week</p>}
+      {filter === "month" && <p>Showing tasks due This Month</p>}
+    </div>
+  );
+}
+
+/*
+############################################################################
+COMPLETED TODOS
+############################################################################
+*/
 
 function CompletedToDos({
   toDos,
@@ -592,7 +663,7 @@ function CompletedToDos({
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <p className="text-lg font-medium">Completed To Dos</p>
+      <CompletedTodoMessage completedToDos={toDos} />
       {optimisticToDos.map((toDo) => (
         <CompletedToDo key={toDo.id} toDo={toDo} markAsToDo={markAsToDo} />
       ))}
@@ -630,4 +701,23 @@ function CompletedToDo({
       </div>
     </div>
   );
+}
+
+function CompletedTodoMessage({ completedToDos }: { completedToDos: ToDos }) {
+  if (completedToDos.length === 0) {
+    return (
+      <p className="p-3 text-center text-xl font-semibold">
+        No tasks have been completed this week
+      </p>
+    );
+  }
+  return (
+    <div className="p-3 pt-5 text-lg font-medium">
+      <p>Showing tasks completed this week</p>
+    </div>
+  );
+}
+
+function Line() {
+  return <div className="w-full border-2 border-altSecondary"></div>;
 }
