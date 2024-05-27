@@ -145,7 +145,7 @@ export const DialogContent = React.forwardRef<
   return (
     <FloatingPortal>
       <FloatingOverlay
-        className="bg-light/20 grid items-center backdrop-blur-sm"
+        className="bg-light/20 flex flex-col  items-center backdrop-blur-sm"
         lockScroll
       >
         <FloatingFocusManager context={floatingContext}>
@@ -154,7 +154,7 @@ export const DialogContent = React.forwardRef<
             aria-labelledby={context.labelId}
             aria-describedby={context.descriptionId}
             {...context.getFloatingProps(props)}
-            className="rounded-xl bg-white p-4 shadow-xl shadow-black/50 "
+            className="w-3/4 rounded-xl bg-white p-4 shadow-xl shadow-black/50 "
           >
             {props.children}
           </div>

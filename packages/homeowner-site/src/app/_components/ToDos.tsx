@@ -26,6 +26,8 @@ import {
   DialogTrigger,
 } from "../../../../ui/Atoms/Dialog";
 import { ItemStatus } from "../../../../core/db/schema";
+import { CTAButton } from "../../../../ui/Atoms/Button";
+import { EditableComponentLabel } from "../../../../ui/Molecules/InPlaceEditableComponent";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -559,6 +561,7 @@ function ToDoQuickViewDialog({
   toDo: ToDos[0];
   isOverdue: boolean;
 }) {
+  const date = new Date(toDo.date).toDateString();
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -589,13 +592,49 @@ function ToDoQuickViewDialog({
           <p>Close</p>
         </DialogClose>
         <DialogHeading className="pt-3 text-xl">Quick View</DialogHeading>
-        <DialogDescription>
-          <Text>{toDo.title}</Text>
-          <Text>{toDo.date}</Text>
+        <DialogDescription className="flex w-full flex-col items-center pt-4">
+          <CTAButton rounded>Go To Item's Edit Page</CTAButton>
+          <Text className="w-full pt-6 text-start text-xl font-medium">
+            {toDo.title}
+          </Text>
+          <Line />
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
           <Text>{toDo.description}</Text>
           <Text>{toDo.status}</Text>
           <Text>{toDo.category}</Text>
           <Text>{toDo.recurring ? "Recurring" : "One-Off"}</Text>
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
+          <EditableComponentLabel label="Date" />
+          <Text>{date}</Text>
+          <Line />
         </DialogDescription>
       </DialogContent>
     </Dialog>
