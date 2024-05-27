@@ -11,9 +11,8 @@ export default function PastItems({
   completedItems: CompletedItems;
   deviceType: "mobile" | "desktop";
 }) {
-  const [filteredItems, setFilteredItems] = React.useState(
-    completedItems.slice(0, 10),
-  );
+  const [filteredItems, setFilteredItems] = React.useState(completedItems);
+
   if (deviceType === "mobile") {
     return (
       <div>
@@ -46,13 +45,25 @@ function FiltersForMobile() {
 }
 
 function ItemsForMobile({ items }: { items: CompletedItems }) {
+  const [itemsToShow, setItemsToShow] = React.useState(2);
+
+  const reducedItems = items.slice(0, itemsToShow);
+
   return (
     <div>
       <h1>Items for Mobile</h1>
       <div className="grid gap-4 p-4">
-        {items.map((item) => (
+        {reducedItems.map((item) => (
           <ItemForMobile key={item.id} item={item} />
         ))}
+        {itemsToShow < items.length && (
+          <button
+            className="rounded-full bg-altSecondary p-3"
+            onClick={() => setItemsToShow(itemsToShow + 2)}
+          >
+            Load More...
+          </button>
+        )}
       </div>
     </div>
   );
