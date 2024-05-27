@@ -506,55 +506,13 @@ function MobileTodo({
         </button>
       </div>
       <div className="grow-0">
-        <ToDoQuickViewDialog toDo={toDo} isOverdue={isOverdue} />
+        <ItemQuickViewDialog toDo={toDo} isOverdue={isOverdue} />
       </div>
     </div>
   );
 }
 
-function ToDoQuickViewPopover({
-  toDo,
-  isOverdue,
-}: {
-  toDo: ToDos[0];
-  isOverdue: boolean;
-}) {
-  return (
-    <Popover>
-      <PopoverTrigger>
-        <div
-          className={clsx(
-            "h-full w-20 rounded-sm p-2",
-            isOverdue
-              ? "bg-red-400 active:bg-red-600"
-              : "bg-brand active:bg-brand/30",
-          )}
-        >
-          <div className="flex justify-center">
-            <ViewIcon />
-          </div>
-          <div className="text-xs">
-            Quick View
-            <br />
-            {toDo.category === "job"
-              ? "Job"
-              : toDo.category === "product"
-                ? "Product"
-                : "Issue"}
-          </div>
-        </div>
-      </PopoverTrigger>
-      <PopoverContent>
-        <PopoverHeading>Quick View</PopoverHeading>
-        <PopoverDescription>
-          <Text>{toDo.title}</Text>
-        </PopoverDescription>
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-function ToDoQuickViewDialog({
+export function ItemQuickViewDialog({
   toDo,
   isOverdue,
 }: {
