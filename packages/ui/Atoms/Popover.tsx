@@ -178,6 +178,7 @@ export const PopoverContent = React.forwardRef<
           aria-describedby={context.descriptionId}
           {...context.getFloatingProps(props)}
           className="rounded-lg bg-white p-4 shadow-lg"
+          {...props}
         >
           {props.children}
         </div>
@@ -208,8 +209,8 @@ export const PopoverHeading = React.forwardRef<
 });
 
 export const PopoverDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLProps<HTMLParagraphElement>
+  HTMLDivElement,
+  React.HTMLProps<HTMLDivElement>
 >(function PopoverDescription(props, ref) {
   const { setDescriptionId } = usePopoverContext();
   const id = useId();
@@ -221,7 +222,7 @@ export const PopoverDescription = React.forwardRef<
     return () => setDescriptionId(undefined);
   }, [id, setDescriptionId]);
 
-  return <p {...props} ref={ref} id={id} />;
+  return <div {...props} ref={ref} id={id} />;
 });
 
 export const PopoverClose = React.forwardRef<

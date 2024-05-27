@@ -10,6 +10,7 @@ import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayou
 import { revalidatePath } from "next/cache";
 import { Bucket } from "sst/node/bucket";
 import Files from "~/app/_components/Files";
+import { redirect } from "next/navigation";
 
 export default async function TodoItemPage({
   params,
@@ -30,12 +31,12 @@ export default async function TodoItemPage({
 
   console.log("item", item);
 
-  if (
-    !session ||
-    !session.user ||
-    !session.user.id ||
-    session.user.id !== property.homeownerId
-  ) {
+  if (!session || !session.user) {
+    // redirect to login
+    redirect("/sign-in");
+  }
+
+  if (session?.user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
 

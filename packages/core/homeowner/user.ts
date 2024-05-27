@@ -38,3 +38,11 @@ export async function getByEmail(email: string) {
     .where(eq(schema.homeownerUsers.email, email));
   return user[0];
 }
+
+export async function getById(id: string) {
+  const user = await db
+    .select()
+    .from(schema.homeownerUsers)
+    .where(eq(schema.homeownerUsers.id, id));
+  return user[0];
+}

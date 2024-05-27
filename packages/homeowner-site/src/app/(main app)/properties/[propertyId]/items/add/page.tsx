@@ -5,6 +5,7 @@ import { auth } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
 import { concatAddress } from "~/utils/functions";
 import AddItem from "~/app/_components/AddItem";
+import { redirect } from "next/navigation";
 
 export default async function AddItemPage({
   params,
@@ -19,12 +20,12 @@ export default async function AddItemPage({
 
   const address = concatAddress(property);
 
-  if (
-    !session ||
-    !session.user ||
-    !session.user.id ||
-    session.user.id !== property.homeownerId
-  ) {
+  if (!session || !session.user) {
+    // redirect to login
+    redirect("/sign-in");
+  }
+
+  if (session?.user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
 

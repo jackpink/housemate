@@ -10,6 +10,7 @@ import ToDos, { UpdateItemPriorityServerAction } from "~/app/_components/ToDos";
 import { revalidatePath } from "next/cache";
 import React from "react";
 import { getDeviceType } from "~/app/actions";
+import { redirect } from "next/navigation";
 
 export default async function ToDoPage({
   params,
@@ -26,12 +27,14 @@ export default async function ToDoPage({
 
   const address = concatAddress(property);
 
-  if (
-    !session ||
-    !session.user ||
-    !session.user.id ||
-    session.user.id !== property.homeownerId
-  ) {
+  console.log("session", session);
+
+  if (!session || !session.user) {
+    // redirect to login
+    redirect("/sign-in");
+  }
+
+  if (session?.user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
 

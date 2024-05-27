@@ -15,6 +15,7 @@ import {
   TradeRequestIcon,
 } from "../../../../../../ui/Atoms/Icons";
 import { concatAddress } from "~/utils/functions";
+import { redirect } from "next/navigation";
 
 export default async function PropertyPage({
   params,
@@ -30,12 +31,12 @@ export default async function PropertyPage({
 
   const address = concatAddress(property);
 
-  if (
-    !session ||
-    !session.user ||
-    !session.user.id ||
-    session.user.id !== property.homeownerId
-  ) {
+  if (!session || !session.user) {
+    // redirect to login
+    redirect("/sign-in");
+  }
+
+  if (session?.user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
 
