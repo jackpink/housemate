@@ -151,9 +151,10 @@ export async function getCompleted(homeownerId: string) {
         eq(item.homeownerId, homeownerId),
         eq(item.status, ItemStatus.COMPLETED),
       ),
+    orderBy: [desc(item.date)],
     with: { files: true },
   });
   return items;
 }
 
-export type CompletedItem = Awaited<ReturnType<typeof getCompleted>>;
+export type CompletedItems = Awaited<ReturnType<typeof getCompleted>>;
