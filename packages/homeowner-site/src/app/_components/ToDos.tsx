@@ -10,6 +10,21 @@ import {
   UpArrowIcon,
   ViewIcon,
 } from "../../../../ui/Atoms/Icons";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeading,
+  PopoverTrigger,
+} from "../../../../ui/Atoms/Popover";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeading,
+  DialogTrigger,
+} from "../../../../ui/Atoms/Dialog";
 import { ItemStatus } from "../../../../core/db/schema";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
@@ -489,31 +504,101 @@ function MobileTodo({
         </button>
       </div>
       <div className="grow-0">
-        <Link href={`/properties/${toDo.propertyId}/items/${toDo.id}`}>
-          <button
-            className={clsx(
-              "h-full rounded-sm  p-2",
-              isOverdue
-                ? "bg-red-400 active:bg-red-600"
-                : "bg-brand active:bg-brand/30",
-            )}
-          >
-            <div className="flex justify-center">
-              <ViewIcon />
-            </div>
-            <div className="text-xs">
-              View
-              <br />
-              {toDo.category === "job"
-                ? "Job"
-                : toDo.category === "product"
-                  ? "Product"
-                  : "Issue"}
-            </div>
-          </button>
-        </Link>
+        <ToDoQuickViewDialog toDo={toDo} isOverdue={isOverdue} />
       </div>
     </div>
+  );
+}
+
+function ToDoQuickViewPopover({
+  toDo,
+  isOverdue,
+}: {
+  toDo: ToDos[0];
+  isOverdue: boolean;
+}) {
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <div
+          className={clsx(
+            "h-full w-20 rounded-sm p-2",
+            isOverdue
+              ? "bg-red-400 active:bg-red-600"
+              : "bg-brand active:bg-brand/30",
+          )}
+        >
+          <div className="flex justify-center">
+            <ViewIcon />
+          </div>
+          <div className="text-xs">
+            Quick View
+            <br />
+            {toDo.category === "job"
+              ? "Job"
+              : toDo.category === "product"
+                ? "Product"
+                : "Issue"}
+          </div>
+        </div>
+      </PopoverTrigger>
+      <PopoverContent>
+        <PopoverHeading>Quick View</PopoverHeading>
+        <PopoverDescription>
+          <Text>{toDo.title}</Text>
+        </PopoverDescription>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function ToDoQuickViewDialog({
+  toDo,
+  isOverdue,
+}: {
+  toDo: ToDos[0];
+  isOverdue: boolean;
+}) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <div
+          className={clsx(
+            "h-full w-20 rounded-sm py-3",
+            isOverdue
+              ? "bg-red-400 active:bg-red-600"
+              : "bg-brand active:bg-brand/30",
+          )}
+        >
+          <div className="flex justify-center pb-1">
+            <ViewIcon />
+          </div>
+          <div className="text-center text-xs">
+            Quick View
+            <br />
+            {toDo.category === "job"
+              ? "Job"
+              : toDo.category === "product"
+                ? "Product"
+                : "Issue"}
+          </div>
+        </div>
+      </DialogTrigger>
+      <DialogContent className="Dialog">
+        <DialogClose className="float-end rounded-lg border-2 border-black p-2">
+          <p>Close</p>
+        </DialogClose>
+        <DialogHeading className="pt-3 text-xl">Quick View</DialogHeading>
+        <DialogDescription>
+          <Text>{toDo.title}</Text>
+          <Text>{toDo.date}</Text>
+          <Text>{toDo.description}</Text>
+          <Text>{toDo.status}</Text>
+          <Text>{toDo.category}</Text>
+          <Text>{toDo.recurring ? "Recurring" : "One-Off"}</Text>
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
   );
 }
 
