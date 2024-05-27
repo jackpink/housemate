@@ -143,3 +143,17 @@ async function recalibratePriority(homeownerId: string) {
 }
 
 export type ToDos = Awaited<ReturnType<typeof getToDos>>;
+
+export async function getCompleted(homeownerId: string) {
+  const items = await db.query.item.findMany({
+    where: (item, { eq }) =>
+      and(
+        eq(item.homeownerId, homeownerId),
+        eq(item.status, ItemStatus.COMPLETED),
+      ),
+    with: { files: true },
+  });
+  return items;
+}
+
+export type CompletedItem = Awaited<ReturnType<typeof getCompleted>>;
