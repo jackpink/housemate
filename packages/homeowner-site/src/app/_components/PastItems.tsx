@@ -81,12 +81,44 @@ type Filter = { status: boolean; value: string };
 type Filters = { title: Filter };
 
 function FiltersForMobile() {
-  const [filters, setFilters] = React.useState<{ title: Filter }>({
-    title: { status: false, value: "" },
-  });
+  const initialFilters = { title: { status: false, value: "" } };
+
+  const searchParams = useSearchParams();
+  const title = searchParams.get("title");
+  if (title) {
+    console.log("Title", title);
+    initialFilters.title = { status: true, value: title };
+  }
+
+  const [filters, setFilters] = React.useState<{ title: Filter }>(
+    initialFilters,
+  );
+
+  const activeFilters = [];
+
+  for (const filter in filters) {
+    console.log("Filter", filter);
+    if (filters[filter as filterValues].status) {
+      console.log("Filter", filter);
+      const activeFilter = { ...filters[filter as filterValues], name: filter };
+      activeFilters.push(activeFilter);
+    }
+  }
 
   return (
     <div>
+      <div className="flex w-full justify-center">
+        {activeFilters.map((filter) => (
+          <div
+            key={filter.value}
+            className="rounded-full border-2 border-dark p-2"
+          >
+            <span>{filter.name}</span>
+            <span className="px-2">{":"}</span>
+            <span>{filter.value}</span>
+          </div>
+        ))}
+      </div>
       <AddFilterDialog filters={filters} setFilters={setFilters} />
     </div>
   );
@@ -186,6 +218,7 @@ function AddFilterDialog({
               placeholder="Enter Title to Search"
               onChange={handleFilterChange}
               name="title"
+              value={filters.title.value}
             />
           </div>
         </DialogDescription>
