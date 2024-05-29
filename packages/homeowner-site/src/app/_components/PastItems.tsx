@@ -4,7 +4,7 @@ import React, { use, useCallback } from "react";
 import { CompletedItems } from "../../../../core/homeowner/item";
 import { ItemQuickViewDialog } from "./ToDos";
 import clsx from "clsx";
-import { PlusIcon } from "../../../../ui/Atoms/Icons";
+import { CancelIcon, PlusIcon } from "../../../../ui/Atoms/Icons";
 import {
   Dialog,
   DialogClose,
@@ -92,6 +92,8 @@ function FiltersForMobile() {
     category: { status: false, value: "job" },
     date: { status: false, value: `${sixMonthsAgo} to ${todaysDate}` },
   };
+  const router = useRouter();
+  const pathname = usePathname();
 
   const searchParams = useSearchParams();
   const title = searchParams.get("title");
@@ -119,6 +121,15 @@ function FiltersForMobile() {
     }
   }
 
+  const removeQueryString = useCallback(
+    (name: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete(name);
+      return params.toString();
+    },
+    [searchParams],
+  );
+
   console.log("Active Filters", filters);
 
   return (
@@ -127,15 +138,35 @@ function FiltersForMobile() {
         {activeFilters.map((filter) => (
           <div
             key={filter.value}
-            className="rounded-full border-2 border-dark bg-brandSecondary/40 p-2"
+            className="flex items-center rounded-full border-2 border-dark bg-brandSecondary/40 p-2"
           >
             <span className="font-medium capitalize">{filter.name}</span>
             <span className="px-2">{":"}</span>
             <span className="capitalize">{filter.value}</span>
+            <button
+              className="pl-4"
+              onClick={() => {
+                setFilters({
+                  ...filters,
+                  [filter.name as filterValues]: {
+                    status: false,
+                    value: filters[filter.name as filterValues].value,
+                  },
+                });
+                const newQueryString = removeQueryString(filter.name);
+                router.push(`${pathname}?${newQueryString}`);
+              }}
+            >
+              <CancelIcon width={27} />
+            </button>
           </div>
         ))}
       </div>
-      <AddFilterDialog filters={filters} setFilters={setFilters} />
+      <AddFilterDialog
+        filters={filters}
+        setFilters={setFilters}
+        removeQueryString={removeQueryString}
+      />
     </div>
   );
 }
@@ -143,9 +174,11 @@ function FiltersForMobile() {
 function AddFilterDialog({
   filters,
   setFilters,
+  removeQueryString,
 }: {
   filters: Filters;
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  removeQueryString: (name: string) => string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -155,15 +188,6 @@ function AddFilterDialog({
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set(name, value);
-      return params.toString();
-    },
-    [searchParams],
-  );
-
-  const removeQueryString = useCallback(
-    (name: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete(name);
       return params.toString();
     },
     [searchParams],
