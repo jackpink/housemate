@@ -61,7 +61,7 @@ export const AddButton = ({
   return (
     <button
       className={clsx(
-        "p-6 text-xl text-brandSecondary",
+        " text-xl text-brandSecondary",
         !editable && "cursor-not-allowed text-slate-500",
       )}
       onClick={onClick}
@@ -78,44 +78,60 @@ type filterValues = "title";
 
 type Filter = { status: boolean; value: string };
 
-type Filters = { title: Filter };
+type Filters = { title: Filter; category: Filter; date: Filter };
 
 function FiltersForMobile() {
-  const initialFilters = { title: { status: false, value: "" } };
+  const dateObj = new Date();
+  const todaysDate = dateObj.toISOString().split("T")[0];
+
+  dateObj.setMonth(dateObj.getMonth() - 6);
+  const sixMonthsAgo = dateObj.toISOString().split("T")[0];
+
+  const initialFilters = {
+    title: { status: false, value: "" },
+    category: { status: false, value: "job" },
+    date: { status: false, value: `${sixMonthsAgo} to ${todaysDate}` },
+  };
 
   const searchParams = useSearchParams();
   const title = searchParams.get("title");
+  const category = searchParams.get("category");
+  const date = searchParams.get("date");
+
   if (title) {
-    console.log("Title", title);
     initialFilters.title = { status: true, value: title };
   }
+  if (category) {
+    initialFilters.category = { status: true, value: category };
+  }
+  if (date) {
+    initialFilters.date = { status: true, value: date };
+  }
 
-  const [filters, setFilters] = React.useState<{ title: Filter }>(
-    initialFilters,
-  );
+  const [filters, setFilters] = React.useState<Filters>(initialFilters);
 
   const activeFilters = [];
 
   for (const filter in filters) {
-    console.log("Filter", filter);
     if (filters[filter as filterValues].status) {
-      console.log("Filter", filter);
       const activeFilter = { ...filters[filter as filterValues], name: filter };
       activeFilters.push(activeFilter);
     }
   }
 
+  console.log("Active Filters", filters);
+
   return (
-    <div>
-      <div className="flex w-full justify-center">
+    <div className="p-4">
+      <div className="flex w-full flex-wrap gap-3 pb-4">
         {activeFilters.map((filter) => (
           <div
             key={filter.value}
-            className="rounded-full border-2 border-dark p-2"
+            className="rounded-full border-2 border-dark bg-brandSecondary/40 p-2"
           >
-            <span>{filter.name}</span>
+            <span className="font-medium capitalize">{filter.name}</span>
             <span className="px-2">{":"}</span>
-            <span>{filter.value}</span>
+            <span className="capitalize">{filter.value}</span>
           </div>
         ))}
       </div>
@@ -177,7 +193,7 @@ function AddFilterDialog({
   );
 
   const handleFilterChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { value, name } = e.target;
       setFilters({
         ...filters,
@@ -194,6 +210,30 @@ function AddFilterDialog({
     [filters],
   );
 
+  const handleDateChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value, name } = e.target;
+      const currentValue = filters.date.value.split(" to ");
+      let newValue = `${value} to ${currentValue[1]}`;
+      if (name === "end") {
+        newValue = `${currentValue[0]} to ${value}`;
+      }
+      console.log("New Date Value", newValue);
+      setFilters({
+        ...filters,
+        date: {
+          status: filters.date.status,
+          value: newValue,
+        },
+      });
+      if (filters.date.status) {
+        const newQueryString = createQueryString("date", newValue);
+        router.push(`${pathname}?${newQueryString}`);
+      }
+    },
+    [filters],
+  );
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -204,26 +244,93 @@ function AddFilterDialog({
           <p>Close</p>
         </DialogClose>
         <DialogHeading className="pt-3 text-xl">Filters</DialogHeading>
-        <DialogDescription className="flex w-full flex-col items-center pt-4">
-          <div>
-            <input
-              type="checkbox"
-              checked={filters.title.status}
-              name="title"
-              onChange={toggleFilterStatus}
-            />
-            <label>Title</label>
+        <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
+          <FilterContainer
+            filterName="title"
+            filterStatus={filters.title.status}
+            toggleFilterStatus={toggleFilterStatus}
+          >
             <input
               type="text"
               placeholder="Enter Title to Search"
               onChange={handleFilterChange}
               name="title"
               value={filters.title.value}
+              className="w-full rounded-full border-2 border-slate-400 p-4"
             />
-          </div>
+          </FilterContainer>
+          <FilterContainer
+            filterName="category"
+            filterStatus={filters.category.status}
+            toggleFilterStatus={toggleFilterStatus}
+          >
+            <select
+              onChange={handleFilterChange}
+              name="category"
+              className="w-full rounded-full border-2 border-slate-400 p-4"
+            >
+              <option value="job">Job</option>
+              <option value="issue">Issue</option>
+              <option value="product">Product</option>
+            </select>
+          </FilterContainer>
+          <FilterContainer
+            filterName="date"
+            filterStatus={filters.date.status}
+            toggleFilterStatus={toggleFilterStatus}
+          >
+            <input
+              type="date"
+              placeholder="Enter Category to Search"
+              onChange={handleDateChange}
+              name="start"
+              value={filters.date.value.split(" to ")[0]}
+              className="w-full rounded-full border-2 border-slate-400 p-4"
+            />
+            <input
+              type="date"
+              placeholder="Enter Category to Search"
+              onChange={handleDateChange}
+              name="end"
+              value={filters.date.value.split(" to ")[1]}
+              className="w-full rounded-full border-2 border-slate-400 p-4"
+            />
+          </FilterContainer>
         </DialogDescription>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function FilterContainer({
+  children,
+  filterStatus,
+  filterName,
+  toggleFilterStatus,
+}: {
+  children: React.ReactNode;
+  filterStatus: boolean;
+  filterName: string;
+  toggleFilterStatus: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <div
+      className={clsx(
+        "w-full rounded-lg border-2 border-black p-2",
+        filterStatus && "bg-altSecondary",
+      )}
+    >
+      <input
+        type="checkbox"
+        checked={filterStatus}
+        name={filterName}
+        onChange={toggleFilterStatus}
+      />
+      <label className="pl-3 text-xl font-semibold capitalize">
+        {filterName}
+      </label>
+      <div className="pt-4">{children}</div>
+    </div>
   );
 }
 
