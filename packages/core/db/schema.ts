@@ -110,7 +110,7 @@ export const item = sqliteTable("item", {
   recurring: integer("recurring", { mode: "boolean" }),
   date: text("date")
     .notNull()
-    .default(sql`(current_timestamp)`),
+    .default(sql`(current_date)`),
   toDoPriority: integer("toDoPriority"),
   homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
     onDelete: "cascade",
