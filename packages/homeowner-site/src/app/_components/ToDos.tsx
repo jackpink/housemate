@@ -551,7 +551,9 @@ export function ItemQuickViewDialog({
         </DialogClose>
         <DialogHeading className="pt-3 text-xl">Quick View</DialogHeading>
         <DialogDescription className="flex w-full flex-col items-center pt-4">
-          <CTAButton rounded>Go To Item's Edit Page</CTAButton>
+          <Link href={`/properties/${toDo.propertyId}/items/${toDo.id}`}>
+            <CTAButton rounded>Go To Item's Edit Page</CTAButton>
+          </Link>
           <Text className="w-full pt-6 text-start text-xl font-medium">
             {toDo.title}
           </Text>
