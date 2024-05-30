@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useCallback } from "react";
+import React, { use, useCallback, useEffect } from "react";
 import { CompletedItems } from "../../../../core/homeowner/item";
 import { ItemQuickViewDialog } from "./ToDos";
 import clsx from "clsx";
@@ -24,11 +24,51 @@ export default function PastItems({
 }) {
   const [filteredItems, setFilteredItems] = React.useState(completedItems);
 
+  // Filter by saerc params
+  const searchParams = useSearchParams();
+  const title = searchParams.get("title");
+  const category = searchParams.get("category");
+  const date = searchParams.get("date");
+
+  const newFilteredItems = completedItems.filter((item) => {
+    let titleResult = true,
+      categoryResult = true,
+      dateResult = true;
+    if (title) {
+      titleResult = item.title.toLowerCase().includes(title.toLowerCase());
+    }
+    if (category) {
+      categoryResult = item.category === category;
+    }
+    if (date) {
+      const dateRange = date.split(" to ");
+      const startDate = dateRange[0]!;
+      const endDate = dateRange[1]!;
+      const itemDate = item.date;
+
+      dateResult = itemDate >= startDate && itemDate <= endDate;
+      console.log(
+        "Item Date",
+        itemDate,
+
+        endDate,
+        dateResult,
+        itemDate <= endDate,
+      );
+    }
+    console.log("Title Result", titleResult, item.title);
+    return titleResult && categoryResult && dateResult;
+  });
+
+  console.log("New Filtered Items", newFilteredItems);
+  console.log("completedItems", completedItems);
+  console.log("title", title);
+
   if (deviceType === "mobile") {
     return (
       <div>
         <FiltersForMobile />
-        <ItemsForMobile items={filteredItems} />
+        <ItemsForMobile items={newFilteredItems} />
       </div>
     );
   }
