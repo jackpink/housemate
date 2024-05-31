@@ -4,18 +4,20 @@ import {
   MainMenuButton,
   SideMenu,
   HomeownerSelected as Selected,
+  MainMenuButtonsProps,
 } from "../../../../ui/Molecules/SideMenu";
 import {
-  AccountIcon,
   AlertsIcon,
   LargeSearchIcon,
   PropertiesIcon,
-  SearchIcon,
 } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
 import { PropsWithChildren } from "react";
+import { auth } from "~/auth";
+import { Alert } from "../../../../core/homeowner/alert";
+import clsx from "clsx";
 
-const MainMenuButtons = ({ selected }: { selected: Selected }) => {
+const MainMenuButtons = ({ selected, alerts }: MainMenuButtonsProps) => {
   const propertiesSelected = selected === Selected.PROPERTIES;
   const alertsSelected = selected === Selected.ALERTS;
   const accountSelected = selected === Selected.SEARCH;
@@ -31,7 +33,15 @@ const MainMenuButtons = ({ selected }: { selected: Selected }) => {
         </MainMenuButton>
       </Link>
 
-      <Link href="/alerts">
+      <Link className="relative" href="/alerts">
+        <div
+          className={clsx(
+            "full absolute -right-2 -top-2 flex h-10 w-10 flex-col items-center justify-center rounded-full bg-red-600 text-white",
+            alerts === 0 && "invisible",
+          )}
+        >
+          {alerts}
+        </div>
         <MainMenuButton selected={alertsSelected}>
           <AlertsIcon selected={alertsSelected} />
           <Text colour={alertsSelected ? "text-brand" : "text-light"}>
@@ -55,7 +65,16 @@ const MainMenuButtons = ({ selected }: { selected: Selected }) => {
   );
 };
 
-export function PropertiesPageWithSideMenu({ children }: PropsWithChildren) {
+export async function PropertiesPageWithSideMenu({
+  children,
+}: PropsWithChildren) {
+  // get alerts for user
+  const session = await auth();
+
+  const alerts = await Alert.getForHomeowner(session?.user?.id ?? "");
+
+  const newAlertsCount = alerts.filter((alert) => !alert.viewed).length;
+
   return (
     <div className="flex w-full flex-nowrap">
       <div className="fixed top-0 hidden h-full w-40 flex-none overflow-hidden border border-r-4  border-altPrimary bg-altPrimary md:block">
@@ -68,6 +87,7 @@ export function PropertiesPageWithSideMenu({ children }: PropsWithChildren) {
         <BottomMenu
           selected={Selected.PROPERTIES}
           MainMenuButtons={MainMenuButtons}
+          alerts={newAlertsCount}
         />
       </div>
       <div className="grow md:pl-40">{children}</div>
