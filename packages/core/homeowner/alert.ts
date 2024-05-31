@@ -53,3 +53,5 @@ export async function getForHomeowner(homeownerId: string) {
 
   return alerts;
 }
+
+export type Alerts = Awaited<ReturnType<typeof getForHomeowner>>;

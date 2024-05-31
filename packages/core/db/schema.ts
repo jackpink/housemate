@@ -153,12 +153,12 @@ export const homeownerAlert = sqliteTable("homeowner_alert", {
   date: text("date")
     .notNull()
     .default(sql`(current_date)`),
-  homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
-    onDelete: "cascade",
-  }),
-  propertyId: text("propertyId").references(() => property.id, {
-    onDelete: "cascade",
-  }),
+  homeownerId: text("homeownerId")
+    .notNull()
+    .references(() => homeownerUsers.id),
+  propertyId: text("propertyId")
+    .notNull()
+    .references(() => property.id),
   viewed: integer("viewed", { mode: "boolean" }).notNull().default(false),
   itemId: text("itemId").references(() => item.id),
 });
