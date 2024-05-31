@@ -143,3 +143,22 @@ export const itemFileRelations = relations(itemFile, ({ one }) => ({
     references: [item.id],
   }),
 }));
+
+export const homeownerAlert = sqliteTable("homeowner_alert", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: text("title").notNull(),
+  description: text("description"),
+  date: text("date")
+    .notNull()
+    .default(sql`(current_date)`),
+  homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
+    onDelete: "cascade",
+  }),
+  propertyId: text("propertyId").references(() => property.id, {
+    onDelete: "cascade",
+  }),
+  viewed: integer("viewed", { mode: "boolean" }).notNull().default(false),
+  itemId: text("itemId").references(() => item.id),
+});
