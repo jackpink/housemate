@@ -94,3 +94,31 @@ export async function PropertiesPageWithSideMenu({
     </div>
   );
 }
+
+export async function AlertsPageWithSideMenu({ children }: PropsWithChildren) {
+  // get alerts for user
+  const session = await auth();
+
+  const alerts = await Alert.getForHomeowner(session?.user?.id ?? "");
+
+  const newAlertsCount = alerts.filter((alert) => !alert.viewed).length;
+
+  return (
+    <div className="flex w-full flex-nowrap">
+      <div className="fixed top-0 hidden h-full w-40 flex-none overflow-hidden border border-r-4  border-altPrimary bg-altPrimary md:block">
+        <SideMenu
+          selected={Selected.ALERTS}
+          MainMenuButtons={MainMenuButtons}
+        />
+      </div>
+      <div className="h-26 fixed bottom-0 z-40  w-full  overflow-hidden border border-t-4 border-altPrimary bg-altPrimary py-3  md:hidden">
+        <BottomMenu
+          selected={Selected.ALERTS}
+          MainMenuButtons={MainMenuButtons}
+          alerts={newAlertsCount}
+        />
+      </div>
+      <div className="grow md:pl-40">{children}</div>
+    </div>
+  );
+}
