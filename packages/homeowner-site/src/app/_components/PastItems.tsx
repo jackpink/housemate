@@ -47,22 +47,9 @@ export default function PastItems({
       const itemDate = item.date;
 
       dateResult = itemDate >= startDate && itemDate <= endDate;
-      console.log(
-        "Item Date",
-        itemDate,
-
-        endDate,
-        dateResult,
-        itemDate <= endDate,
-      );
     }
-    console.log("Title Result", titleResult, item.title);
     return titleResult && categoryResult && dateResult;
   });
-
-  console.log("New Filtered Items", newFilteredItems);
-  console.log("completedItems", completedItems);
-  console.log("title", title);
 
   if (deviceType === "mobile") {
     return (
