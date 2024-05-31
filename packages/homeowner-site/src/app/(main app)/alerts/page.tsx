@@ -3,6 +3,7 @@ import { PageWithSingleColumn } from "../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
 import { redirect } from "next/navigation";
 import { Alert } from "../../../../../core/homeowner/alert";
+import { Alerts } from "~/app/_components/Alerts";
 
 export default async function AlertsPage() {
   const session = await auth();
@@ -20,9 +21,7 @@ export default async function AlertsPage() {
       <PageTitle>Alerts</PageTitle>
 
       <PageWithSingleColumn>
-        {alerts.map((alert) => (
-          <div>{alert.title}</div>
-        ))}
+        <Alerts alerts={alerts} />
       </PageWithSingleColumn>
     </>
   );
