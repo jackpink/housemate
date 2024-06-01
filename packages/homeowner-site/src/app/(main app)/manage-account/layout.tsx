@@ -1,4 +1,4 @@
-import { PropertiesPageWithSideMenu } from "~/app/_components/Layout";
+import { ManageAccountPageWithSideMenu } from "~/app/_components/Layout";
 
 export default async function MainAppLayout({
   children,
@@ -7,7 +7,7 @@ export default async function MainAppLayout({
 }) {
   return (
     <>
-      <PropertiesPageWithSideMenu>{children}</PropertiesPageWithSideMenu>
+      <ManageAccountPageWithSideMenu>{children}</ManageAccountPageWithSideMenu>
       <div className="h-48"></div>
     </>
   );

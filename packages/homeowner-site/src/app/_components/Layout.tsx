@@ -65,9 +65,10 @@ const MainMenuButtons = ({ selected, alerts }: MainMenuButtonsProps) => {
   );
 };
 
-export async function PropertiesPageWithSideMenu({
+async function PageWithBottomMenu({
   children,
-}: PropsWithChildren) {
+  selected,
+}: PropsWithChildren<{ selected: Selected }>) {
   // get alerts for user
   const session = await auth();
 
@@ -77,48 +78,40 @@ export async function PropertiesPageWithSideMenu({
 
   return (
     <div className="flex w-full flex-nowrap">
-      <div className="fixed top-0 hidden h-full w-40 flex-none overflow-hidden border border-r-4  border-altPrimary bg-altPrimary md:block">
-        <SideMenu
-          selected={Selected.PROPERTIES}
-          MainMenuButtons={MainMenuButtons}
-        />
-      </div>
       <div className="h-26 fixed bottom-0 z-40  w-full  overflow-hidden border border-t-4 border-altPrimary bg-altPrimary py-3  md:hidden">
         <BottomMenu
-          selected={Selected.PROPERTIES}
+          selected={selected}
           MainMenuButtons={MainMenuButtons}
           alerts={newAlertsCount}
         />
       </div>
-      <div className="grow md:pl-40">{children}</div>
+      <div className="grow">{children}</div>
     </div>
   );
 }
 
-export async function AlertsPageWithSideMenu({ children }: PropsWithChildren) {
-  // get alerts for user
-  const session = await auth();
-
-  const alerts = await Alert.getForHomeowner(session?.user?.id ?? "");
-
-  const newAlertsCount = alerts.filter((alert) => !alert.viewed).length;
-
+export async function PropertiesPageWithSideMenu({
+  children,
+}: PropsWithChildren) {
   return (
-    <div className="flex w-full flex-nowrap">
-      <div className="fixed top-0 hidden h-full w-40 flex-none overflow-hidden border border-r-4  border-altPrimary bg-altPrimary md:block">
-        <SideMenu
-          selected={Selected.ALERTS}
-          MainMenuButtons={MainMenuButtons}
-        />
-      </div>
-      <div className="h-26 fixed bottom-0 z-40  w-full  overflow-hidden border border-t-4 border-altPrimary bg-altPrimary py-3  md:hidden">
-        <BottomMenu
-          selected={Selected.ALERTS}
-          MainMenuButtons={MainMenuButtons}
-          alerts={newAlertsCount}
-        />
-      </div>
-      <div className="grow md:pl-40">{children}</div>
-    </div>
+    <PageWithBottomMenu selected={Selected.PROPERTIES}>
+      {children}
+    </PageWithBottomMenu>
+  );
+}
+
+export async function AlertsPageWithSideMenu({ children }: PropsWithChildren) {
+  return (
+    <PageWithBottomMenu selected={Selected.ALERTS}>
+      {children}
+    </PageWithBottomMenu>
+  );
+}
+
+export async function ManageAccountPageWithSideMenu({
+  children,
+}: PropsWithChildren) {
+  return (
+    <PageWithBottomMenu selected={Selected.NONE}>{children}</PageWithBottomMenu>
   );
 }
