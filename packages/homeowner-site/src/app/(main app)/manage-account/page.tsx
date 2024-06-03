@@ -29,10 +29,6 @@ export default async function ManageAccountPage() {
         <h1 className="border-b-2 border-black font-semibold">General</h1>
         <div className="flex flex-col items-center justify-center">
           <GeneralSettings user={user} />
-          <p>Email: {user.email}</p>
-          <p>First Name: {user.firstName}</p>
-          <p>Last Name: {user.lastName}</p>
-          <CTAButton rounded>Change Password</CTAButton>
         </div>
         <h1 className="border-b-2 border-black font-semibold">Alerts</h1>
       </PageWithSingleColumn>

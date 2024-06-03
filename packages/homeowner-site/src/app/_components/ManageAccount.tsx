@@ -9,10 +9,16 @@ import {
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { User } from "../../../../core/homeowner/user";
 import { updateUser } from "../actions";
+import { CTAButton } from "../../../../ui/Atoms/Button";
 
 export function GeneralSettings({ user }: { user: User }) {
   return (
-    <div className="w-full p-4">
+    <div className="flex w-full flex-col items-center p-4">
+      <div className="flex w-full justify-between p-2">
+        <EditableComponentLabel label="Email: " />
+        <p className="text-lg">{user.email}</p>
+      </div>
+      <CTAButton rounded>Change Primary Email</CTAButton>
       <EditableComponent
         value={user.firstName}
         EditModeComponent={EditableFirstName}
@@ -31,6 +37,7 @@ export function GeneralSettings({ user }: { user: User }) {
         }
         editable
       />
+      <CTAButton rounded>Change Password</CTAButton>
     </div>
   );
 }
