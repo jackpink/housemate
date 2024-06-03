@@ -27,6 +27,28 @@ export async function create({
   return created.id;
 }
 
+export async function update({
+  id,
+  firstName,
+  lastName,
+}: {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+}) {
+  console.log("Try to update user", id, firstName, lastName);
+  const [updated] = await db
+    .update(schema.homeownerUsers)
+    .set({
+      firstName,
+      lastName,
+    })
+    .where(eq(schema.homeownerUsers.id, id))
+    .returning({ id: schema.homeownerUsers.id });
+  if (!updated) throw new Error("Failed to update user");
+  return updated.id;
+}
+
 export async function getByCredentials(email: string, password: string) {
   console.log("Try to get user by credentials");
 }
@@ -44,5 +66,7 @@ export async function getById(id: string) {
     .select()
     .from(schema.homeownerUsers)
     .where(eq(schema.homeownerUsers.id, id));
+  if (!user[0]) throw new Error("User not found");
   return user[0];
 }
+export type User = Awaited<ReturnType<typeof getById>>;
