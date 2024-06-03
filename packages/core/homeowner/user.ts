@@ -79,3 +79,8 @@ export async function getById(id: string) {
   return user[0];
 }
 export type User = Awaited<ReturnType<typeof getById>>;
+
+export async function getAll() {
+  const users = await db.select().from(schema.homeownerUsers);
+  return users;
+}

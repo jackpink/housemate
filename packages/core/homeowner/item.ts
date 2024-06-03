@@ -158,3 +158,18 @@ export async function getCompleted(homeownerId: string) {
 }
 
 export type CompletedItems = Awaited<ReturnType<typeof getCompleted>>;
+
+export async function getWarrantyAlertForUser(
+  homeownerId: string,
+  warrantyEndDate: string,
+) {
+  const items = await db.query.item.findMany({
+    where: (item, { eq }) =>
+      and(
+        eq(item.homeownerId, homeownerId),
+        eq(item.warrantyEndDate, warrantyEndDate),
+      ),
+    with: { files: true },
+  });
+  return items;
+}

@@ -121,6 +121,7 @@ export const item = sqliteTable("item", {
   propertyId: text("propertyId").references(() => property.id, {
     onDelete: "cascade",
   }),
+  warrantyEndDate: text("warrantyEndDate"),
 });
 
 export const itemRelations = relations(item, ({ many }) => ({
