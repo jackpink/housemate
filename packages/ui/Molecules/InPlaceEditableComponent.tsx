@@ -226,7 +226,9 @@ export const EditMode: React.FC<{
 };
 
 export function EditableComponentLabel({ label }: { label: string }) {
-  return <TextSpan className="text-xl font-medium">{label}</TextSpan>;
+  return (
+    <TextSpan className="text-nowrap text-xl font-medium">{label}</TextSpan>
+  );
 }
 
 export function CapitaliseText({
@@ -239,7 +241,7 @@ export function CapitaliseText({
   return (
     <>
       <span>{capitalise ? value.charAt(0).toUpperCase() : value}</span>
-      <span>{capitalise ? value.slice(1) : ""}</span>
+      <span className="	">{capitalise ? value.slice(1) : ""}</span>
     </>
   );
 }
