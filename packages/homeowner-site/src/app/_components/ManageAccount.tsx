@@ -13,7 +13,7 @@ import { CTAButton } from "../../../../ui/Atoms/Button";
 
 export function GeneralSettings({ user }: { user: User }) {
   return (
-    <div className="flex w-screen flex-col items-center p-4">
+    <div className="flex w-screen flex-col items-center p-2">
       <div className="flex w-full justify-between p-2">
         <EditableComponentLabel label="Email: " />
         <p className="text-lg">{user.email}</p>
@@ -115,7 +115,7 @@ export function AlertSettings({ user }: { user: User }) {
   const taskReminderValue = getAlertString(user.taskReminder);
   const taskOverdueValue = getAlertString(user.taskOverdueReminder);
   return (
-    <div className="flex w-full flex-col items-center p-4">
+    <div className="flex w-full flex-col items-center p-2">
       <EditableComponent
         value={warrantyAlertValue}
         EditModeComponent={EditableWarranty}
@@ -136,6 +136,18 @@ export function AlertSettings({ user }: { user: User }) {
           updateUser({
             id: user.id,
             taskReminder: getAlertNumber(value),
+          });
+        }}
+        editable
+      />
+      <EditableComponent
+        value={taskOverdueValue}
+        EditModeComponent={EditableTaskOverdueReminder}
+        StandardComponent={TaskOverdueReminder}
+        updateValue={async (value: string) => {
+          updateUser({
+            id: user.id,
+            taskOverdueReminder: getAlertNumber(value),
           });
         }}
         editable
@@ -177,7 +189,7 @@ const EditableWarranty: EditModeComponent = ({ value, setValue }) => {
 const TaskReminder: StandardComponent = ({ value, pending }) => {
   return (
     <div className="flex w-full items-center">
-      <EditableComponentLabel label="Task Reminder:" />
+      <EditableComponentLabel label={"Task Reminder Alerts:"} />
       <p className={clsx("p-2 text-xl ", pending && "text-slate-500")}>
         {value}
       </p>
@@ -187,8 +199,42 @@ const TaskReminder: StandardComponent = ({ value, pending }) => {
 
 const EditableTaskReminder: EditModeComponent = ({ value, setValue }) => {
   return (
-    <div className="flex w-full items-center">
-      <EditableComponentLabel label="Task Reminder:" />
+    <div className="w-full items-center md:flex">
+      <EditableComponentLabel label="Task Reminder Alerts:" />
+      <select
+        onChange={(e) => setValue(e.currentTarget.value)}
+        value={value}
+        size={1}
+      >
+        <option value="No Alert">No Alert</option>
+        <option value="1 Week">1 Week</option>
+        <option value="2 Weeks">2 Weeks</option>
+        <option value="1 Month">1 Month</option>
+        <option value="3 Months">3 Months</option>
+        <option value="6 Months">6 Months</option>
+      </select>
+    </div>
+  );
+};
+
+const TaskOverdueReminder: StandardComponent = ({ value, pending }) => {
+  return (
+    <div className="flex w-full items-center ">
+      <EditableComponentLabel label="Task Overdue Alerts:" />
+      <p className={clsx("p-2 text-xl ", pending && "text-slate-500")}>
+        {value}
+      </p>
+    </div>
+  );
+};
+
+const EditableTaskOverdueReminder: EditModeComponent = ({
+  value,
+  setValue,
+}) => {
+  return (
+    <div className="w-full items-center md:flex">
+      <EditableComponentLabel label="Task Overdue Alerts:" />
       <select
         onChange={(e) => setValue(e.currentTarget.value)}
         value={value}
