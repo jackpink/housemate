@@ -26,6 +26,9 @@ export const homeownerUsers = sqliteTable("homeowner_user", {
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
   password: text("password"),
+  warrantyAlert: integer("warranty_alert").notNull().default(30),
+  taskReminder: integer("task_reminder").notNull().default(7),
+  taskOverdueReminder: integer("task_overdue_reminder").notNull().default(7),
 });
 
 export const homeownerAccounts = sqliteTable(
