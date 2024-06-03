@@ -3,8 +3,10 @@ import { PageWithSingleColumn } from "../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
 import { redirect } from "next/navigation";
 import { User } from "../../../../../core/homeowner/user";
-import { CTAButton } from "../../../../../ui/Atoms/Button";
-import { GeneralSettings } from "~/app/_components/ManageAccount";
+import {
+  AlertSettings,
+  GeneralSettings,
+} from "~/app/_components/ManageAccount";
 
 export default async function ManageAccountPage() {
   const session = await auth();
@@ -31,6 +33,9 @@ export default async function ManageAccountPage() {
           <GeneralSettings user={user} />
         </div>
         <h1 className="border-b-2 border-black font-semibold">Alerts</h1>
+        <div>
+          <AlertSettings user={user} />
+        </div>
       </PageWithSingleColumn>
     </>
   );

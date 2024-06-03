@@ -203,14 +203,27 @@ export async function updateUser({
   id,
   firstName,
   lastName,
+  warrantyAlert,
+  taskReminder,
+  taskOverdueReminder,
 }: {
   id: string;
   firstName?: string;
   lastName?: string;
+  warrantyAlert?: number;
+  taskReminder?: number;
+  taskOverdueReminder?: number;
 }) {
   "use server";
   // update user
-  const user = await User.update({ id, firstName, lastName });
+  const user = await User.update({
+    id,
+    firstName,
+    lastName,
+    warrantyAlert,
+    taskReminder,
+    taskOverdueReminder,
+  });
   if (!user) throw new Error("Failed to update user");
   revalidatePath(`/manage-account`);
 }
