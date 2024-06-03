@@ -13,6 +13,7 @@ import {
 import React from "react";
 import { signUp } from "../actions";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -81,8 +82,10 @@ const createUser = async (
   state: any,
   formData: FormData,
 ): Promise<FormState> => {
+  let result;
+
   try {
-    const result = signUpSchema.parse({
+    result = signUpSchema.parse({
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
       email: formData.get("email"),
@@ -91,12 +94,11 @@ const createUser = async (
     });
 
     console.log("new user", result.firstName);
-
-    await signUp(result);
   } catch (error) {
     console.error("Error signing up", error);
     return fromErrorToFormState(error);
   }
+  await signUp(result);
 
   return {
     error: false,

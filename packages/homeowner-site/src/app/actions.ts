@@ -75,7 +75,19 @@ export async function signUp({
   // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  User.create({ firstName, lastName, email, password: hashedPassword });
+  User.create({ firstName, lastName, email, password: hashedPassword })
+    .then((userId) => {
+      console.log("User created", userId);
+    })
+    .catch((error) => {
+      console.error("Error signing up", error);
+      throw error;
+    })
+    .finally(() => {
+      //redirect(redirectPath);
+    });
+
+  redirect("/sign-in");
 
   // TODO: Send verification token email
   return {
@@ -184,4 +196,19 @@ export async function getDeviceType() {
     console.log("desktop");
     return "desktop";
   }
+}
+
+export async function updateUser({
+  id,
+  firstName,
+  lastName,
+}: {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+}) {
+  "use server";
+  // update user
+  const user = await User.update({ id, firstName, lastName });
+  if (!user) throw new Error("Failed to update user");
 }
