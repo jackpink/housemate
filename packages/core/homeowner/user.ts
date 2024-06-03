@@ -31,10 +31,16 @@ export async function update({
   id,
   firstName,
   lastName,
+  warrantyAlert,
+  taskReminder,
+  taskOverdueReminder,
 }: {
   id: string;
   firstName?: string;
   lastName?: string;
+  warrantyAlert?: number;
+  taskReminder?: number;
+  taskOverdueReminder?: number;
 }) {
   console.log("Try to update user", id, firstName, lastName);
   const [updated] = await db
@@ -42,6 +48,9 @@ export async function update({
     .set({
       firstName,
       lastName,
+      warrantyAlert,
+      taskReminder,
+      taskOverdueReminder,
     })
     .where(eq(schema.homeownerUsers.id, id))
     .returning({ id: schema.homeownerUsers.id });
