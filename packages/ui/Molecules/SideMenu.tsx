@@ -6,6 +6,7 @@ export enum HomeownerSelected {
   PROPERTIES,
   ALERTS,
   SEARCH,
+  NONE,
 }
 
 export const SideMenu = ({
