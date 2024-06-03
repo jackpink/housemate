@@ -114,6 +114,7 @@ export async function createProperty({
   country: string;
   homeownerId: string;
 }) {
+  console.log;
   const propertyId = await Property.create({
     apartment,
     streetNumber,
@@ -211,4 +212,5 @@ export async function updateUser({
   // update user
   const user = await User.update({ id, firstName, lastName });
   if (!user) throw new Error("Failed to update user");
+  revalidatePath(`/manage-account`);
 }
