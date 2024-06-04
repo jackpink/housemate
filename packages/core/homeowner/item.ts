@@ -159,7 +159,7 @@ export async function getCompleted(homeownerId: string) {
 
 export type CompletedItems = Awaited<ReturnType<typeof getCompleted>>;
 
-export async function getWarrantyAlertForUser(
+export async function getForUserAndWarrantyDate(
   homeownerId: string,
   warrantyEndDate: string,
 ) {
@@ -169,7 +169,16 @@ export async function getWarrantyAlertForUser(
         eq(item.homeownerId, homeownerId),
         eq(item.warrantyEndDate, warrantyEndDate),
       ),
-    with: { files: true },
+  });
+  return items;
+}
+
+export type Items = Awaited<ReturnType<typeof getForUserAndWarrantyDate>>;
+
+export async function getForUserAndDate(userId: string, taskDate: string) {
+  const items = await db.query.item.findMany({
+    where: (item, { eq }) =>
+      and(eq(item.homeownerId, userId), eq(item.date, taskDate)),
   });
   return items;
 }

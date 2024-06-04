@@ -8,11 +8,13 @@ export async function create({
   description,
   homeownerId,
   propertyId,
+  itemId,
 }: {
   title: string;
   description?: string;
   homeownerId: string;
   propertyId: string;
+  itemId?: string;
 }) {
   const [created] = await db
     .insert(homeownerAlert)
@@ -21,6 +23,7 @@ export async function create({
       description,
       homeownerId,
       propertyId,
+      itemId,
     })
     .returning({ id: homeownerAlert.id });
   if (!created) throw new Error("Failed to create alert");

@@ -118,9 +118,11 @@ export const item = sqliteTable("item", {
   homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
     onDelete: "cascade",
   }),
-  propertyId: text("propertyId").references(() => property.id, {
-    onDelete: "cascade",
-  }),
+  propertyId: text("propertyId")
+    .references(() => property.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
   warrantyEndDate: text("warrantyEndDate"),
 });
 
