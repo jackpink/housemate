@@ -12,6 +12,7 @@ import {
 import { createItemAction } from "../actions";
 import { ErrorMessage } from "../../../../ui/Atoms/Text";
 import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction, useState } from "react";
 
 export default function AddItem({
   homeownerId,
@@ -20,6 +21,8 @@ export default function AddItem({
   homeownerId: string;
   propertyId: string;
 }) {
+  const [category, setCategory] = useState("job");
+
   const { pending } = useFormStatus();
 
   const router = useRouter();
@@ -53,6 +56,7 @@ export default function AddItem({
   };
 
   const [state, formAction] = useFormState(createItem, emptyFormState);
+
   return (
     <form className="flex flex-col gap-4" action={formAction}>
       <TextInputWithError
@@ -61,9 +65,9 @@ export default function AddItem({
         error={!!state.fieldErrors["title"]?.[0]}
         errorMessage={state.fieldErrors["title"]?.[0]}
       />
-      <Status />
+      <Category setCategory={setCategory} />
+      <Status category={category} />
 
-      <Category />
       <CTAButton rounded className="mt-8 w-full" loading={pending}>
         {pending ? "Adding Item..." : "Add Item"}
       </CTAButton>
@@ -74,7 +78,44 @@ export default function AddItem({
   );
 }
 
-function Status() {
+function Status({ category }: { category: string }) {
+  if (category === "issue") {
+    return (
+      <div className="hidden">
+        <label htmlFor="status" className="text-lg">
+          Status
+        </label>
+        <select
+          id="status"
+          name="status"
+          size={1}
+          className="rounded-full bg-altSecondary/70 p-6"
+          value={"todo"}
+        >
+          <option value="todo">To Do</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+    );
+  } else if (category === "product") {
+    return (
+      <div className="hidden">
+        <label htmlFor="status" className="text-lg">
+          Status
+        </label>
+        <select
+          id="status"
+          name="status"
+          size={1}
+          className="rounded-full bg-altSecondary/70 p-6"
+          value={"completed"}
+        >
+          <option value="todo">To Do</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+    );
+  }
   return (
     <>
       <label htmlFor="status" className="text-lg">
@@ -93,7 +134,11 @@ function Status() {
   );
 }
 
-function Category() {
+function Category({
+  setCategory,
+}: {
+  setCategory: Dispatch<SetStateAction<string>>;
+}) {
   return (
     <>
       <label htmlFor="category" className="text-lg">
@@ -104,6 +149,9 @@ function Category() {
         name="category"
         size={1}
         className="rounded-full bg-altSecondary/70 p-6"
+        onChange={(e) => {
+          setCategory(e.target.value);
+        }}
       >
         <option value="job">Job</option>
         <option value="product">Product</option>
