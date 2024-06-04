@@ -45,6 +45,7 @@ export default async function TodoItemPage({
     description,
     recurring,
     date,
+    warrantyEndDate,
   }) => {
     "use server";
     console.log("updateItem", title, description, recurring);
@@ -54,6 +55,7 @@ export default async function TodoItemPage({
       description,
       recurring,
       date,
+      warrantyEndDate,
     });
     revalidatePath(`/properties/${params.propertyId}/items/${params.itemId}`);
   };

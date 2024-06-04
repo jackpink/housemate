@@ -27,6 +27,7 @@ export type UpdateItemServerAction = ({
   description?: string;
   recurring?: boolean;
   date?: string;
+  warrantyEndDate?: string;
 }) => Promise<void>;
 
 export default function EditItem({
@@ -43,7 +44,215 @@ export default function EditItem({
   Files: React.ReactNode;
 }) {
   const date = new Date(item.date);
-  console.log("dat from DB", date.toDateString());
+
+  if (item.category === "product") {
+    return (
+      <EditProduct
+        item={item}
+        updateItem={updateItem}
+        bucketName={bucketName}
+        propertyId={propertyId}
+        Files={Files}
+        date={date}
+      />
+    );
+  }
+
+  return (
+    <EditJob
+      item={item}
+      updateItem={updateItem}
+      bucketName={bucketName}
+      propertyId={propertyId}
+      Files={Files}
+      date={date}
+    />
+  );
+}
+
+function EditProduct({
+  item,
+  updateItem,
+  bucketName,
+  propertyId,
+  Files,
+  date,
+}: {
+  item: ItemWithFiles;
+  updateItem: UpdateItemServerAction;
+  bucketName: string;
+  propertyId: string;
+  Files: React.ReactNode;
+  date: Date;
+}) {
+  return (
+    <>
+      <div className="py-4 pl-10">
+        <EditableComponent
+          value={item.title}
+          EditModeComponent={EditableTitle}
+          StandardComponent={Title}
+          updateValue={async (value: string) => updateItem({ title: value })}
+          editable
+        />
+      </div>
+      <Line />
+      <div className="flex flex-wrap-reverse items-center justify-center">
+        <div className="flex w-full flex-col items-center justify-center lg:w-96 2xl:w-128">
+          <InPlaceEditableComponent
+            title="Description"
+            value={item.description}
+            EditModeComponent={EditableDescription}
+            StandardComponent={Description}
+            updateValue={async (value: string) =>
+              updateItem({ description: value })
+            }
+            editable
+          />
+
+          <Line />
+          <EditableComponent
+            value={date.toDateString()}
+            EditModeComponent={EditableDateOfItem}
+            StandardComponent={DateOfItem}
+            updateValue={async (value: string) => {
+              console.log("value before add", value);
+
+              updateItem({ date: value });
+            }}
+            editable
+          />
+
+          <Line />
+          <EditableComponent
+            value={item.warrantyEndDate || "No Warranty"}
+            EditModeComponent={EditableWarrantyEndDate}
+            StandardComponent={WarrantyEndDate}
+            updateValue={async (value: string) => {
+              console.log("value before add", value);
+
+              updateItem({ warrantyEndDate: value });
+            }}
+            editable
+          />
+          <Line />
+
+          <PhotosAndDocuments
+            itemId={item.id}
+            bucketName={bucketName}
+            propertyId={propertyId}
+            Files={Files}
+          />
+        </div>
+      </div>
+    </>
+  );
+}
+
+function EditIssue({
+  item,
+  updateItem,
+  bucketName,
+  propertyId,
+  Files,
+  date,
+}: {
+  item: ItemWithFiles;
+  updateItem: UpdateItemServerAction;
+  bucketName: string;
+  propertyId: string;
+  Files: React.ReactNode;
+  date: Date;
+}) {
+  return (
+    <>
+      <div className="py-4 pl-10">
+        <EditableComponent
+          value={item.title}
+          EditModeComponent={EditableTitle}
+          StandardComponent={Title}
+          updateValue={async (value: string) => updateItem({ title: value })}
+          editable
+        />
+      </div>
+      <Line />
+      <div className="flex flex-wrap-reverse items-center justify-center">
+        <div className="flex w-full flex-col items-center justify-center lg:w-96 2xl:w-128">
+          <InPlaceEditableComponent
+            title="Description"
+            value={item.description}
+            EditModeComponent={EditableDescription}
+            StandardComponent={Description}
+            updateValue={async (value: string) =>
+              updateItem({ description: value })
+            }
+            editable
+          />
+          <Line />
+          <Status status="todo" />
+          <Line />
+          <EditableComponent
+            value={date.toDateString()}
+            EditModeComponent={EditableDateOfItem}
+            StandardComponent={DateOfItem}
+            updateValue={async (value: string) => {
+              console.log("value before add", value);
+
+              updateItem({ date: value });
+            }}
+            editable
+          />
+
+          <div className="w-full">
+            <EditableComponent
+              value={item.recurring ? "recurring" : "one-off"}
+              EditModeComponent={EditableOneOffRecurring}
+              StandardComponent={OneOffRecurring}
+              updateValue={async (value: string) => {
+                console.log("value", value);
+
+                let recurring = value === "recurring" ? true : false;
+                console.log("recurring", recurring);
+                updateItem({ recurring: recurring });
+              }}
+              editable
+            />
+            <EditableComponent
+              value="Weekly"
+              EditModeComponent={EditableSchedule}
+              StandardComponent={Schedule}
+              updateValue={async (value) => console.log("value", value)}
+              editable
+            />
+            <Line />
+          </div>
+          <PhotosAndDocuments
+            itemId={item.id}
+            bucketName={bucketName}
+            propertyId={propertyId}
+            Files={Files}
+          />
+        </div>
+      </div>
+    </>
+  );
+}
+
+function EditJob({
+  item,
+  updateItem,
+  bucketName,
+  propertyId,
+  Files,
+  date,
+}: {
+  item: ItemWithFiles;
+  updateItem: UpdateItemServerAction;
+  bucketName: string;
+  propertyId: string;
+  Files: React.ReactNode;
+  date: Date;
+}) {
   return (
     <>
       <div className="py-4 pl-10">
@@ -289,6 +498,50 @@ const EditableDateOfItem: EditModeComponent = function ({ value, setValue }) {
   return (
     <div className="w-full">
       <EditableComponentLabel label="Date" />
+      <div className="w-full pt-2 text-lg">
+        <input
+          type="date"
+          value={dateString}
+          onChange={(e) => setValue(e.currentTarget.value)}
+        />
+      </div>
+    </div>
+  );
+};
+
+const WarrantyEndDate: StandardComponent = function ({ value, pending }) {
+  if (value === "No Warranty") {
+    return (
+      <div className="w-full">
+        <EditableComponentLabel label="Warranty End Date" />
+        <p className={clsx("w-full pt-2 text-lg", pending && "text-slate-500")}>
+          {value}
+        </p>
+      </div>
+    );
+  }
+  const date = new Date(value);
+  console.log("date", date.toDateString());
+  return (
+    <div className="w-full">
+      <EditableComponentLabel label="Warranty End Date" />
+      <p className={clsx("w-full pt-2 text-lg", pending && "text-slate-500")}>
+        {date.toDateString()}
+      </p>
+    </div>
+  );
+};
+
+const EditableWarrantyEndDate: EditModeComponent = function ({
+  value,
+  setValue,
+}) {
+  const date = new Date(value);
+  const dateString = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : ""}${date.getDate()}`;
+  console.log("date editable", dateString);
+  return (
+    <div className="w-full">
+      <EditableComponentLabel label="Warranty End Date" />
       <div className="w-full pt-2 text-lg">
         <input
           type="date"
