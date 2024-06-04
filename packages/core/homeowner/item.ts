@@ -1,7 +1,7 @@
 export * as Item from "./item";
 import { ItemCategory, ItemStatus, item, itemFile } from "../db/schema";
 import { db } from "../db";
-import { eq, InferSelectModel, and, asc, desc, lte, gte } from "drizzle-orm";
+import { eq, and, asc, desc, or } from "drizzle-orm";
 
 export async function create({
   title,
@@ -44,6 +44,7 @@ export async function update({
   date,
   priority,
   status,
+  warrantyEndDate,
 }: {
   id: string;
   title?: string;
@@ -52,6 +53,7 @@ export async function update({
   date?: string;
   priority?: number;
   status?: ItemStatus;
+  warrantyEndDate?: string;
 }) {
   await db
     .update(item)
@@ -62,6 +64,7 @@ export async function update({
       date,
       toDoPriority: priority,
       status,
+      warrantyEndDate,
     })
     .where(eq(item.id, id));
 }
@@ -106,6 +109,10 @@ export async function getToDosCompletedThisWeek(homeownerId: string) {
       and(
         eq(item.homeownerId, homeownerId),
         eq(item.status, ItemStatus.COMPLETED),
+        or(
+          eq(item.category, ItemCategory.JOB),
+          eq(item.category, ItemCategory.ISSUE),
+        ),
       ),
     with: { files: true },
   });
