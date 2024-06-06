@@ -38,6 +38,8 @@ async function File({ file }: { file: ItemWithFiles["files"][0] }) {
     bucketName: file.bucket,
   });
 
+  console.log("presigned url", url);
+
   const isPdf = file.type.endsWith("pdf");
 
   console.log("url", url);
