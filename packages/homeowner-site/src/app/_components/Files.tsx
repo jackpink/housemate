@@ -28,6 +28,7 @@ async function File({ file }: { file: ItemWithFiles["files"][0] }) {
       Bucket: bucketName,
       Key: key,
     };
+    console.log("params", params);
     const getObjectCommand = new GetObjectCommand(params);
     const url = await getSignedUrl(new S3Client({}), getObjectCommand);
     return url;
@@ -47,7 +48,14 @@ async function File({ file }: { file: ItemWithFiles["files"][0] }) {
         {isPdf ? (
           <PdfFileIcon />
         ) : (
-          <Image
+          // <Image
+          //   src={url}
+          //   alt="house"
+          //   className="h-full w-auto object-contain"
+          //   width={350}
+          //   height={330}
+          // />
+          <img
             src={url}
             alt="house"
             className="h-full w-auto object-contain"
