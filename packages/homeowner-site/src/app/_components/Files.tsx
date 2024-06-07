@@ -54,8 +54,8 @@ async function File({ file }: { file: ItemWithFiles["files"][0] }) {
             src={url}
             alt="house"
             className="h-full w-auto object-contain"
-            width={350}
-            height={330}
+            width={200}
+            height={200}
           />
           // <img
           //   src={url}
