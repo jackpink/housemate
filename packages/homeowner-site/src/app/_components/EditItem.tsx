@@ -586,7 +586,7 @@ function PhotosAndDocuments({
     <div className="w-full p-2">
       <EditableComponentLabel label="Photos and Documents" />
       <ImageUploader
-        bucketKey={`${itemId}/`}
+        bucketKey={`${itemId}`}
         deviceType="desktop"
         onUploadComplete={onUploadComplete}
         bucketName={bucketName}
