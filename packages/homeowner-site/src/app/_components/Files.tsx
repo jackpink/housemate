@@ -1,21 +1,32 @@
-import { type ItemWithFiles } from "../../../../core/homeowner/item";
+import {
+  type ItemWithFiles,
+  type Files,
+} from "../../../../core/homeowner/item";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
 import { PdfFileIcon } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
 
-export default function Files({ files }: { files: ItemWithFiles["files"] }) {
+export default function Files({
+  rootFolder,
+}: {
+  rootFolder: ItemWithFiles["filesRootFolder"];
+}) {
+  if (!rootFolder) {
+    return <div>No files</div>;
+  }
+
   return (
     <div className="flex w-full flex-wrap justify-center gap-8 py-4">
-      {files.map((file) => (
+      {rootFolder.files.map((file) => (
         <File file={file} />
       ))}
     </div>
   );
 }
 
-async function File({ file }: { file: ItemWithFiles["files"][0] }) {
+async function File({ file }: { file: Files[number] }) {
   const getImageFromBucket = async ({
     key,
     bucketName,
@@ -33,6 +44,7 @@ async function File({ file }: { file: ItemWithFiles["files"][0] }) {
     const url = await getSignedUrl(new S3Client({}), getObjectCommand);
     return url;
   };
+  const fileKey = file.key;
   const url = await getImageFromBucket({
     key: file.key,
     bucketName: file.bucket,

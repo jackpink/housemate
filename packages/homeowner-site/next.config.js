@@ -10,7 +10,7 @@ const config = {
     remotePatterns: [
       {
         hostname:
-          "prod-my-sst-app-default-itemuploadsbucket713f469a-b7dxb0spvs67.s3.us-east-1.amazonaws.com",
+          "dev-my-sst-app-default-itemuploadsbucket713f469a-yqlxlhugoane.s3.ap-southeast-2.amazonaws.com",
       },
       {
         hostname:

@@ -78,7 +78,7 @@ export default async function TodoItemPage({
             updateItem={updateItem}
             propertyId={params.propertyId}
             bucketName={bucketName}
-            Files={<Files files={item.files} />}
+            Files={<Files rootFolder={item.filesRootFolder} />}
           />
           <p>{item.status}</p>
         </div>
