@@ -124,11 +124,39 @@ export const item = sqliteTable("item", {
     })
     .notNull(),
   warrantyEndDate: text("warrantyEndDate"),
+  filesRootFolderId: text("filesFolderId"),
 });
 
-export const itemRelations = relations(item, ({ many }) => ({
-  files: many(itemFile),
+export const itemRelations = relations(item, ({ one, many }) => ({
+  filesRootFolder: one(itemFilesFolder, {
+    fields: [item.filesRootFolderId],
+    references: [itemFilesFolder.id],
+  }),
+  alerts: many(homeownerAlert),
 }));
+
+export const itemFilesFolder = sqliteTable("item_files_folder", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  itemId: text("item_id").references(() => item.id, {}),
+  parentId: text("parent_id"),
+});
+
+export const itemFilesFolderRelations = relations(
+  itemFilesFolder,
+  ({ many, one }) => ({
+    files: many(itemFile, {
+      relationName: "files",
+    }),
+    folders: many(itemFilesFolder),
+    parent: one(itemFilesFolder, {
+      fields: [itemFilesFolder.parentId],
+      references: [itemFilesFolder.id],
+    }),
+  }),
+);
 
 export const itemFile = sqliteTable("item_file", {
   id: text("id")
@@ -138,15 +166,14 @@ export const itemFile = sqliteTable("item_file", {
   key: text("key").notNull(),
   type: text("type").notNull(),
   bucket: text("bucket").notNull(),
-  itemId: text("itemId").references(() => item.id, {
-    onDelete: "cascade",
-  }),
+  folderId: text("folderId").notNull(),
 });
 
 export const itemFileRelations = relations(itemFile, ({ one }) => ({
-  item: one(item, {
-    fields: [itemFile.itemId],
-    references: [item.id],
+  folder: one(itemFilesFolder, {
+    fields: [itemFile.folderId],
+    references: [itemFilesFolder.id],
+    relationName: "files",
   }),
 }));
 

@@ -1,7 +1,13 @@
 export * as Item from "./item";
-import { ItemCategory, ItemStatus, item, itemFile } from "../db/schema";
+import {
+  ItemCategory,
+  ItemStatus,
+  item,
+  itemFile,
+  itemFilesFolder,
+} from "../db/schema";
 import { db } from "../db";
-import { eq, and, asc, desc, or } from "drizzle-orm";
+import { eq, and, asc, desc, or, type InferSelectModel } from "drizzle-orm";
 
 export async function create({
   title,
@@ -22,19 +28,40 @@ export async function create({
     .returning({ id: item.id });
 
   if (!created) throw new Error("Failed to create item");
+  // add a root folder for the item
+  const [folderCreated] = await db
+    .insert(itemFilesFolder)
+    .values({ name: "root", itemId: created.id })
+    .returning({ id: itemFilesFolder.id });
+
+  if (!folderCreated) throw new Error("Failed to create folder for item");
+
   return created.id;
 }
 
 export async function get(id: string) {
   const result = await db.query.item.findFirst({
     where: eq(item.id, id),
-    with: { files: true },
+    with: {
+      filesRootFolder: {
+        with: {
+          files: true,
+          folders: true,
+        },
+      },
+    },
   });
   if (!result) throw new Error("Item not found");
   return result;
 }
 
 export type ItemWithFiles = Awaited<ReturnType<typeof get>>;
+
+//export type FilesFolder = ItemWithFiles["filesRootFolder"].
+
+export type File = InferSelectModel<typeof itemFile>;
+
+export type Files = File[];
 
 export async function update({
   id,
@@ -70,13 +97,13 @@ export async function update({
 }
 
 export async function addFile({
-  itemId,
+  folderId,
   name,
   key,
   bucket,
   type,
 }: {
-  itemId: string;
+  folderId: string;
   name: string;
   key: string;
   bucket: string;
@@ -84,7 +111,7 @@ export async function addFile({
 }) {
   await db
     .insert(itemFile)
-    .values({ itemId, name, key, bucket, type })
+    .values({ folderId, name, key, bucket, type })
     .returning({ id: itemFile.id });
 }
 
@@ -96,7 +123,11 @@ export async function getToDos(homeownerId: string) {
     where: (item, { eq }) =>
       and(eq(item.homeownerId, homeownerId), eq(item.status, ItemStatus.TODO)),
 
-    with: { files: true },
+    with: {
+      filesRootFolder: {
+        with: { files: true, folders: true },
+      },
+    },
     orderBy: [desc(item.toDoPriority)],
   });
   console.log("items", items);
@@ -114,7 +145,11 @@ export async function getToDosCompletedThisWeek(homeownerId: string) {
           eq(item.category, ItemCategory.ISSUE),
         ),
       ),
-    with: { files: true },
+    with: {
+      filesRootFolder: {
+        with: { files: true, folders: true },
+      },
+    },
   });
   const todaysDate = new Date();
   items.filter((item) => {
@@ -159,7 +194,11 @@ export async function getCompleted(homeownerId: string) {
         eq(item.status, ItemStatus.COMPLETED),
       ),
     orderBy: [desc(item.date)],
-    with: { files: true },
+    with: {
+      filesRootFolder: {
+        with: { files: true, folders: true },
+      },
+    },
   });
   return items;
 }
