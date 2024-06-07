@@ -50,20 +50,20 @@ async function File({ file }: { file: ItemWithFiles["files"][0] }) {
         {isPdf ? (
           <PdfFileIcon />
         ) : (
-          // <Image
-          //   src={url}
-          //   alt="house"
-          //   className="h-full w-auto object-contain"
-          //   width={350}
-          //   height={330}
-          // />
-          <img
+          <Image
             src={url}
             alt="house"
             className="h-full w-auto object-contain"
             width={350}
             height={330}
           />
+          // <img
+          //   src={url}
+          //   alt="house"
+          //   className="h-full w-auto object-contain"
+          //   width={350}
+          //   height={330}
+          // />
         )}
         <Text className="text-wrap break-words text-sm">{file.name}</Text>
       </div>
