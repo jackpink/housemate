@@ -11,6 +11,7 @@ import { revalidatePath } from "next/cache";
 import { Bucket } from "sst/node/bucket";
 import Files from "~/app/_components/Files";
 import { redirect } from "next/navigation";
+import { getDeviceType } from "~/app/actions";
 
 export default async function TodoItemPage({
   params,
@@ -18,6 +19,8 @@ export default async function TodoItemPage({
   params: { propertyId: string; itemId: string };
 }) {
   const session = await auth();
+
+  const deviceType = await getDeviceType();
 
   const item = await Item.get(params.itemId);
 
@@ -78,7 +81,12 @@ export default async function TodoItemPage({
             updateItem={updateItem}
             propertyId={params.propertyId}
             bucketName={bucketName}
-            Files={<Files rootFolder={item.filesRootFolder} />}
+            Files={
+              <Files
+                rootFolder={item.filesRootFolder}
+                deviceType={deviceType}
+              />
+            }
           />
           <p>{item.status}</p>
         </div>

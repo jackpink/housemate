@@ -164,7 +164,8 @@ export async function createItemAction({
   return itemId;
 }
 
-export async function addFileToItemAction({
+export async function addFileToFolderAction({
+  folderId,
   itemId,
   name,
   key,
@@ -172,6 +173,7 @@ export async function addFileToItemAction({
   propertyId,
   type,
 }: {
+  folderId: string;
   itemId: string;
   name: string;
   key: string;
@@ -179,7 +181,7 @@ export async function addFileToItemAction({
   propertyId: string;
   type: string;
 }) {
-  const itemFileId = Item.addFile({ itemId, name, key, bucket, type });
+  const itemFileId = Item.addFile({ folderId, name, key, bucket, type });
   revalidatePath(`/properties/${propertyId}/items/${itemId}`);
   return itemFileId;
 }

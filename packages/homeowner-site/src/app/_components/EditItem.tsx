@@ -11,7 +11,7 @@ import {
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { item } from "../../../../core/db/schema";
 import ImageUploader from "../../../../ui/Molecules/ImageUploader";
-import { addFileToItemAction } from "../actions";
+import { addFileToFolderAction } from "../actions";
 import { type ItemWithFiles } from "../../../../core/homeowner/item";
 import React from "react";
 
@@ -142,6 +142,7 @@ function EditProduct({
             bucketName={bucketName}
             propertyId={propertyId}
             Files={Files}
+            folderId={item.filesRootFolderId!}
           />
         </div>
       </div>
@@ -227,6 +228,7 @@ function EditIssue({
             <Line />
           </div>
           <PhotosAndDocuments
+            folderId={item.filesRootFolderId!}
             itemId={item.id}
             bucketName={bucketName}
             propertyId={propertyId}
@@ -316,6 +318,7 @@ function EditJob({
             <Line />
           </div>
           <PhotosAndDocuments
+            folderId={item.filesRootFolderId!}
             itemId={item.id}
             bucketName={bucketName}
             propertyId={propertyId}
@@ -331,7 +334,7 @@ function Line() {
   return <div className="w-full border-2 border-altSecondary"></div>;
 }
 
-const Title: StandardComponent = ({ value, pending }) => {
+export const Title: StandardComponent = ({ value, pending }) => {
   return (
     <h1 className={clsx("p-2 text-xl font-bold", pending && "text-slate-500")}>
       {value}
@@ -339,7 +342,7 @@ const Title: StandardComponent = ({ value, pending }) => {
   );
 };
 
-const EditableTitle: EditModeComponent = ({ value, setValue }) => {
+export const EditableTitle: EditModeComponent = ({ value, setValue }) => {
   return (
     <input
       type="text"
@@ -555,11 +558,13 @@ const EditableWarrantyEndDate: EditModeComponent = function ({
 
 function PhotosAndDocuments({
   itemId,
+  folderId,
   bucketName,
   propertyId,
   Files,
 }: {
   itemId: string;
+  folderId: string;
   bucketName: string;
   propertyId: string;
   Files: React.ReactNode;
@@ -573,7 +578,8 @@ function PhotosAndDocuments({
     key: string;
     type: string;
   }) => {
-    addFileToItemAction({
+    addFileToFolderAction({
+      folderId,
       itemId,
       name,
       key,

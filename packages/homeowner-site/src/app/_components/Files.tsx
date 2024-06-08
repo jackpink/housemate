@@ -1,32 +1,86 @@
 import {
   type ItemWithFiles,
   type Files,
+  type Folder,
 } from "../../../../core/homeowner/item";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
-import { PdfFileIcon } from "../../../../ui/Atoms/Icons";
+import {
+  DownloadIcon,
+  EditIconSmall,
+  PdfFileIcon,
+  ViewIcon,
+} from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
+import { MobileImage } from "./File";
 
 export default function Files({
   rootFolder,
+  deviceType,
 }: {
   rootFolder: ItemWithFiles["filesRootFolder"];
+  deviceType: string;
 }) {
   if (!rootFolder) {
     return <div>No files</div>;
   }
 
+  if (deviceType === "mobile") {
+    return <MobileFiles rootFolder={rootFolder} deviceType={deviceType} />;
+  }
+
   return (
     <div className="flex w-full flex-wrap justify-center gap-8 py-4">
       {rootFolder.files.map((file) => (
-        <File file={file} />
+        <File file={file} deviceType={deviceType} />
       ))}
     </div>
   );
 }
 
-async function File({ file }: { file: Files[number] }) {
+function MobileFiles({
+  rootFolder,
+  deviceType,
+}: {
+  rootFolder: Folder;
+  deviceType: string;
+}) {
+  return (
+    <div>
+      <MobileFolder folder={rootFolder}>
+        {rootFolder.files.map((file) => (
+          <File file={file} deviceType={deviceType} />
+        ))}
+      </MobileFolder>
+    </div>
+  );
+}
+
+function MobileFolder({
+  folder,
+  children,
+}: {
+  folder: Folder;
+  children: React.ReactNode;
+}) {
+  return (
+    <details className="" open>
+      <summary className="rounded-md bg-slate-300 p-2 capitalize">
+        {folder.name}
+      </summary>
+      <div className="py-2 pl-4">{children}</div>
+    </details>
+  );
+}
+
+async function File({
+  file,
+  deviceType,
+}: {
+  file: Files[number];
+  deviceType: string;
+}) {
   const getImageFromBucket = async ({
     key,
     bucketName,
@@ -44,7 +98,6 @@ async function File({ file }: { file: Files[number] }) {
     const url = await getSignedUrl(new S3Client({}), getObjectCommand);
     return url;
   };
-  const fileKey = file.key;
   const url = await getImageFromBucket({
     key: file.key,
     bucketName: file.bucket,
@@ -55,6 +108,14 @@ async function File({ file }: { file: Files[number] }) {
   const isPdf = file.type.endsWith("pdf");
 
   console.log("url", url);
+
+  if (deviceType === "mobile") {
+    return (
+      <div className="flex h-14 w-full items-center justify-between">
+        {isPdf ? <PdfFileIcon /> : <MobileImage url={url} file={file} />}
+      </div>
+    );
+  }
 
   return (
     <div className="flex  flex-col items-center justify-center">
