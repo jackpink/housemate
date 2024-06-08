@@ -18,7 +18,7 @@ export function MobileImage({
   file: Files[number];
 }) {
   return (
-    <div className="flex h-14 w-full items-center justify-center">
+    <div className="relative flex h-14 w-full items-center justify-center">
       <div className="w-14 ">
         <Image
           src={url}
@@ -41,19 +41,22 @@ export function MobileImage({
 
 const Title: StandardComponent = ({ value, pending }) => {
   return (
-    <Text className={clsx("p-2 text-sm", pending && "text-slate-500")}>
-      {value}
-    </Text>
+    <p className={clsx("p-2 text-sm", pending && "text-slate-500")}>{value}</p>
   );
 };
 
 const EditableTitle: EditModeComponent = ({ value, setValue }) => {
   return (
-    <input
-      type="text"
-      className="w-28 rounded-lg border-2 border-slate-400 p-2 text-sm"
-      value={value}
-      onChange={(e) => setValue(e.currentTarget.value)}
-    />
+    <>
+      <input
+        type="text"
+        className="absolute -left-0 w-28 rounded-lg  border-2 border-slate-400 p-2 text-sm"
+        value={value}
+        onChange={(e) => setValue(e.currentTarget.value)}
+      />
+      <button className=" absolute left-32 rounded-full border-2 border-black p-2 text-sm font-semibold">
+        Move
+      </button>
+    </>
   );
 };
