@@ -22,21 +22,37 @@ export async function create({
   homeownerId: string;
   propertyId: string;
 }) {
-  const [created] = await db
-    .insert(item)
-    .values({ title, status, category, homeownerId, propertyId })
-    .returning({ id: item.id });
+  const itemId = await db.transaction(async (tx) => {
+    const [folderCreated] = await tx
+      .insert(itemFilesFolder)
+      .values({ name: "root" })
+      .returning({ id: itemFilesFolder.id });
 
-  if (!created) throw new Error("Failed to create item");
-  // add a root folder for the item
-  const [folderCreated] = await db
-    .insert(itemFilesFolder)
-    .values({ name: "root", itemId: created.id })
-    .returning({ id: itemFilesFolder.id });
+    if (!folderCreated) throw new Error("Failed to create folder for item");
 
-  if (!folderCreated) throw new Error("Failed to create folder for item");
+    const [itemCreated] = await tx
+      .insert(item)
+      .values({
+        title,
+        status,
+        category,
+        homeownerId,
+        propertyId,
+        filesRootFolderId: folderCreated.id,
+      })
+      .returning({ id: item.id });
 
-  return created.id;
+    if (!itemCreated) throw new Error("Failed to create item");
+
+    await tx
+      .update(itemFilesFolder)
+      .set({ itemId: itemCreated.id })
+      .where(eq(itemFilesFolder.id, folderCreated.id));
+
+    return itemCreated.id;
+  });
+
+  return itemId;
 }
 
 export async function get(id: string) {
@@ -46,7 +62,6 @@ export async function get(id: string) {
       filesRootFolder: {
         with: {
           files: true,
-          folders: true,
         },
       },
     },
@@ -62,6 +77,19 @@ export type ItemWithFiles = Awaited<ReturnType<typeof get>>;
 export type File = InferSelectModel<typeof itemFile>;
 
 export type Files = File[];
+
+export type Folder = Awaited<ReturnType<typeof getFilesRootFolder>>;
+
+export async function getFilesRootFolder(id: string) {
+  const result = await db.query.itemFilesFolder.findFirst({
+    where: eq(itemFilesFolder.itemId, id),
+    with: {
+      files: true,
+    },
+  });
+  if (!result) throw new Error("Folder not found");
+  return result;
+}
 
 export async function update({
   id,
@@ -125,7 +153,7 @@ export async function getToDos(homeownerId: string) {
 
     with: {
       filesRootFolder: {
-        with: { files: true, folders: true },
+        with: { files: true },
       },
     },
     orderBy: [desc(item.toDoPriority)],
@@ -147,7 +175,7 @@ export async function getToDosCompletedThisWeek(homeownerId: string) {
       ),
     with: {
       filesRootFolder: {
-        with: { files: true, folders: true },
+        with: { files: true },
       },
     },
   });
@@ -196,7 +224,7 @@ export async function getCompleted(homeownerId: string) {
     orderBy: [desc(item.date)],
     with: {
       filesRootFolder: {
-        with: { files: true, folders: true },
+        with: { files: true },
       },
     },
   });

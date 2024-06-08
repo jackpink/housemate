@@ -5,6 +5,8 @@ import {
   primaryKey,
   sqliteTable,
   text,
+  AnySQLiteColumn,
+  foreignKey,
 } from "drizzle-orm/sqlite-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
@@ -135,14 +137,26 @@ export const itemRelations = relations(item, ({ one, many }) => ({
   alerts: many(homeownerAlert),
 }));
 
-export const itemFilesFolder = sqliteTable("item_files_folder", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  name: text("name").notNull(),
-  itemId: text("item_id").references(() => item.id, {}),
-  parentId: text("parent_id"),
-});
+export const itemFilesFolder = sqliteTable(
+  "item_files_folder",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: text("name").notNull(),
+    itemId: text("item_id").references(() => item.id, {}),
+    parentId: text("parent_id"),
+  },
+  // (folder) => {
+  //   return {
+  //     parentReference: foreignKey({
+  //       columns: [folder.parentId],
+  //       foreignColumns: [folder.id],
+  //       name: "parent_fk",
+  //     }),
+  //   };
+  // },
+);
 
 export const itemFilesFolderRelations = relations(
   itemFilesFolder,
@@ -150,11 +164,9 @@ export const itemFilesFolderRelations = relations(
     files: many(itemFile, {
       relationName: "files",
     }),
-    folders: many(itemFilesFolder),
-    parent: one(itemFilesFolder, {
-      fields: [itemFilesFolder.parentId],
-      references: [itemFilesFolder.id],
-    }),
+    // folders: many(itemFilesFolder, {
+    //   relationName: "folders",
+    // }),
   }),
 );
 
@@ -166,7 +178,9 @@ export const itemFile = sqliteTable("item_file", {
   key: text("key").notNull(),
   type: text("type").notNull(),
   bucket: text("bucket").notNull(),
-  folderId: text("folderId").notNull(),
+  folderId: text("folderId")
+    .notNull()
+    .references(() => itemFilesFolder.id),
 });
 
 export const itemFileRelations = relations(itemFile, ({ one }) => ({
