@@ -87,6 +87,7 @@ export default async function TodoItemPage({
                 deviceType={deviceType}
               />
             }
+            deviceType={deviceType}
           />
           <p>{item.status}</p>
         </div>

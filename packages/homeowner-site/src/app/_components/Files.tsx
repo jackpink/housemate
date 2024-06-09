@@ -26,6 +26,8 @@ export default function Files({
     return <div>No files</div>;
   }
 
+  console.log("rootFolder", rootFolder);
+
   if (deviceType === "mobile") {
     return <MobileFiles rootFolder={rootFolder} deviceType={deviceType} />;
   }
@@ -93,7 +95,7 @@ async function File({
       Bucket: bucketName,
       Key: key,
     };
-    console.log("params", params);
+
     const getObjectCommand = new GetObjectCommand(params);
     const url = await getSignedUrl(new S3Client({}), getObjectCommand);
     return url;
@@ -103,11 +105,7 @@ async function File({
     bucketName: file.bucket,
   });
 
-  console.log("presigned url", url);
-
   const isPdf = file.type.endsWith("pdf");
-
-  console.log("url", url);
 
   if (deviceType === "mobile") {
     return (

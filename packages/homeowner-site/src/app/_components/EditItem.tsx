@@ -11,9 +11,27 @@ import {
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { item } from "../../../../core/db/schema";
 import ImageUploader from "../../../../ui/Molecules/ImageUploader";
-import { addFileToFolderAction } from "../actions";
+import { addFileToFolderAction, createFolderForItem } from "../actions";
 import { type ItemWithFiles } from "../../../../core/homeowner/item";
 import React from "react";
+import { LargeAddIcon, PlusIcon } from "../../../../ui/Atoms/Icons";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeading,
+  DialogTrigger,
+} from "../../../../ui/Atoms/Dialog";
+import { CTAButton } from "../../../../ui/Atoms/Button";
+import { useFormState } from "react-dom";
+import {
+  FormState,
+  emptyFormState,
+  fromErrorToFormState,
+} from "../../../../core/homeowner/forms";
+import { z } from "zod";
+import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 
 const createDateString = (date: Date) => {
   const dateString = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : "1"}${date.getDate()}`;
@@ -36,12 +54,14 @@ export default function EditItem({
   bucketName,
   propertyId,
   Files,
+  deviceType,
 }: {
   item: ItemWithFiles;
   updateItem: UpdateItemServerAction;
   bucketName: string;
   propertyId: string;
   Files: React.ReactNode;
+  deviceType: "desktop" | "mobile";
 }) {
   const date = new Date(item.date);
 
@@ -54,6 +74,7 @@ export default function EditItem({
         propertyId={propertyId}
         Files={Files}
         date={date}
+        deviceType={deviceType}
       />
     );
   }
@@ -66,6 +87,7 @@ export default function EditItem({
       propertyId={propertyId}
       Files={Files}
       date={date}
+      deviceType={deviceType}
     />
   );
 }
@@ -77,6 +99,7 @@ function EditProduct({
   propertyId,
   Files,
   date,
+  deviceType,
 }: {
   item: ItemWithFiles;
   updateItem: UpdateItemServerAction;
@@ -84,6 +107,7 @@ function EditProduct({
   propertyId: string;
   Files: React.ReactNode;
   date: Date;
+  deviceType: "desktop" | "mobile";
 }) {
   return (
     <>
@@ -143,6 +167,7 @@ function EditProduct({
             propertyId={propertyId}
             Files={Files}
             folderId={item.filesRootFolderId!}
+            deviceType={deviceType}
           />
         </div>
       </div>
@@ -157,6 +182,7 @@ function EditIssue({
   propertyId,
   Files,
   date,
+  deviceType,
 }: {
   item: ItemWithFiles;
   updateItem: UpdateItemServerAction;
@@ -164,6 +190,7 @@ function EditIssue({
   propertyId: string;
   Files: React.ReactNode;
   date: Date;
+  deviceType: "desktop" | "mobile";
 }) {
   return (
     <>
@@ -233,6 +260,7 @@ function EditIssue({
             bucketName={bucketName}
             propertyId={propertyId}
             Files={Files}
+            deviceType={deviceType}
           />
         </div>
       </div>
@@ -247,6 +275,7 @@ function EditJob({
   propertyId,
   Files,
   date,
+  deviceType,
 }: {
   item: ItemWithFiles;
   updateItem: UpdateItemServerAction;
@@ -254,6 +283,7 @@ function EditJob({
   propertyId: string;
   Files: React.ReactNode;
   date: Date;
+  deviceType: "desktop" | "mobile";
 }) {
   return (
     <>
@@ -323,6 +353,7 @@ function EditJob({
             bucketName={bucketName}
             propertyId={propertyId}
             Files={Files}
+            deviceType={deviceType}
           />
         </div>
       </div>
@@ -334,7 +365,7 @@ function Line() {
   return <div className="w-full border-2 border-altSecondary"></div>;
 }
 
-export const Title: StandardComponent = ({ value, pending }) => {
+const Title: StandardComponent = ({ value, pending }) => {
   return (
     <h1 className={clsx("p-2 text-xl font-bold", pending && "text-slate-500")}>
       {value}
@@ -342,7 +373,7 @@ export const Title: StandardComponent = ({ value, pending }) => {
   );
 };
 
-export const EditableTitle: EditModeComponent = ({ value, setValue }) => {
+const EditableTitle: EditModeComponent = ({ value, setValue }) => {
   return (
     <input
       type="text"
@@ -562,12 +593,14 @@ function PhotosAndDocuments({
   bucketName,
   propertyId,
   Files,
+  deviceType,
 }: {
   itemId: string;
   folderId: string;
   bucketName: string;
   propertyId: string;
   Files: React.ReactNode;
+  deviceType: "desktop" | "mobile";
 }) {
   const onUploadComplete = ({
     name,
@@ -588,16 +621,104 @@ function PhotosAndDocuments({
       type,
     });
   };
+  console.log("deviceType", deviceType);
   return (
     <div className="w-full p-2">
       <EditableComponentLabel label="Photos and Documents" />
-      <ImageUploader
-        bucketKey={`${itemId}`}
-        deviceType="desktop"
-        onUploadComplete={onUploadComplete}
-        bucketName={bucketName}
-      />
+      <div className="flex w-full justify-around py-4">
+        <ImageUploader
+          bucketKey={`${itemId}`}
+          deviceType={deviceType}
+          onUploadComplete={onUploadComplete}
+          bucketName={bucketName}
+        />
+        <PhotosAndDocumentsAddFolder parentFolderId={folderId} />
+      </div>
       {Files}
     </div>
   );
 }
+
+function PhotosAndDocumentsAddFolder({
+  parentFolderId,
+}: {
+  parentFolderId: string;
+}) {
+  const [state, formAction] = useFormState(createFolder, emptyFormState);
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <AddFolderButton onClick={() => {}} />
+      </DialogTrigger>
+      <DialogContent className="Dialog">
+        <DialogClose className="float-end rounded-lg border-2 border-black p-2">
+          <p>Close</p>
+        </DialogClose>
+        <DialogHeading className="pt-3 text-xl">New Folder</DialogHeading>
+        <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
+          <EditableComponentLabel label="Folder Name" />
+          <form action={formAction}>
+            <TextInputWithError
+              label="Folder Name"
+              name="name"
+              error={!!state.fieldErrors["lastName"]?.[0]}
+              errorMessage={state.fieldErrors["lastName"]?.[0]}
+            />
+            <input
+              type="text"
+              value={parentFolderId}
+              name="parentId"
+              id="parentId"
+              hidden
+            />
+
+            <CTAButton rounded>Create Folder</CTAButton>
+          </form>
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function AddFolderButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex w-36 flex-col items-center justify-center rounded-lg bg-brand p-2"
+    >
+      <PlusIcon width={23} height={23} />
+      <Text className="font-semibold">Add Folder</Text>
+    </button>
+  );
+}
+
+export const addFolderSchema = z.object({
+  name: z.string().min(1),
+  parentId: z.string().min(1),
+});
+
+const createFolder = async (
+  state: any,
+  formData: FormData,
+): Promise<FormState> => {
+  let result;
+
+  try {
+    result = addFolderSchema.parse({
+      name: formData.get("name"),
+      parentId: formData.get("parentId"),
+    });
+
+    console.log("new folder", result.name);
+  } catch (error) {
+    console.error("Error signing up", error);
+    return fromErrorToFormState(error);
+  }
+  await createFolderForItem(result);
+
+  return {
+    error: false,
+    message: "Success",
+    fieldErrors: {},
+  };
+};

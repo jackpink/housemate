@@ -229,3 +229,13 @@ export async function updateUser({
   if (!user) throw new Error("Failed to update user");
   revalidatePath(`/manage-account`);
 }
+
+export async function createFolderForItem({
+  parentId,
+  name,
+}: {
+  parentId: string;
+  name: string;
+}) {
+  await Item.addFolder({ parentId, name });
+}
