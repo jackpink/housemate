@@ -164,9 +164,14 @@ export const itemFilesFolderRelations = relations(
     files: many(itemFile, {
       relationName: "files",
     }),
-    // folders: many(itemFilesFolder, {
-    //   relationName: "folders",
-    // }),
+    folders: many(itemFilesFolder, {
+      relationName: "folders",
+    }),
+    folder: one(itemFilesFolder, {
+      fields: [itemFilesFolder.parentId],
+      references: [itemFilesFolder.id],
+      relationName: "folders",
+    }),
   }),
 );
 

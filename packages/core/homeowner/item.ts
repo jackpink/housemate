@@ -62,6 +62,7 @@ export async function get(id: string) {
       filesRootFolder: {
         with: {
           files: true,
+          folders: true,
         },
       },
     },
@@ -140,6 +141,20 @@ export async function addFile({
   await db
     .insert(itemFile)
     .values({ folderId, name, key, bucket, type })
+    .returning({ id: itemFile.id });
+}
+
+export async function addFolder({
+  parentId,
+  name,
+}: {
+  parentId: string;
+  name: string;
+}) {
+  console.log("addFolder", parentId, name);
+  await db
+    .insert(itemFilesFolder)
+    .values({ parentId, name })
     .returning({ id: itemFile.id });
 }
 
