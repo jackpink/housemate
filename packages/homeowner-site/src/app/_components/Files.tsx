@@ -2,16 +2,12 @@ import {
   type ItemWithFiles,
   type Files,
   type Folder,
+  type RootFolder,
 } from "../../../../core/homeowner/item";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
-import {
-  DownloadIcon,
-  EditIconSmall,
-  PdfFileIcon,
-  ViewIcon,
-} from "../../../../ui/Atoms/Icons";
+import { PdfFileIcon } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
 import { MobileImage } from "./File";
 
@@ -45,7 +41,7 @@ function MobileFiles({
   rootFolder,
   deviceType,
 }: {
-  rootFolder: Folder;
+  rootFolder: RootFolder;
   deviceType: string;
 }) {
   return (
@@ -54,6 +50,15 @@ function MobileFiles({
         {rootFolder.files.map((file) => (
           <File file={file} deviceType={deviceType} />
         ))}
+        <div className="pl-2">
+          {rootFolder.folders.map((folder) => (
+            <MobileFolder folder={folder}>
+              {folder.files.map((file) => (
+                <File file={file} deviceType={deviceType} />
+              ))}
+            </MobileFolder>
+          ))}
+        </div>
       </MobileFolder>
     </div>
   );
