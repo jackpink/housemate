@@ -62,7 +62,11 @@ export async function get(id: string) {
       filesRootFolder: {
         with: {
           files: true,
-          folders: true,
+          folders: {
+            with: {
+              files: true,
+            },
+          },
         },
       },
     },
@@ -79,13 +83,31 @@ export type File = InferSelectModel<typeof itemFile>;
 
 export type Files = File[];
 
-export type Folder = Awaited<ReturnType<typeof getFilesRootFolder>>;
+export type RootFolder = Awaited<ReturnType<typeof getFilesRootFolder>>;
+
+export type Folder = Awaited<ReturnType<typeof getFilesFolder>>;
+
+export async function getFilesFolder(id: string) {
+  const result = await db.query.itemFilesFolder.findFirst({
+    where: eq(itemFilesFolder.itemId, id),
+    with: {
+      files: true,
+    },
+  });
+  if (!result) throw new Error("Folder not found");
+  return result;
+}
 
 export async function getFilesRootFolder(id: string) {
   const result = await db.query.itemFilesFolder.findFirst({
     where: eq(itemFilesFolder.itemId, id),
     with: {
       files: true,
+      folders: {
+        with: {
+          files: true,
+        },
+      },
     },
   });
   if (!result) throw new Error("Folder not found");
@@ -152,7 +174,7 @@ export async function addFolder({
   name: string;
 }) {
   console.log("addFolder", parentId, name);
-  await db
+  const result = await db
     .insert(itemFilesFolder)
     .values({ parentId, name })
     .returning({ id: itemFile.id });
