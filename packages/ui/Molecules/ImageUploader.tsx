@@ -14,6 +14,14 @@ import {
   UploadIcon,
   WarningIcon,
 } from "../Atoms/Icons";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeading,
+  DialogTrigger,
+} from "../Atoms/Dialog";
 
 type UploadStatus =
   | "fileSizeError"
@@ -37,7 +45,7 @@ export default function ImageUploader({
 }: {
   bucketKey: string;
   bucketName: string;
-  deviceType: string;
+  deviceType: "mobile" | "desktop";
   onUploadComplete: ({
     key,
     name,
@@ -130,7 +138,18 @@ export default function ImageUploader({
         }
       });
   };
-
+  console.log("deviceType", deviceType);
+  if (deviceType === "mobile") {
+    console.log("mobile imatge updloader");
+    return (
+      <MobileFileUploadDialog
+        currentUploads={currentUploads}
+        setCurrentUploads={setCurrentUploads}
+        uploadImageToBucket={uploadImageToBucket}
+        deviceType={deviceType}
+      />
+    );
+  }
   if (currentUploads.length > 0) {
     return (
       <>
@@ -149,6 +168,7 @@ export default function ImageUploader({
               progress={upload.progress}
               uploadImageToBucket={uploadImageToBucket}
               index={index}
+              deviceType={deviceType}
             />
           ))}
         </div>
@@ -325,7 +345,7 @@ function SelectImageToUploadForMobile({
         className="mb-4 flex h-full flex-col items-center justify-center"
       >
         <div className="bg-brand text-dark hover:bg-brand/70 cursor-pointer rounded-full border-0 p-6 text-xl font-extrabold">
-          Choose Image To Upload
+          Browse Files
         </div>
         <input
           onChange={selectFile}
@@ -348,6 +368,7 @@ function UploadSelectedImage({
   progress,
   uploadImageToBucket,
   index,
+  deviceType,
 }: {
   status: UploadStatus;
   filePreviewUrl: string | undefined;
@@ -355,9 +376,41 @@ function UploadSelectedImage({
   progress: number;
   uploadImageToBucket: (index: number) => void;
   index: number;
+  deviceType: "mobile" | "desktop";
 }) {
   // if file is a pdf, show a pdf icon
   const isPdf = fileName.endsWith(".pdf");
+
+  if (deviceType === "mobile") {
+    return (
+      <div className="flex items-center justify-center">
+        <div className="flex w-full">
+          {status === "fileTypeError" || status === "fileSizeError" ? (
+            <WarningIcon width={120} height={80} colour="rgb(239 68 68)" />
+          ) : isPdf ? (
+            <PdfFileIcon />
+          ) : (
+            <img src={filePreviewUrl} width={48} height={48} />
+          )}
+          <Text className="w-32 text-wrap break-words text-sm">{fileName}</Text>
+          {status === "preview" && (
+            <UploadFromPreview
+              uploadImageToBucket={() => uploadImageToBucket(index)}
+            />
+          )}
+          {status === "uploading" && <ProgressBar progress={progress} />}
+          {status === "error" && (
+            <UploadError
+              uploadImageToBucket={() => uploadImageToBucket(index)}
+            />
+          )}
+          {status === "success" && <UploadSuccess />}
+          {status === "fileTypeError" && <FileError status={status} />}
+          {status === "fileSizeError" && <FileError status={status} />}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex  flex-col items-center justify-center">
@@ -426,7 +479,7 @@ function UploadFromPreview({
   return (
     <button
       onClick={uploadImageToBucket}
-      className="bg-altSecondary flex w-full justify-center rounded-lg p-2 "
+      className="bg-altSecondary flex w-full items-center justify-center rounded-lg p-2 "
     >
       <UploadIcon /> <Text className="pl-2 text-sm">Upload</Text>
     </button>
@@ -534,5 +587,95 @@ function UploadingBar({ progress }: { progress: number }) {
     >
       Uploading
     </CTAButton>
+  );
+}
+
+/*
+##########################################################################
+MOBILE FILE UPLOAD DIALOG
+##########################################################################
+*/
+
+function MobileFileUploadDialog({
+  currentUploads,
+  setCurrentUploads,
+  uploadImageToBucket,
+  deviceType,
+}: {
+  currentUploads: Upload[];
+  setCurrentUploads: React.Dispatch<React.SetStateAction<Upload[]>>;
+  uploadImageToBucket: (index: number) => void;
+  deviceType: "mobile" | "desktop";
+}) {
+  if (currentUploads.length > 0) {
+    return (
+      <Dialog>
+        <DialogTrigger asChild>
+          <MobileFileUploadButton onClick={() => {}} />
+        </DialogTrigger>
+        <DialogContent className="Dialog">
+          <DialogClose className="float-end rounded-lg border-2 border-black p-2">
+            <p>Close</p>
+          </DialogClose>
+          <DialogHeading className="pt-3 text-xl">Filters</DialogHeading>
+          <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
+            <UploadButton
+              currentUploads={currentUploads}
+              setCurrentUploads={setCurrentUploads}
+              uploadImageToBucket={uploadImageToBucket}
+            />
+            <div className="flex w-full flex-col justify-center gap-4 py-4">
+              {currentUploads.map((upload, index) => (
+                <UploadSelectedImage
+                  filePreviewUrl={URL.createObjectURL(upload.file)}
+                  fileName={upload.file.name}
+                  key={index}
+                  status={upload.status}
+                  progress={upload.progress}
+                  uploadImageToBucket={uploadImageToBucket}
+                  index={index}
+                  deviceType={deviceType}
+                />
+              ))}
+            </div>
+          </DialogDescription>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <MobileFileUploadButton onClick={() => {}} />
+      </DialogTrigger>
+      <DialogContent className="Dialog">
+        <DialogClose className="float-end rounded-lg border-2 border-black p-2">
+          <p>Close</p>
+        </DialogClose>
+        <DialogHeading className="pt-3 text-xl">File Upload</DialogHeading>
+        <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
+          <SelectImageToUpload
+            setCurrentUploads={setCurrentUploads}
+            deviceType="mobile"
+          />
+          <div className="flex w-full flex-wrap justify-center gap-8 py-4">
+            Select Files to Upload
+          </div>
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function MobileFileUploadButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="bg-brand flex w-36 flex-col items-center justify-center rounded-lg p-2"
+    >
+      <UploadIcon />
+      <Text className="font-semibold">Upload Image</Text>
+    </button>
   );
 }
