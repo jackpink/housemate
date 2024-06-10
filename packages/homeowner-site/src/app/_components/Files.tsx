@@ -9,7 +9,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
 import { PdfFileIcon } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
-import { MobileImage } from "./File";
+import { MobileImage, MobilePDF } from "./File";
 
 export default function Files({
   rootFolder,
@@ -115,7 +115,11 @@ async function File({
   if (deviceType === "mobile") {
     return (
       <div className="flex h-14 w-full items-center justify-between">
-        {isPdf ? <PdfFileIcon /> : <MobileImage url={url} file={file} />}
+        {isPdf ? (
+          <MobilePDF file={file} />
+        ) : (
+          <MobileImage url={url} file={file} />
+        )}
       </div>
     );
   }
