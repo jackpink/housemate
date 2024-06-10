@@ -13,7 +13,7 @@ import {
 import { ReactNode, useState } from "react";
 import React from "react";
 
-export function MobileImage({
+export function MobileFile({
   url,
   file,
 }: {
@@ -42,20 +42,31 @@ export function MobileImage({
   );
 }
 
-const Title: StandardComponent = ({ value, pending }) => {
+const MobileImage: StandardComponent = ({ value, pending, url }) => {
   return (
-    <p
-      className={clsx(
-        "w-40 text-wrap break-words p-2 text-sm",
-        pending && "text-slate-500",
-      )}
-    >
-      {value}
-    </p>
+    <div className="relative flex  w-full items-center justify-center">
+      <div className="w-14 ">
+        <Image
+          src={url}
+          alt="house"
+          className="h-full w-auto object-contain"
+          width={56}
+          height={56}
+        />
+      </div>
+      <p
+        className={clsx(
+          "w-40 text-wrap break-words p-2 text-sm",
+          pending && "text-slate-500",
+        )}
+      >
+        {value}
+      </p>
+    </div>
   );
 };
 
-const EditableTitle: EditModeComponent = ({ value, setValue }) => {
+const EditableMobileImage: EditModeComponent = ({ value, setValue, url }) => {
   return (
     <>
       <input
@@ -91,17 +102,21 @@ export function MobilePDF({ file }: { file: Files[number] }) {
 export type StandardComponent = ({
   value,
   pending,
+  url,
 }: {
   value: string;
   pending?: boolean;
+  url: string;
 }) => ReactNode;
 
 export type EditModeComponent = ({
   value,
   setValue,
+  url,
 }: {
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
+  url: string;
 }) => ReactNode;
 
 export function EditableComponent({
@@ -109,12 +124,14 @@ export function EditableComponent({
   EditModeComponent,
   updateValue,
   StandardComponent,
+  url,
   editable,
 }: {
   value: string;
   EditModeComponent: EditModeComponent;
   updateValue: (value: string) => Promise<void>;
   StandardComponent: StandardComponent;
+  url: string;
   editable?: boolean;
 }) {
   const [editMode, setEditMode] = useState(false);
@@ -150,7 +167,11 @@ export function EditableComponent({
         onClickConfirm={onClickConfirmButton}
         onClickCancel={onClickCancelButton}
         EditableComponent={
-          <EditModeComponent value={inputValue} setValue={setInputValue} />
+          <EditModeComponent
+            value={inputValue}
+            setValue={setInputValue}
+            url={url}
+          />
         }
       />
     );
@@ -159,7 +180,11 @@ export function EditableComponent({
   if (!editable) {
     return (
       <EditableComponentWrapper>
-        <StandardComponent value={optimisticValue} pending={pending} />
+        <StandardComponent
+          value={optimisticValue}
+          pending={pending}
+          url={url}
+        />
         <div className="justify-self-end"></div>
       </EditableComponentWrapper>
     );
@@ -167,7 +192,7 @@ export function EditableComponent({
 
   return (
     <div className="flex justify-between p-2">
-      <StandardComponent value={optimisticValue} pending={pending} />
+      <StandardComponent value={optimisticValue} pending={pending} url={url} />
       <div className="justify-self-end">
         <button
           onClick={() => setEditMode(true)}
