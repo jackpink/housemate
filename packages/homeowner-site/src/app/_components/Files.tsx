@@ -9,7 +9,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
 import { PdfFileIcon } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
-import { MobileImage, MobilePDF } from "./File";
+import { MobileFile } from "./File";
 
 export default function Files({
   rootFolder,
@@ -76,7 +76,7 @@ function MobileFolder({
       <summary className="rounded-md bg-slate-300 p-2 capitalize">
         {folder.name}
       </summary>
-      <div className="py-2 pl-4">{children}</div>
+      <div className="grid gap-4 py-2 pl-4">{children}</div>
     </details>
   );
 }
@@ -113,15 +113,7 @@ async function File({
   const isPdf = file.type.endsWith("pdf");
 
   if (deviceType === "mobile") {
-    return (
-      <div className="flex h-14 w-full items-center justify-between">
-        {isPdf ? (
-          <MobilePDF file={file} />
-        ) : (
-          <MobileImage url={url} file={file} />
-        )}
-      </div>
-    );
+    return <MobileFile url={url} file={file} />;
   }
 
   return (

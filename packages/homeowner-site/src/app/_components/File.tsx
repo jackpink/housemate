@@ -20,36 +20,41 @@ export function MobileFile({
   url: string;
   file: Files[number];
 }) {
-  return (
-    <div className="relative flex  w-full items-center justify-center">
-      <div className="w-14 ">
-        <Image
-          src={url}
-          alt="house"
-          className="h-full w-auto object-contain"
-          width={56}
-          height={56}
-        />
-      </div>
+  const isPdf = file.type.endsWith("pdf");
+
+  if (isPdf) {
+    return (
       <EditableComponent
         value={file.name}
-        EditModeComponent={EditableTitle}
-        StandardComponent={Title}
+        EditModeComponent={EditableMobilePDF}
+        StandardComponent={MobilePDF}
+        url={url}
         updateValue={async (value: string) => console.log("update value")}
         editable
       />
-    </div>
+    );
+  }
+
+  return (
+    <EditableComponent
+      value={file.name}
+      EditModeComponent={EditableMobileImage}
+      StandardComponent={MobileImage}
+      url={url}
+      updateValue={async (value: string) => console.log("update value")}
+      editable
+    />
   );
 }
 
 const MobileImage: StandardComponent = ({ value, pending, url }) => {
   return (
-    <div className="relative flex  w-full items-center justify-center">
+    <div className="flex w-full items-center justify-center">
       <div className="w-14 ">
         <Image
           src={url}
           alt="house"
-          className="h-full w-auto object-contain"
+          className="w-auto object-cover"
           width={56}
           height={56}
         />
@@ -68,36 +73,59 @@ const MobileImage: StandardComponent = ({ value, pending, url }) => {
 
 const EditableMobileImage: EditModeComponent = ({ value, setValue, url }) => {
   return (
-    <>
+    <div className="flex  w-full items-center justify-center">
+      <div className="w-14 ">
+        <Image
+          src={url}
+          alt="house"
+          className="w-auto object-cover"
+          width={56}
+          height={56}
+        />
+      </div>
       <input
         type="text"
-        className="absolute -left-0 w-28 rounded-lg  border-2 border-slate-400 p-2 text-sm"
+        className=" rounded-lg border-2 border-slate-400 p-2 text-sm"
         value={value}
         onChange={(e) => setValue(e.currentTarget.value)}
       />
-      <button className=" absolute left-32 rounded-full border-2 border-black p-2 text-sm font-semibold">
-        Move
-      </button>
+    </div>
+  );
+};
+
+const MobilePDF: StandardComponent = ({ value, pending, url }) => {
+  return (
+    <>
+      <div className="w-10">
+        <PdfFileIcon />
+      </div>
+      <p
+        className={clsx(
+          "text-wrap break-words p-2 align-middle text-sm",
+          pending && "text-slate-500",
+        )}
+      >
+        {value}
+      </p>
     </>
   );
 };
 
-export function MobilePDF({ file }: { file: Files[number] }) {
+const EditableMobilePDF: EditModeComponent = ({ value, setValue, url }) => {
   return (
-    <div className="flex h-14 w-full items-center justify-between">
+    <div className="flex items-center">
       <div className="w-10">
         <PdfFileIcon />
       </div>
-      <EditableComponent
-        value={file.name}
-        EditModeComponent={EditableTitle}
-        StandardComponent={Title}
-        updateValue={async (value: string) => console.log("update value")}
-        editable
+      <input
+        type="text"
+        className="rounded-lg  border-2 border-slate-400 p-2 text-sm"
+        value={value}
+        onChange={(e) => setValue(e.currentTarget.value)}
       />
     </div>
   );
-}
+};
 
 export type StandardComponent = ({
   value,
@@ -191,7 +219,7 @@ export function EditableComponent({
   }
 
   return (
-    <div className="flex justify-between p-2">
+    <div className="flex justify-between">
       <StandardComponent value={optimisticValue} pending={pending} url={url} />
       <div className="justify-self-end">
         <button
@@ -216,12 +244,15 @@ export const EditMode: React.FC<{
 }> = ({ onClickConfirm, onClickCancel, EditableComponent }) => {
   return (
     <div>
-      <div>{EditableComponent}</div>
-      <div className="flex flex-nowrap">
-        <button onClick={onClickCancel}>
+      {EditableComponent}
+      <div className="flex flex-nowrap justify-around pt-2">
+        <button className=" rounded-full border-2 border-black p-2 text-sm font-semibold">
+          Move
+        </button>
+        <button onClick={onClickCancel} className="flex">
           <CancelIcon />
         </button>
-        <button onClick={onClickConfirm}>
+        <button className="flex" onClick={onClickConfirm}>
           <ConfirmIcon />
         </button>
       </div>
