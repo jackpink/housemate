@@ -96,12 +96,12 @@ const EditableMobileImage: EditModeComponent = ({ value, setValue, url }) => {
 const MobilePDF: StandardComponent = ({ value, pending, url }) => {
   return (
     <>
-      <div className="w-10">
+      <div className="w-10 pr-2">
         <PdfFileIcon />
       </div>
       <p
         className={clsx(
-          "text-wrap break-words p-2 align-middle text-sm",
+          "text-wrap break-words align-middle text-sm",
           pending && "text-slate-500",
         )}
       >
@@ -114,12 +114,12 @@ const MobilePDF: StandardComponent = ({ value, pending, url }) => {
 const EditableMobilePDF: EditModeComponent = ({ value, setValue, url }) => {
   return (
     <div className="flex items-center">
-      <div className="w-10">
+      <div className="w-10 pr-2">
         <PdfFileIcon />
       </div>
       <input
         type="text"
-        className="rounded-lg  border-2 border-slate-400 p-2 text-sm"
+        className="grow rounded-lg border-2 border-slate-400 p-2 text-sm"
         value={value}
         onChange={(e) => setValue(e.currentTarget.value)}
       />
