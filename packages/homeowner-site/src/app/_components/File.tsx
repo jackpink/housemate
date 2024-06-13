@@ -13,6 +13,16 @@ import {
 import { ReactNode, useState } from "react";
 import React from "react";
 
+export type StandardComponent = ({
+  value,
+  pending,
+  url,
+}: {
+  value: string;
+  pending?: boolean;
+  url: string;
+}) => ReactNode;
+
 export function MobileFile({
   url,
   file,
@@ -47,76 +57,48 @@ export function MobileFile({
   );
 }
 
-const MobileImage: StandardComponent = ({ value, pending, url }) => {
-  return (
-    <div className="flex w-full items-center justify-center">
-      <div className="w-14 ">
-        <Image
-          src={url}
-          alt="house"
-          className="w-auto object-cover"
-          width={56}
-          height={56}
-        />
-      </div>
-      <p
-        className={clsx(
-          "w-40 text-wrap break-words p-2 text-sm",
-          pending && "text-slate-500",
-        )}
-      >
-        {value}
-      </p>
-    </div>
-  );
-};
-
-const EditableMobileImage: EditModeComponent = ({ value, setValue, url }) => {
-  return (
-    <div className="flex  w-full items-center justify-center">
-      <div className="w-14 ">
-        <Image
-          src={url}
-          alt="house"
-          className="w-auto object-cover"
-          width={56}
-          height={56}
-        />
-      </div>
-      <input
-        type="text"
-        className=" rounded-lg border-2 border-slate-400 p-2 text-sm"
-        value={value}
-        onChange={(e) => setValue(e.currentTarget.value)}
-      />
-    </div>
-  );
-};
-
-const MobilePDF: StandardComponent = ({ value, pending, url }) => {
+function StandardComponent({
+  value,
+  pending,
+  url,
+  children,
+}: {
+  value: string;
+  pending?: boolean;
+  url: string;
+  children: ReactNode;
+}) {
   return (
     <>
-      <div className="w-10 pr-2">
-        <PdfFileIcon />
+      <div className="w-10 flex-initial pr-2">{children}</div>
+      <div className="flex h-auto flex-1 flex-col justify-center">
+        <p
+          className={clsx(
+            "table w-full table-fixed break-words align-bottom	text-sm",
+            pending && "text-slate-500",
+          )}
+        >
+          {value}
+        </p>
       </div>
-      <p
-        className={clsx(
-          "text-wrap break-words align-middle text-sm",
-          pending && "text-slate-500",
-        )}
-      >
-        {value}
-      </p>
     </>
   );
-};
+}
 
-const EditableMobilePDF: EditModeComponent = ({ value, setValue, url }) => {
+function EditModeComponent({
+  value,
+  setValue,
+  url,
+  children,
+}: {
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+  url: string;
+  children: ReactNode;
+}) {
   return (
     <div className="flex items-center">
-      <div className="w-10 pr-2">
-        <PdfFileIcon />
-      </div>
+      <div className="w-10 pr-2">{children}</div>
       <input
         type="text"
         className="grow rounded-lg border-2 border-slate-400 p-2 text-sm"
@@ -125,17 +107,51 @@ const EditableMobilePDF: EditModeComponent = ({ value, setValue, url }) => {
       />
     </div>
   );
+}
+
+const MobilePDF: StandardComponent = ({ url, pending, value }) => {
+  return (
+    <StandardComponent value={value} pending={pending} url={url}>
+      <PdfFileIcon />
+    </StandardComponent>
+  );
 };
 
-export type StandardComponent = ({
-  value,
-  pending,
-  url,
-}: {
-  value: string;
-  pending?: boolean;
-  url: string;
-}) => ReactNode;
+const MobileImage: StandardComponent = ({ value, pending, url }) => {
+  return (
+    <StandardComponent value={value} pending={pending} url={url}>
+      <Image
+        src={url}
+        alt="house"
+        className="w-auto object-cover"
+        width={56}
+        height={56}
+      />
+    </StandardComponent>
+  );
+};
+
+const EditableMobilePDF: EditModeComponent = ({ value, setValue, url }) => {
+  return (
+    <EditModeComponent value={value} setValue={setValue} url={url}>
+      <PdfFileIcon />
+    </EditModeComponent>
+  );
+};
+
+const EditableMobileImage: EditModeComponent = ({ value, setValue, url }) => {
+  return (
+    <EditModeComponent value={value} setValue={setValue} url={url}>
+      <Image
+        src={url}
+        alt="house"
+        className="w-auto object-cover"
+        width={56}
+        height={56}
+      />
+    </EditModeComponent>
+  );
+};
 
 export type EditModeComponent = ({
   value,
@@ -221,10 +237,10 @@ export function EditableComponent({
   return (
     <div className="flex justify-between">
       <StandardComponent value={optimisticValue} pending={pending} url={url} />
-      <div className="justify-self-end">
+      <div className="flex-initial justify-self-end">
         <button
           onClick={() => setEditMode(true)}
-          className={clsx(pending && "cursor-wait")}
+          className={clsx("pl-2", pending && "cursor-wait")}
         >
           <EditIconSmall />
         </button>
