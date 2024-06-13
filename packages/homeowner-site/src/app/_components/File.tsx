@@ -25,12 +25,19 @@ export type StandardComponent = ({
   url: string;
 }) => ReactNode;
 
+export type UpdateFileServerAction = ({}: {
+  name?: string;
+  folderId?: string;
+}) => Promise<void>;
+
 export function MobileFile({
   url,
   file,
+  updateFile,
 }: {
   url: string;
   file: Files[number];
+  updateFile: UpdateFileServerAction;
 }) {
   const isPdf = file.type.endsWith("pdf");
 
@@ -41,7 +48,7 @@ export function MobileFile({
         EditModeComponent={EditableMobilePDF}
         StandardComponent={MobilePDF}
         url={url}
-        updateValue={async (value: string) => console.log("update value")}
+        updateValue={async (value: string) => updateFile({ name: value })}
         editable
       />
     );
@@ -53,7 +60,7 @@ export function MobileFile({
       EditModeComponent={EditableMobileImage}
       StandardComponent={MobileImage}
       url={url}
-      updateValue={async (value: string) => console.log("update value")}
+      updateValue={async (value: string) => updateFile({ name: value })}
       editable
     />
   );

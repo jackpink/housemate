@@ -3,13 +3,14 @@ import {
   type Files,
   type Folder,
   type RootFolder,
+  Item,
 } from "../../../../core/homeowner/item";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
 import { FolderIcon, PdfFileIcon } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
-import { MobileFile } from "./File";
+import { MobileFile, UpdateFileServerAction } from "./File";
 
 export default function Files({
   rootFolder,
@@ -99,6 +100,7 @@ async function File({
     bucketName: string;
   }) => {
     "use server";
+
     const params = {
       Bucket: bucketName,
       Key: key,
@@ -113,10 +115,21 @@ async function File({
     bucketName: file.bucket,
   });
 
+  const updateFile: UpdateFileServerAction = async ({ name, folderId }) => {
+    "use server";
+    console.log("updateFile", name, folderId);
+    await Item.updateFile({
+      id: file.id,
+      name,
+      folderId,
+    });
+    revalidatePath(`/properties/${}/items/${params.itemId}`);
+  };
+
   const isPdf = file.type.endsWith("pdf");
 
   if (deviceType === "mobile") {
-    return <MobileFile url={url} file={file} />;
+    return <MobileFile url={url} file={file} updateFile={updateFile} />;
   }
 
   return (
