@@ -11,28 +11,47 @@ import Image from "next/image";
 import { FolderIcon, PdfFileIcon } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
 import { MobileFile, UpdateFileServerAction } from "./File";
+import { revalidatePath } from "next/cache";
 
 export default function Files({
   rootFolder,
   deviceType,
+  propertyId,
 }: {
   rootFolder: ItemWithFiles["filesRootFolder"];
   deviceType: string;
+  propertyId: string;
 }) {
   if (!rootFolder) {
     return <div>No files</div>;
   }
 
+  const allFolders = [...rootFolder.folders];
+  allFolders.push(rootFolder);
+
   console.log("rootFolder", rootFolder);
 
   if (deviceType === "mobile") {
-    return <MobileFiles rootFolder={rootFolder} deviceType={deviceType} />;
+    return (
+      <MobileFiles
+        rootFolder={rootFolder}
+        deviceType={deviceType}
+        propertyId={propertyId}
+        allFolders={allFolders}
+      />
+    );
   }
 
   return (
     <div className="flex w-full flex-wrap justify-center gap-8 py-4">
       {rootFolder.files.map((file) => (
-        <File file={file} deviceType={deviceType} />
+        <File
+          file={file}
+          deviceType={deviceType}
+          itemId={rootFolder.itemId!}
+          propertyId={propertyId}
+          allFolders={allFolders}
+        />
       ))}
     </div>
   );
@@ -41,26 +60,42 @@ export default function Files({
 function MobileFiles({
   rootFolder,
   deviceType,
+  propertyId,
+  allFolders,
 }: {
   rootFolder: RootFolder;
   deviceType: string;
+  propertyId: string;
+  allFolders: Folder[];
 }) {
   return (
     <div>
       <MobileFolder folder={rootFolder}>
         {rootFolder.files.map((file) => (
-          <File file={file} deviceType={deviceType} />
+          <File
+            file={file}
+            deviceType={deviceType}
+            itemId={rootFolder.itemId!}
+            propertyId={propertyId}
+            allFolders={allFolders}
+          />
         ))}
-        <div className="pl-2">
-          {rootFolder.folders.map((folder) => (
-            <MobileFolder folder={folder}>
-              {folder.files.map((file) => (
-                <File file={file} deviceType={deviceType} />
-              ))}
-            </MobileFolder>
-          ))}
-        </div>
       </MobileFolder>
+      <div className="pl-6">
+        {rootFolder.folders.map((folder) => (
+          <MobileFolder folder={folder}>
+            {folder.files.map((file) => (
+              <File
+                file={file}
+                deviceType={deviceType}
+                itemId={rootFolder.itemId!}
+                propertyId={propertyId}
+                allFolders={allFolders}
+              />
+            ))}
+          </MobileFolder>
+        ))}
+      </div>
     </div>
   );
 }
@@ -73,13 +108,14 @@ function MobileFolder({
   children: React.ReactNode;
 }) {
   return (
-    <details className="" open>
+    <details className="pt-2" open>
       <summary className="rounded-md bg-slate-300 p-2 capitalize ">
         <span className="flex items-center">
           <FolderIcon width={20} height={20} />
           <Text>{folder.name}</Text>
         </span>
       </summary>
+
       <div className="grid gap-4 py-2 pl-4">{children}</div>
     </details>
   );
@@ -88,9 +124,15 @@ function MobileFolder({
 async function File({
   file,
   deviceType,
+  itemId,
+  propertyId,
+  allFolders,
 }: {
   file: Files[number];
   deviceType: string;
+  itemId: string;
+  propertyId: string;
+  allFolders: Folder[];
 }) {
   const getImageFromBucket = async ({
     key,
@@ -123,13 +165,20 @@ async function File({
       name,
       folderId,
     });
-    revalidatePath(`/properties/${}/items/${params.itemId}`);
+    revalidatePath(`/properties/${propertyId}/items/${itemId}`);
   };
 
   const isPdf = file.type.endsWith("pdf");
 
   if (deviceType === "mobile") {
-    return <MobileFile url={url} file={file} updateFile={updateFile} />;
+    return (
+      <MobileFile
+        url={url}
+        file={file}
+        updateFile={updateFile}
+        allFolders={allFolders}
+      />
+    );
   }
 
   return (
