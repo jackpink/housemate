@@ -7,7 +7,7 @@ import {
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
-import { PdfFileIcon } from "../../../../ui/Atoms/Icons";
+import { FolderIcon, PdfFileIcon } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
 import { MobileFile } from "./File";
 
@@ -73,8 +73,11 @@ function MobileFolder({
 }) {
   return (
     <details className="" open>
-      <summary className="rounded-md bg-slate-300 p-2 capitalize">
-        {folder.name}
+      <summary className="rounded-md bg-slate-300 p-2 capitalize ">
+        <span className="flex items-center">
+          <FolderIcon width={20} height={20} />
+          <Text>{folder.name}</Text>
+        </span>
       </summary>
       <div className="grid gap-4 py-2 pl-4">{children}</div>
     </details>

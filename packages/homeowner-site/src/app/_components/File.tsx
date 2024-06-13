@@ -1,14 +1,16 @@
 "use client";
 
 import clsx from "clsx";
-import { Text } from "../../../../ui/Atoms/Text";
 import Image from "next/image";
 import { type Files } from "../../../../core/homeowner/item";
 import {
   CancelIcon,
   ConfirmIcon,
+  CrossIcon,
   EditIconSmall,
+  MoveIcon,
   PdfFileIcon,
+  TickIcon,
 } from "../../../../ui/Atoms/Icons";
 import { ReactNode, useState } from "react";
 import React from "react";
@@ -262,14 +264,23 @@ export const EditMode: React.FC<{
     <div>
       {EditableComponent}
       <div className="flex flex-nowrap justify-around pt-2">
-        <button className=" rounded-full border-2 border-black p-2 text-sm font-semibold">
+        <button className="flex rounded-full border-2 border-black p-2 text-sm font-semibold">
+          <MoveIcon />
           Move
         </button>
-        <button onClick={onClickCancel} className="flex">
-          <CancelIcon />
+        <button
+          className="flex rounded-full border-2 border-black p-2 text-sm font-semibold"
+          onClick={onClickCancel}
+        >
+          <CrossIcon width={15} />
+          Cancel
         </button>
-        <button className="flex" onClick={onClickConfirm}>
-          <ConfirmIcon />
+        <button
+          className="flex rounded-full border-2 border-black p-2 text-sm font-semibold"
+          onClick={onClickConfirm}
+        >
+          <TickIcon />
+          Confirm
         </button>
       </div>
     </div>
