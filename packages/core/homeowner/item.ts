@@ -166,6 +166,18 @@ export async function addFile({
     .returning({ id: itemFile.id });
 }
 
+export async function updateFile({
+  id,
+  name,
+  folderId,
+}: {
+  id: string;
+  name?: string;
+  folderId?: string;
+}) {
+  await db.update(itemFile).set({ name, folderId }).where(eq(itemFile.id, id));
+}
+
 export async function addFolder({
   parentId,
   name,
