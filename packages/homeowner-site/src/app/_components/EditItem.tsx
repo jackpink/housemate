@@ -18,7 +18,12 @@ import ImageUploader from "../../../../ui/Molecules/ImageUploader";
 import { addFileToFolderAction, createFolderForItem } from "../actions";
 import { type ItemWithFiles } from "../../../../core/homeowner/item";
 import React from "react";
-import { LargeAddIcon, PlusIcon } from "../../../../ui/Atoms/Icons";
+import {
+  CompletedIcon,
+  LargeAddIcon,
+  PlusIcon,
+  ToDoIcon,
+} from "../../../../ui/Atoms/Icons";
 import {
   Dialog,
   DialogClose,
@@ -538,24 +543,40 @@ function Status({
     return (
       <div className="w-full">
         <EditableComponentLabel label="Status" />
-        <div className="bg-completed rounded-full p-6 text-center">
+        <div className="bg-completed flex items-center justify-center rounded-full p-6 text-center ">
+          <CompletedIcon width={50} height={50} />
           Completed
         </div>
-        <button onClick={() => updateItem({ status: ItemStatus.TODO })}>
-          <Text>Mark as To Do? ✗</Text>
+        <div className="h-2"></div>
+        <button
+          className="bg-todo/80 rounded-full p-1 text-center"
+          onClick={() => updateItem({ status: ItemStatus.TODO })}
+        >
+          <span className="flex items-center justify-center">
+            Mark as To Do? <ToDoIcon width={30} height={30} />
+          </span>
         </button>
-        <Text></Text>
+        <div className="h-2"></div>
       </div>
     );
   }
   return (
     <div className="w-full">
       <EditableComponentLabel label="Status" />
-      <div className="bg-todo rounded-full p-6 text-center">To Do</div>
-      <button onClick={() => updateItem({ status: ItemStatus.COMPLETED })}>
-        <Text>Mark as Complete? ✓</Text>
+      <div className="bg-todo flex items-center justify-center rounded-full p-6 text-center">
+        <ToDoIcon width={50} height={50} />
+        To Do
+      </div>
+      <div className="h-2"></div>
+      <button
+        className="bg-completed/50 rounded-full p-1 text-center"
+        onClick={() => updateItem({ status: ItemStatus.COMPLETED })}
+      >
+        <span className="flex items-center justify-center">
+          Mark as Complete? <CompletedIcon width={30} height={30} />
+        </span>
       </button>
-      <Text></Text>
+      <div className="h-2"></div>
     </div>
   );
 }
