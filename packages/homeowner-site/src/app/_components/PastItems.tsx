@@ -395,7 +395,17 @@ function ItemsForMobile({ items }: { items: CompletedItems }) {
       <h1>Items for Mobile</h1>
       <div className="grid gap-4 p-4">
         {reducedItems.map((item) => (
-          <ItemForMobile key={item.id} item={item} />
+          <ItemForMobile
+            key={item.id}
+            item={item}
+            colour={
+              item.category === "product"
+                ? "product"
+                : item.category === "issue"
+                  ? "issue"
+                  : "completed"
+            }
+          />
         ))}
         {itemsToShow < items.length && (
           <button
@@ -410,7 +420,13 @@ function ItemsForMobile({ items }: { items: CompletedItems }) {
   );
 }
 
-function ItemForMobile({ item }: { item: CompletedItems[0] }) {
+export function ItemForMobile({
+  item,
+  colour,
+}: {
+  item: CompletedItems[0];
+  colour: "product" | "completed" | "todo" | "issue";
+}) {
   const dateString = new Date(item.date).toDateString();
   const category =
     item.category === "job"
@@ -419,13 +435,24 @@ function ItemForMobile({ item }: { item: CompletedItems[0] }) {
         ? "Issue"
         : "Product";
   return (
-    <div className="flex rounded-xl bg-brand/50 p-3">
+    <div
+      className={clsx(
+        " flex rounded-xl p-3",
+        colour === "product" && "bg-product/50",
+        colour === "completed" && "bg-completed/50",
+        colour === "todo" && "bg-todo/50",
+        colour === "issue" && "bg-issue/50",
+      )}
+    >
       <div className="grow">
         <p className="italic">{dateString}</p>
         <p className="text-center text-lg font-semibold">{item.title}</p>
         <p>{category}</p>
       </div>
-      <ItemQuickViewDialog toDo={item} isOverdue={false} />
+      <ItemQuickViewDialog
+        toDo={item}
+        colour={item.category === "product" ? "product" : "completed"}
+      />
     </div>
   );
 }

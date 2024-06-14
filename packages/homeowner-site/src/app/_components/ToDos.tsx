@@ -492,7 +492,10 @@ function MobileTodo({
       </div>
 
       <div className="grow-0">
-        <ItemQuickViewDialog toDo={toDo} isOverdue={isOverdue} />
+        <ItemQuickViewDialog
+          toDo={toDo}
+          colour={toDo.category === "job" ? "todo" : "issue"}
+        />
       </div>
       <div className="grow-0">
         <button
@@ -509,10 +512,10 @@ function MobileTodo({
 
 export function ItemQuickViewDialog({
   toDo,
-  isOverdue,
+  colour,
 }: {
   toDo: ToDos[0];
-  isOverdue: boolean;
+  colour: "todo" | "completed" | "issue" | "product";
 }) {
   const date = new Date(toDo.date).toDateString();
   return (
@@ -521,9 +524,15 @@ export function ItemQuickViewDialog({
         <div
           className={clsx(
             "h-full w-20 rounded-sm py-3",
-            isOverdue
-              ? "bg-red-400 active:bg-red-600"
-              : "bg-todo active:bg-todo/30",
+            colour === "todo"
+              ? "bg-todo active:bg-todo/30"
+              : colour === "completed"
+                ? "bg-completed active:bg-completed/30"
+                : colour === "issue"
+                  ? "bg-issue active:bg-issue/30"
+                  : colour === "product"
+                    ? "bg-product active:bg-product/30"
+                    : "bg-todo active:bg-todo/30",
           )}
         >
           <div className="flex justify-center pb-1">
