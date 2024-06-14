@@ -112,7 +112,8 @@ export const item = sqliteTable("item", {
   description: text("description"),
   status: text("status", { enum: ["completed", "todo"] }).notNull(),
   category: text("category", { enum: ["job", "product", "issue"] }).notNull(),
-  recurring: integer("recurring", { mode: "boolean" }),
+  recurring: integer("recurring", { mode: "boolean" }).default(false),
+  recurringSchedule: text("recurringSchedule").default("yearly"),
   date: text("date")
     .notNull()
     .default(sql`(current_date)`),
@@ -129,12 +130,21 @@ export const item = sqliteTable("item", {
   filesRootFolderId: text("filesFolderId"),
 });
 
+export const pastItemDate = sqliteTable("past_item_date", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  itemId: text("itemId").references(() => item.id, { onDelete: "cascade" }),
+  date: text("date").notNull(),
+});
+
 export const itemRelations = relations(item, ({ one, many }) => ({
   filesRootFolder: one(itemFilesFolder, {
     fields: [item.filesRootFolderId],
     references: [itemFilesFolder.id],
   }),
   alerts: many(homeownerAlert),
+  pastDates: many(pastItemDate),
 }));
 
 export const itemFilesFolder = sqliteTable(
@@ -144,7 +154,9 @@ export const itemFilesFolder = sqliteTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
-    itemId: text("item_id").references(() => item.id, {}),
+    itemId: text("item_id").references(() => item.id, {
+      onDelete: "cascade",
+    }),
     parentId: text("parent_id"),
   },
   // (folder) => {
@@ -185,7 +197,9 @@ export const itemFile = sqliteTable("item_file", {
   bucket: text("bucket").notNull(),
   folderId: text("folderId")
     .notNull()
-    .references(() => itemFilesFolder.id),
+    .references(() => itemFilesFolder.id, {
+      onDelete: "cascade",
+    }),
 });
 
 export const itemFileRelations = relations(itemFile, ({ one }) => ({
@@ -207,10 +221,10 @@ export const homeownerAlert = sqliteTable("homeowner_alert", {
     .default(sql`(current_date)`),
   homeownerId: text("homeownerId")
     .notNull()
-    .references(() => homeownerUsers.id),
+    .references(() => homeownerUsers.id, { onDelete: "cascade" }),
   propertyId: text("propertyId")
     .notNull()
-    .references(() => property.id),
+    .references(() => property.id, { onDelete: "cascade" }),
   viewed: integer("viewed", { mode: "boolean" }).notNull().default(false),
   itemId: text("itemId").references(() => item.id),
 });
