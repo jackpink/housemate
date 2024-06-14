@@ -2,9 +2,11 @@ export * as Item from "./item";
 import {
   ItemCategory,
   ItemStatus,
+  RecurringSchedule,
   item,
   itemFile,
   itemFilesFolder,
+  itemPastDate,
 } from "../db/schema";
 import { db } from "../db";
 import { eq, and, asc, desc, or, type InferSelectModel } from "drizzle-orm";
@@ -69,6 +71,7 @@ export async function get(id: string) {
           },
         },
       },
+      pastDates: true,
     },
   });
   if (!result) throw new Error("Item not found");
@@ -135,19 +138,120 @@ export async function update({
   status?: ItemStatus;
   warrantyEndDate?: string;
 }) {
+  if (recurring !== undefined) {
+    console.log("updating recurring", recurring);
+    await updateRecurring({ id, recurring });
+  }
+  if (!!status) {
+    console.log("updating status", status);
+    await updateStatus({ id, status });
+  }
+  if (
+    !!priority ||
+    !!title ||
+    !!description ||
+    !!recurringSchedule ||
+    !!date ||
+    !!warrantyEndDate
+  ) {
+    await db
+      .update(item)
+      .set({
+        title,
+        description,
+        recurringSchedule,
+        date,
+        toDoPriority: priority,
+        warrantyEndDate,
+      })
+      .where(eq(item.id, id));
+  }
+}
+
+async function updateRecurring({
+  id,
+  recurring,
+}: {
+  id: string;
+  recurring: boolean;
+}) {
+  // TODO
+  const itemObj = await get(id);
+  if (recurring && itemObj.status === ItemStatus.COMPLETED) {
+    createNewPastDateAndUpdateCurrentDate({
+      itemId: id,
+      date: itemObj.date,
+      recurringSchedule: itemObj.recurringSchedule as RecurringSchedule,
+    });
+  }
+  console.log("updating recurring", recurring, id);
+  await db.update(item).set({ recurring }).where(eq(item.id, id));
+}
+
+export async function updateStatus({
+  id,
+  status,
+}: {
+  id: string;
+  status: ItemStatus;
+}) {
+  // if marking as completed + is recurring, create new past date and update current date
+  // if marking as completed + is not recurring, just mark as completed
+  // if marking as todo, mark as todo
+  // if marking as todo + is recurring, mark as todo
+  if (status === ItemStatus.COMPLETED) {
+    const itemObj = await get(id);
+    console.log("we are marking status as completed");
+    if (itemObj.recurring) {
+      await createNewPastDateAndUpdateCurrentDate({
+        itemId: id,
+        date: itemObj.date,
+        recurringSchedule: itemObj.recurringSchedule as RecurringSchedule,
+      });
+    } else {
+      await db.update(item).set({ status }).where(eq(item.id, id));
+    }
+  } else {
+    await db.update(item).set({ status }).where(eq(item.id, id));
+  }
+}
+
+async function createNewPastDateAndUpdateCurrentDate({
+  itemId,
+  date,
+  recurringSchedule,
+}: {
+  itemId: string;
+  date: string;
+  recurringSchedule: RecurringSchedule;
+}) {
+  console.log("creating new past date");
+  await db.insert(itemPastDate).values({ itemId, date });
+
+  let newDate = new Date(date);
+
+  if (recurringSchedule === RecurringSchedule.WEEKLY) {
+    newDate.setDate(newDate.getDate() + 7);
+  } else if (recurringSchedule === RecurringSchedule.FORTNIGHTLY) {
+    newDate.setDate(newDate.getDate() + 14);
+  } else if (recurringSchedule === RecurringSchedule.MONTHLY) {
+    newDate.setMonth(newDate.getMonth() + 1);
+  } else if (recurringSchedule === RecurringSchedule.QUARTERLY) {
+    newDate.setMonth(newDate.getMonth() + 3);
+  } else if (recurringSchedule === RecurringSchedule.HALF_YEARLY) {
+    newDate.setMonth(newDate.getMonth() + 6);
+  } else if (recurringSchedule === RecurringSchedule.YEARLY) {
+    newDate.setFullYear(newDate.getFullYear() + 1);
+  } else {
+    throw new Error("Recurring schedule not found");
+  }
+  const dateString = `${newDate.getFullYear()}-${newDate.getMonth() < 9 ? "0" : ""}${newDate.getMonth() + 1}-${newDate.getDate() < 10 ? "0" : ""}${newDate.getDate()}`;
+
+  console.log("changing new date to", dateString, itemId);
   await db
     .update(item)
-    .set({
-      title,
-      description,
-      recurring,
-      recurringSchedule,
-      date,
-      toDoPriority: priority,
-      status,
-      warrantyEndDate,
-    })
-    .where(eq(item.id, id));
+    .set({ date: dateString, status: ItemStatus.TODO })
+    .where(eq(item.id, itemId));
 }
 
 export async function addFile({

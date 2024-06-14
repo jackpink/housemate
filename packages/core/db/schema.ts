@@ -104,6 +104,15 @@ export enum ItemStatus {
   TODO = "todo",
 }
 
+export enum RecurringSchedule {
+  WEEKLY = "weekly",
+  FORTNIGHTLY = "fortnightly",
+  MONTHLY = "monthly",
+  QUARTERLY = "quarterly",
+  HALF_YEARLY = "half-yearly",
+  YEARLY = "yearly",
+}
+
 export const item = sqliteTable("item", {
   id: text("id")
     .primaryKey()
@@ -113,7 +122,14 @@ export const item = sqliteTable("item", {
   status: text("status", { enum: ["completed", "todo"] }).notNull(),
   category: text("category", { enum: ["job", "product", "issue"] }).notNull(),
   recurring: integer("recurring", { mode: "boolean" }).default(false),
-  recurringSchedule: text("recurringSchedule").default("yearly"),
+  recurringSchedule: text("recurringSchedule", {
+    enum: Object.values(RecurringSchedule).map((value: any) => `${value}`) as [
+      string,
+      ...string[],
+    ],
+  })
+    .default("yearly")
+    .notNull(),
   date: text("date")
     .notNull()
     .default(sql`(current_date)`),
@@ -130,7 +146,16 @@ export const item = sqliteTable("item", {
   filesRootFolderId: text("filesFolderId"),
 });
 
-export const pastItemDate = sqliteTable("past_item_date", {
+export const itemRelations = relations(item, ({ one, many }) => ({
+  filesRootFolder: one(itemFilesFolder, {
+    fields: [item.filesRootFolderId],
+    references: [itemFilesFolder.id],
+  }),
+  alerts: many(homeownerAlert),
+  pastDates: many(itemPastDate),
+}));
+
+export const itemPastDate = sqliteTable("item_past_date", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -138,13 +163,11 @@ export const pastItemDate = sqliteTable("past_item_date", {
   date: text("date").notNull(),
 });
 
-export const itemRelations = relations(item, ({ one, many }) => ({
-  filesRootFolder: one(itemFilesFolder, {
-    fields: [item.filesRootFolderId],
-    references: [itemFilesFolder.id],
+export const itemPastDateRelations = relations(itemPastDate, ({ one }) => ({
+  item: one(item, {
+    fields: [itemPastDate.itemId],
+    references: [item.id],
   }),
-  alerts: many(homeownerAlert),
-  pastDates: many(pastItemDate),
 }));
 
 export const itemFilesFolder = sqliteTable(
