@@ -9,7 +9,11 @@ import {
   type StandardComponent,
   type EditModeComponent,
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
-import { ItemStatus, item } from "../../../../core/db/schema";
+import {
+  ItemStatus,
+  RecurringSchedule,
+  item,
+} from "../../../../core/db/schema";
 import ImageUploader from "../../../../ui/Molecules/ImageUploader";
 import { addFileToFolderAction, createFolderForItem } from "../actions";
 import { type ItemWithFiles } from "../../../../core/homeowner/item";
@@ -221,6 +225,7 @@ function EditIssue({
           <Line />
           <Status status={item.status} updateItem={updateItem} />
           <Line />
+
           <EditableComponent
             value={date.toDateString()}
             EditModeComponent={EditableDateOfItem}
@@ -234,19 +239,6 @@ function EditIssue({
           />
 
           <div className="w-full">
-            <EditableComponent
-              value={item.recurring ? "recurring" : "one-off"}
-              EditModeComponent={EditableOneOffRecurring}
-              StandardComponent={OneOffRecurring}
-              updateValue={async (value: string) => {
-                console.log("value", value);
-
-                let recurring = value === "recurring" ? true : false;
-                console.log("recurring", recurring);
-                updateItem({ recurring: recurring });
-              }}
-              editable
-            />
             <EditableComponent
               value="Weekly"
               EditModeComponent={EditableSchedule}
@@ -314,39 +306,8 @@ function EditJob({
           <Line />
           <Status status={item.status} updateItem={updateItem} />
           <Line />
-          <EditableComponent
-            value={date.toDateString()}
-            EditModeComponent={EditableDateOfItem}
-            StandardComponent={DateOfItem}
-            updateValue={async (value: string) => {
-              console.log("value before add", value);
-
-              updateItem({ date: value });
-            }}
-            editable
-          />
-
+          <JobOneOffRecurring item={item} updateItem={updateItem} />
           <div className="w-full">
-            <EditableComponent
-              value={item.recurring ? "recurring" : "one-off"}
-              EditModeComponent={EditableOneOffRecurring}
-              StandardComponent={OneOffRecurring}
-              updateValue={async (value: string) => {
-                console.log("value", value);
-
-                let recurring = value === "recurring" ? true : false;
-                console.log("recurring", recurring);
-                updateItem({ recurring: recurring });
-              }}
-              editable
-            />
-            <EditableComponent
-              value="Weekly"
-              EditModeComponent={EditableSchedule}
-              StandardComponent={Schedule}
-              updateValue={async (value) => console.log("value", value)}
-              editable
-            />
             <Line />
           </div>
           <PhotosAndDocuments
@@ -360,6 +321,95 @@ function EditJob({
         </div>
       </div>
     </>
+  );
+}
+
+function JobOneOffRecurring({
+  item,
+  updateItem,
+}: {
+  item: ItemWithFiles;
+  updateItem: UpdateItemServerAction;
+}) {
+  const date = new Date(item.date);
+  if (item.recurring) {
+    return (
+      <>
+        <EditableComponent
+          value={item.recurring ? "recurring" : "one-off"}
+          EditModeComponent={EditableOneOffRecurring}
+          StandardComponent={OneOffRecurring}
+          updateValue={async (value: string) => {
+            console.log("value", value);
+
+            let recurring = value === "recurring" ? true : false;
+            console.log("recurring", recurring);
+            updateItem({ recurring: recurring });
+          }}
+          editable
+        />
+        <EditableComponent
+          value={item.recurringSchedule}
+          EditModeComponent={EditableSchedule}
+          StandardComponent={Schedule}
+          updateValue={async (value) => console.log("value", value)}
+          editable
+        />
+        <EditableComponent
+          value={date.toDateString()}
+          EditModeComponent={EditableDateOfItemUpcoming}
+          StandardComponent={DateOfItemUpcoming}
+          updateValue={async (value: string) => {
+            updateItem({ date: value });
+          }}
+          editable
+        />
+        <PastDates pastDates={item.pastDates} />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <EditableComponent
+        value={item.recurring ? "recurring" : "one-off"}
+        EditModeComponent={EditableOneOffRecurring}
+        StandardComponent={OneOffRecurring}
+        updateValue={async (value: string) => {
+          let recurring = value === "recurring" ? true : false;
+          updateItem({ recurring: recurring });
+        }}
+        editable
+      />
+      <EditableComponent
+        value={date.toDateString()}
+        EditModeComponent={EditableDateOfItem}
+        StandardComponent={DateOfItem}
+        updateValue={async (value: string) => {
+          updateItem({ date: value });
+        }}
+        editable
+      />
+    </>
+  );
+}
+
+function PastDates({ pastDates }: { pastDates: ItemWithFiles["pastDates"] }) {
+  if (pastDates.length === 0) {
+    return (
+      <div className="w-full pl-2">
+        <EditableComponentLabel label="Past Dates" />
+        <p>No Past Dates to display</p>
+      </div>
+    );
+  }
+  return (
+    <div className="w-full pl-2">
+      <EditableComponentLabel label="Past Dates" />
+      {pastDates.map((date) => (
+        <p key={date.id}>{date.date}</p>
+      ))}
+    </div>
   );
 }
 
@@ -490,10 +540,16 @@ function Status({
 }
 
 const Schedule: StandardComponent = function ({ value, pending }) {
+  console.log("value of schedule", value);
   return (
     <div className="w-full">
       <EditableComponentLabel label="Schedule" />
-      <p className={clsx("w-full pt-2 text-lg", pending && "text-slate-500")}>
+      <p
+        className={clsx(
+          "w-full pt-2 text-lg capitalize",
+          pending && "text-slate-500",
+        )}
+      >
         {value}
       </p>
     </div>
@@ -508,16 +564,15 @@ const EditableSchedule: EditModeComponent = function ({ value, setValue }) {
         id="schedule"
         name="schedule"
         size={1}
-        className="w-full rounded-full bg-altSecondary/70 p-6"
+        className="w-full rounded-full bg-altSecondary/70 p-6 capitalize"
         value={value}
         onChange={(e) => setValue(e.currentTarget.value)}
       >
-        <option value="weekly">Weekly</option>
-        <option value="fortnightly">Fortnightly</option>
-        <option value="monthly">Monthly</option>
-        <option value="quarterly">Quarterly</option>
-        <option value="biannually">Biannually</option>
-        <option value="yearly">Yearly</option>
+        {Object.values(RecurringSchedule).map((schedule) => (
+          <option key={schedule} value={schedule} className="capitalize">
+            {schedule}
+          </option>
+        ))}
       </select>
     </div>
   );
@@ -543,6 +598,40 @@ const EditableDateOfItem: EditModeComponent = function ({ value, setValue }) {
   return (
     <div className="w-full">
       <EditableComponentLabel label="Date" />
+      <div className="w-full pt-2 text-lg">
+        <input
+          type="date"
+          value={dateString}
+          onChange={(e) => setValue(e.currentTarget.value)}
+        />
+      </div>
+    </div>
+  );
+};
+
+const DateOfItemUpcoming: StandardComponent = function ({ value, pending }) {
+  const date = new Date(value);
+  console.log("date", date.toDateString());
+  return (
+    <div className="w-full">
+      <EditableComponentLabel label="Date Upcoming" />
+      <p className={clsx("w-full pt-2 text-lg", pending && "text-slate-500")}>
+        {date.toDateString()}
+      </p>
+    </div>
+  );
+};
+
+const EditableDateOfItemUpcoming: EditModeComponent = function ({
+  value,
+  setValue,
+}) {
+  const date = new Date(value);
+  const dateString = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : ""}${date.getDate()}`;
+  console.log("date editable", dateString);
+  return (
+    <div className="w-full">
+      <EditableComponentLabel label="Date Upcoming" />
       <div className="w-full pt-2 text-lg">
         <input
           type="date"
