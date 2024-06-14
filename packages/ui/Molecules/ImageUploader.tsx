@@ -672,10 +672,10 @@ function MobileFileUploadButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="bg-brand flex w-36 flex-col items-center justify-center rounded-lg p-2"
+      className="bg-brand flex w-32 flex-col items-center justify-center rounded-lg p-2"
     >
       <UploadIcon />
-      <Text className="font-semibold">Upload Image</Text>
+      <p className="text-md font-semibold ">Upload Image</p>
     </button>
   );
 }

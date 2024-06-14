@@ -124,6 +124,7 @@ function EditProduct({
           StandardComponent={Title}
           updateValue={async (value: string) => updateItem({ title: value })}
           editable
+          deviceType={deviceType}
         />
       </div>
       <Line />
@@ -138,6 +139,7 @@ function EditProduct({
               updateItem({ description: value })
             }
             editable
+            deviceType={deviceType}
           />
 
           <Line />
@@ -151,6 +153,7 @@ function EditProduct({
               updateItem({ date: value });
             }}
             editable
+            deviceType={deviceType}
           />
 
           <Line />
@@ -164,6 +167,7 @@ function EditProduct({
               updateItem({ warrantyEndDate: value });
             }}
             editable
+            deviceType={deviceType}
           />
           <Line />
 
@@ -207,6 +211,7 @@ function EditIssue({
           StandardComponent={Title}
           updateValue={async (value: string) => updateItem({ title: value })}
           editable
+          deviceType={deviceType}
         />
       </div>
       <Line />
@@ -221,6 +226,7 @@ function EditIssue({
               updateItem({ description: value })
             }
             editable
+            deviceType={deviceType}
           />
           <Line />
           <Status status={item.status} updateItem={updateItem} />
@@ -236,6 +242,7 @@ function EditIssue({
               updateItem({ date: value });
             }}
             editable
+            deviceType={deviceType}
           />
 
           <div className="w-full">
@@ -245,6 +252,7 @@ function EditIssue({
               StandardComponent={Schedule}
               updateValue={async (value) => console.log("value", value)}
               editable
+              deviceType={deviceType}
             />
             <Line />
           </div>
@@ -281,13 +289,14 @@ function EditJob({
 }) {
   return (
     <>
-      <div className="py-4 pl-10">
+      <div className="py-4">
         <EditableComponent
           value={item.title}
           EditModeComponent={EditableTitle}
           StandardComponent={Title}
           updateValue={async (value: string) => updateItem({ title: value })}
           editable
+          deviceType={deviceType}
         />
       </div>
       <Line />
@@ -302,11 +311,16 @@ function EditJob({
               updateItem({ description: value })
             }
             editable
+            deviceType={deviceType}
           />
           <Line />
           <Status status={item.status} updateItem={updateItem} />
           <Line />
-          <JobOneOffRecurring item={item} updateItem={updateItem} />
+          <JobOneOffRecurring
+            item={item}
+            updateItem={updateItem}
+            deviceType={deviceType}
+          />
           <div className="w-full">
             <Line />
           </div>
@@ -327,9 +341,11 @@ function EditJob({
 function JobOneOffRecurring({
   item,
   updateItem,
+  deviceType,
 }: {
   item: ItemWithFiles;
   updateItem: UpdateItemServerAction;
+  deviceType: "desktop" | "mobile";
 }) {
   const date = new Date(item.date);
   if (item.recurring) {
@@ -346,6 +362,7 @@ function JobOneOffRecurring({
             console.log("recurring", recurring);
             updateItem({ recurring: recurring });
           }}
+          deviceType={deviceType}
           editable
         />
         <EditableComponent
@@ -354,6 +371,7 @@ function JobOneOffRecurring({
           StandardComponent={Schedule}
           updateValue={async (value) => console.log("value", value)}
           editable
+          deviceType={deviceType}
         />
         <EditableComponent
           value={date.toDateString()}
@@ -363,6 +381,7 @@ function JobOneOffRecurring({
             updateItem({ date: value });
           }}
           editable
+          deviceType={deviceType}
         />
         <PastDates pastDates={item.pastDates} />
       </>
@@ -380,6 +399,7 @@ function JobOneOffRecurring({
           updateItem({ recurring: recurring });
         }}
         editable
+        deviceType={deviceType}
       />
       <EditableComponent
         value={date.toDateString()}
@@ -389,6 +409,7 @@ function JobOneOffRecurring({
           updateItem({ date: value });
         }}
         editable
+        deviceType={deviceType}
       />
     </>
   );
@@ -419,7 +440,7 @@ function Line() {
 
 const Title: StandardComponent = ({ value, pending }) => {
   return (
-    <h1 className={clsx("p-2 text-xl font-bold", pending && "text-slate-500")}>
+    <h1 className={clsx("p-2 text-xl font-bold ", pending && "text-slate-500")}>
       {value}
     </h1>
   );
@@ -429,7 +450,7 @@ const EditableTitle: EditModeComponent = ({ value, setValue }) => {
   return (
     <input
       type="text"
-      className="rounded-lg border-2 border-slate-400 p-2 text-xl"
+      className="max-w-64 grow rounded-lg border-2 border-slate-400 p-2 text-xl"
       value={value}
       onChange={(e) => setValue(e.currentTarget.value)}
     />
@@ -784,10 +805,10 @@ function AddFolderButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="flex w-36 flex-col items-center justify-center rounded-lg bg-brand p-2"
+      className="flex w-32 flex-col items-center justify-center rounded-lg bg-brand p-2"
     >
       <PlusIcon width={23} height={23} />
-      <Text className="font-semibold">Add Folder</Text>
+      <p className="text-md font-semibold">Add Folder</p>
     </button>
   );
 }

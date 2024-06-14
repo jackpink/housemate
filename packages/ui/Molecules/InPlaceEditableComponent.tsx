@@ -6,6 +6,8 @@ import {
   PlusIcon,
   CancelIcon,
   ConfirmIcon,
+  CrossIcon,
+  TickIcon,
 } from "../Atoms/Icons";
 import { TextSpan, ParagraphText } from "../Atoms/Text";
 import clsx from "clsx";
@@ -17,6 +19,7 @@ export function InPlaceEditableComponent({
   EditModeComponent,
   updateValue,
   StandardComponent,
+  deviceType,
   editable = true,
 }: {
   title: string;
@@ -24,6 +27,7 @@ export function InPlaceEditableComponent({
   EditModeComponent: EditModeComponent;
   updateValue: (value: string) => Promise<void>;
   StandardComponent: StandardComponent;
+  deviceType: "mobile" | "desktop";
   editable?: boolean;
 }) {
   const [editMode, setEditMode] = useState(false);
@@ -52,7 +56,7 @@ export function InPlaceEditableComponent({
 
   if (!exists && editMode) {
     return (
-      <EditableComponentWrapper>
+      <EditableComponentWrapper deviceType={deviceType}>
         <EditMode
           onClickConfirm={onClickConfirmButton}
           onClickCancel={() => setEditMode(false)}
@@ -73,6 +77,7 @@ export function InPlaceEditableComponent({
       EditModeComponent={EditModeComponent}
       updateValue={updateValue}
       StandardComponent={StandardComponent}
+      deviceType={deviceType}
       editable={editable}
     />
   );
@@ -99,12 +104,14 @@ export function EditableComponent({
   EditModeComponent,
   updateValue,
   StandardComponent,
+  deviceType,
   editable,
 }: {
   value: string;
   EditModeComponent: EditModeComponent;
   updateValue: (value: string) => Promise<void>;
   StandardComponent: StandardComponent;
+  deviceType: "mobile" | "desktop";
   editable?: boolean;
 }) {
   const [editMode, setEditMode] = useState(false);
@@ -136,7 +143,7 @@ export function EditableComponent({
 
   if (editMode) {
     return (
-      <EditableComponentWrapper>
+      <EditableComponentWrapper deviceType={deviceType}>
         <EditMode
           onClickConfirm={onClickConfirmButton}
           onClickCancel={onClickCancelButton}
@@ -150,7 +157,7 @@ export function EditableComponent({
 
   if (!editable) {
     return (
-      <EditableComponentWrapper>
+      <EditableComponentWrapper deviceType={deviceType}>
         <StandardComponent value={optimisticValue} pending={pending} />
         <div className="justify-self-end"></div>
       </EditableComponentWrapper>
@@ -158,7 +165,7 @@ export function EditableComponent({
   }
 
   return (
-    <EditableComponentWrapper>
+    <div className="flex w-full justify-between">
       <StandardComponent value={optimisticValue} pending={pending} />
       <div className="justify-self-end">
         <button
@@ -168,12 +175,27 @@ export function EditableComponent({
           <EditIconSmall />
         </button>
       </div>
-    </EditableComponentWrapper>
+    </div>
   );
 }
 
-function EditableComponentWrapper({ children }: { children: ReactNode }) {
-  return <div className="flex w-full justify-between p-2">{children}</div>;
+function EditableComponentWrapper({
+  children,
+  deviceType,
+}: {
+  children: ReactNode;
+  deviceType: "mobile" | "desktop";
+}) {
+  return (
+    <div
+      className={clsx(
+        " w-full justify-between p-2",
+        deviceType === "desktop" && "flex",
+      )}
+    >
+      {children}
+    </div>
+  );
 }
 
 export const AddButton = ({
@@ -213,12 +235,20 @@ export const EditMode: React.FC<{
   return (
     <>
       <div>{EditableComponent}</div>
-      <div className="flex flex-nowrap">
-        <button onClick={onClickCancel}>
-          <CancelIcon />
+      <div className="flex flex-nowrap justify-around pt-2">
+        <button
+          className="flex rounded-full border-2 border-black p-2 text-sm font-semibold"
+          onClick={onClickCancel}
+        >
+          <CrossIcon width={15} />
+          <span className="pl-1">Cancel</span>
         </button>
-        <button onClick={onClickConfirm}>
-          <ConfirmIcon />
+        <button
+          className="flex rounded-full border-2 border-black p-2 text-sm font-semibold"
+          onClick={onClickConfirm}
+        >
+          <TickIcon />
+          <span className="pl-1">Confirm</span>
         </button>
       </div>
     </>
