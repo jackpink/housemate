@@ -7,6 +7,7 @@ import {
   AlertSettings,
   GeneralSettings,
 } from "~/app/_components/ManageAccount";
+import { getDeviceType } from "~/app/actions";
 
 export default async function ManageAccountPage() {
   const session = await auth();
@@ -16,6 +17,8 @@ export default async function ManageAccountPage() {
     // redirect to login
     redirect("/sign-in");
   }
+
+  const deviceType = await getDeviceType();
 
   const user = await User.getById(session.user.id);
 
@@ -30,11 +33,11 @@ export default async function ManageAccountPage() {
       <PageWithSingleColumn>
         <h1 className="border-b-2 border-black font-semibold">General</h1>
         <div className="flex flex-col items-center justify-center">
-          <GeneralSettings user={user} />
+          <GeneralSettings user={user} deviceType={deviceType} />
         </div>
         <h1 className="border-b-2 border-black font-semibold">Alerts</h1>
         <div>
-          <AlertSettings user={user} />
+          <AlertSettings user={user} deviceType={deviceType} />
         </div>
       </PageWithSingleColumn>
     </>

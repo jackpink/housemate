@@ -11,7 +11,13 @@ import { User } from "../../../../core/homeowner/user";
 import { updateUser } from "../actions";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 
-export function GeneralSettings({ user }: { user: User }) {
+export function GeneralSettings({
+  user,
+  deviceType,
+}: {
+  user: User;
+  deviceType: "mobile" | "desktop";
+}) {
   return (
     <div className="flex w-screen flex-col items-center p-2">
       <div className="flex w-full justify-between p-2">
@@ -27,6 +33,7 @@ export function GeneralSettings({ user }: { user: User }) {
           updateUser({ id: user.id, firstName: value })
         }
         editable
+        deviceType={deviceType}
       />
       <EditableComponent
         value={user.lastName}
@@ -36,6 +43,7 @@ export function GeneralSettings({ user }: { user: User }) {
           updateUser({ id: user.id, lastName: value })
         }
         editable
+        deviceType={deviceType}
       />
       <div className="flex w-full justify-between p-2">
         <EditableComponentLabel label="Password: " />
@@ -110,7 +118,13 @@ Alert Settings
 ########################################################################
 */
 
-export function AlertSettings({ user }: { user: User }) {
+export function AlertSettings({
+  user,
+  deviceType,
+}: {
+  user: User;
+  deviceType: "mobile" | "desktop";
+}) {
   const warrantyAlertValue = getAlertString(user.warrantyAlert);
   const taskReminderValue = getAlertString(user.taskReminder);
   const taskOverdueValue = getAlertString(user.taskOverdueReminder);
@@ -127,6 +141,7 @@ export function AlertSettings({ user }: { user: User }) {
           });
         }}
         editable
+        deviceType={deviceType}
       />
       <EditableComponent
         value={taskReminderValue}
@@ -139,6 +154,7 @@ export function AlertSettings({ user }: { user: User }) {
           });
         }}
         editable
+        deviceType={deviceType}
       />
       <EditableComponent
         value={taskOverdueValue}
@@ -151,6 +167,7 @@ export function AlertSettings({ user }: { user: User }) {
           });
         }}
         editable
+        deviceType={deviceType}
       />
     </div>
   );
