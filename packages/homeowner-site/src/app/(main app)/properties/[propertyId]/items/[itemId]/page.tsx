@@ -46,7 +46,9 @@ export default async function TodoItemPage({
   const updateItem: UpdateItemServerAction = async ({
     title,
     description,
+    status,
     recurring,
+    recurringSchedule,
     date,
     warrantyEndDate,
   }) => {
@@ -56,7 +58,9 @@ export default async function TodoItemPage({
       id: params.itemId,
       title,
       description,
+      status,
       recurring,
+      recurringSchedule,
       date,
       warrantyEndDate,
     });

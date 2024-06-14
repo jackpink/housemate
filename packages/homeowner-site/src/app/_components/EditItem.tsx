@@ -9,7 +9,7 @@ import {
   type StandardComponent,
   type EditModeComponent,
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
-import { item } from "../../../../core/db/schema";
+import { ItemStatus, item } from "../../../../core/db/schema";
 import ImageUploader from "../../../../ui/Molecules/ImageUploader";
 import { addFileToFolderAction, createFolderForItem } from "../actions";
 import { type ItemWithFiles } from "../../../../core/homeowner/item";
@@ -43,7 +43,9 @@ export type UpdateItemServerAction = ({
 }: {
   title?: string;
   description?: string;
+  status?: ItemStatus;
   recurring?: boolean;
+  recurringSchedule?: string;
   date?: string;
   warrantyEndDate?: string;
 }) => Promise<void>;
@@ -217,7 +219,7 @@ function EditIssue({
             editable
           />
           <Line />
-          <Status status="todo" />
+          <Status status={item.status} updateItem={updateItem} />
           <Line />
           <EditableComponent
             value={date.toDateString()}
@@ -310,7 +312,7 @@ function EditJob({
             editable
           />
           <Line />
-          <Status status="todo" />
+          <Status status={item.status} updateItem={updateItem} />
           <Line />
           <EditableComponent
             value={date.toDateString()}
@@ -454,23 +456,32 @@ const EditableOneOffRecurring: EditModeComponent = function ({
   );
 };
 
-function Status({ status }: { status: string }) {
-  let statusFormatted = "";
-  switch (status) {
-    case "todo":
-      statusFormatted = "To Do";
-      break;
-    case "completed":
-      statusFormatted = "completed";
-      break;
+function Status({
+  status,
+  updateItem,
+}: {
+  status: string;
+  updateItem: UpdateItemServerAction;
+}) {
+  if (status === "completed") {
+    return (
+      <div className="w-full">
+        <EditableComponentLabel label="Status" />
+        <div className="bg-completed rounded-full p-6 text-center">
+          Completed
+        </div>
+        <button onClick={() => updateItem({ status: ItemStatus.TODO })}>
+          <Text>Mark as To Do? ✗</Text>
+        </button>
+        <Text></Text>
+      </div>
+    );
   }
   return (
     <div className="w-full">
       <EditableComponentLabel label="Status" />
-      <div className="rounded-full bg-altSecondary/70 p-6 text-center">
-        {statusFormatted}
-      </div>
-      <button>
+      <div className="bg-todo rounded-full p-6 text-center">To Do</div>
+      <button onClick={() => updateItem({ status: ItemStatus.COMPLETED })}>
         <Text>Mark as Complete? ✓</Text>
       </button>
       <Text></Text>

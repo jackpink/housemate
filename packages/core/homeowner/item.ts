@@ -119,6 +119,7 @@ export async function update({
   title,
   description,
   recurring,
+  recurringSchedule,
   date,
   priority,
   status,
@@ -128,6 +129,7 @@ export async function update({
   title?: string;
   description?: string;
   recurring?: boolean;
+  recurringSchedule?: string;
   date?: string;
   priority?: number;
   status?: ItemStatus;
@@ -139,6 +141,7 @@ export async function update({
       title,
       description,
       recurring,
+      recurringSchedule,
       date,
       toDoPriority: priority,
       status,
