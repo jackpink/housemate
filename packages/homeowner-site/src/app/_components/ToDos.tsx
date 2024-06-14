@@ -10,13 +10,7 @@ import {
   UpArrowIcon,
   ViewIcon,
 } from "../../../../ui/Atoms/Icons";
-import {
-  Popover,
-  PopoverContent,
-  PopoverDescription,
-  PopoverHeading,
-  PopoverTrigger,
-} from "../../../../ui/Atoms/Popover";
+
 import {
   Dialog,
   DialogClose,
@@ -465,7 +459,7 @@ function MobileTodo({
     <div
       className={clsx(
         "flex rounded-lg border-2 border-dark p-2",
-        isOverdue ? "bg-red-300" : " bg-brand/50",
+        isOverdue ? "bg-red-300" : " bg-todo/70",
       )}
     >
       <div className="flex h-full flex-col items-center gap-2 rounded-sm">
@@ -475,7 +469,7 @@ function MobileTodo({
             "flex w-full flex-col items-center rounded-md  p-1 px-5 py-1 ",
             isOverdue
               ? "bg-red-400 active:bg-red-600"
-              : "bg-brand active:bg-brand/30",
+              : "bg-todo active:bg-todo/30",
           )}
         >
           <UpArrowIcon width={30} height={30} />
@@ -487,7 +481,7 @@ function MobileTodo({
             "flex w-full flex-col items-center rounded-md bg-altSecondary p-1",
             isOverdue
               ? "bg-red-400 active:bg-red-600"
-              : "bg-brand active:bg-brand/30",
+              : "bg-todo active:bg-todo/30",
           )}
         >
           <DownArrowIcon width={30} height={30} />
@@ -496,17 +490,18 @@ function MobileTodo({
       <div className="flex grow items-center justify-center">
         <Text className="text-xl font-semibold">{toDo.title}</Text>
       </div>
+
+      <div className="grow-0">
+        <ItemQuickViewDialog toDo={toDo} isOverdue={isOverdue} />
+      </div>
       <div className="grow-0">
         <button
           onClick={() => markAsCompleted(toDo)}
-          className="h-full w-20 rounded-sm bg-green-300 p-2 active:bg-green-400"
+          className="bg-completed h-full w-20 rounded-sm p-2 active:bg-green-400"
         >
           <div>✔</div>
           <div className="text-xs">Mark as Completed</div>
         </button>
-      </div>
-      <div className="grow-0">
-        <ItemQuickViewDialog toDo={toDo} isOverdue={isOverdue} />
       </div>
     </div>
   );
@@ -528,7 +523,7 @@ export function ItemQuickViewDialog({
             "h-full w-20 rounded-sm py-3",
             isOverdue
               ? "bg-red-400 active:bg-red-600"
-              : "bg-brand active:bg-brand/30",
+              : "bg-todo active:bg-todo/30",
           )}
         >
           <div className="flex justify-center pb-1">
@@ -763,14 +758,14 @@ function CompletedToDo({
   markAsToDo: (toDo: ToDos[0]) => void;
 }) {
   return (
-    <div className="flex rounded-lg border-2 border-altSecondary bg-green-300 p-2">
+    <div className="bg-completed flex rounded-lg border-2 border-altSecondary p-2">
       <div className="flex grow items-center justify-center">
         <Text className="text-xl font-semibold">{toDo.title}</Text>
       </div>
       <div className="grow-0">
         <button
           onClick={() => markAsToDo(toDo)}
-          className="h-20 w-20 rounded-sm border-2 border-dark bg-brand p-2 hover:bg-green-400"
+          className="bg-todo h-20 w-20 rounded-sm border-2 border-dark p-2 hover:bg-green-400"
         >
           {/* <div className="flex justify-center">
             <div className="h-5 w-5 border-2 border-dark"></div>
