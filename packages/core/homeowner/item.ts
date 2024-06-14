@@ -323,7 +323,6 @@ export async function getToDosCompletedThisWeek(homeownerId: string) {
     where: (item, {}) =>
       and(
         eq(item.homeownerId, homeownerId),
-        eq(item.status, ItemStatus.COMPLETED),
         or(
           eq(item.category, ItemCategory.JOB),
           eq(item.category, ItemCategory.ISSUE),
@@ -333,6 +332,7 @@ export async function getToDosCompletedThisWeek(homeownerId: string) {
       filesRootFolder: {
         with: { files: true },
       },
+      pastDates: true,
     },
   });
   const todaysDate = new Date();
@@ -340,7 +340,18 @@ export async function getToDosCompletedThisWeek(homeownerId: string) {
     const toDoDate = new Date(item.date);
     const timeDiff = Math.abs(toDoDate.getTime() - todaysDate.getTime());
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    if (diffDays < 7) {
+    if (diffDays < 7 && item.status === ItemStatus.COMPLETED) {
+      return true;
+    } else if (
+      item.recurring &&
+      item.pastDates.length > 0 &&
+      item.pastDates.some((pastDate) => {
+        const pastDateObj = new Date(pastDate.date);
+        const timeDiff = Math.abs(pastDateObj.getTime() - todaysDate.getTime());
+        const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        return diffDays < 7;
+      })
+    ) {
       return true;
     }
     return false;
@@ -372,19 +383,23 @@ export type ToDos = Awaited<ReturnType<typeof getToDos>>;
 
 export async function getCompleted(homeownerId: string) {
   const items = await db.query.item.findMany({
-    where: (item, { eq }) =>
-      and(
-        eq(item.homeownerId, homeownerId),
-        eq(item.status, ItemStatus.COMPLETED),
-      ),
+    where: (item, { eq }) => and(eq(item.homeownerId, homeownerId)),
     orderBy: [desc(item.date)],
     with: {
       filesRootFolder: {
         with: { files: true },
       },
+      pastDates: true,
     },
   });
-  return items;
+
+  const filteredItems = items.filter((item) => {
+    return (
+      item.status === ItemStatus.COMPLETED ||
+      (item.pastDates.length > 0 && item.recurring)
+    );
+  });
+  return filteredItems;
 }
 
 export type CompletedItems = Awaited<ReturnType<typeof getCompleted>>;
