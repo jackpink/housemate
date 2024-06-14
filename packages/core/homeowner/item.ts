@@ -181,6 +181,7 @@ async function updateRecurring({
     createNewPastDateAndUpdateCurrentDate({
       itemId: id,
       date: itemObj.date,
+      propertyId: itemObj.propertyId,
       recurringSchedule: itemObj.recurringSchedule as RecurringSchedule,
     });
   }
@@ -206,6 +207,7 @@ export async function updateStatus({
       await createNewPastDateAndUpdateCurrentDate({
         itemId: id,
         date: itemObj.date,
+        propertyId: itemObj.propertyId,
         recurringSchedule: itemObj.recurringSchedule as RecurringSchedule,
       });
     } else {
@@ -219,14 +221,16 @@ export async function updateStatus({
 async function createNewPastDateAndUpdateCurrentDate({
   itemId,
   date,
+  propertyId,
   recurringSchedule,
 }: {
   itemId: string;
   date: string;
+  propertyId: string;
   recurringSchedule: RecurringSchedule;
 }) {
   console.log("creating new past date");
-  await db.insert(itemPastDate).values({ itemId, date });
+  await db.insert(itemPastDate).values({ itemId, date, propertyId });
 
   let newDate = new Date(date);
 
@@ -426,4 +430,69 @@ export async function getForUserAndDate(userId: string, taskDate: string) {
       and(eq(item.homeownerId, userId), eq(item.date, taskDate)),
   });
   return items;
+}
+
+async function getItemPastDatesInDateRange({
+  propertyId,
+  startDate,
+  endDate,
+}: {
+  propertyId: string;
+  startDate: string;
+  endDate: string;
+}) {
+  const itemPastDates = await db.query.itemPastDate.findMany({
+    where: (itemPastDate, { eq, and }) =>
+      eq(itemPastDate.propertyId, propertyId),
+  });
+  const filteredItemPastDates = itemPastDates.filter((itemPastDate) => {
+    return itemPastDate.date >= startDate && itemPastDate.date <= endDate;
+  });
+  let items = [];
+  for (const itemPastDateObj of filteredItemPastDates) {
+    const item = await db.query.item.findFirst({
+      where: (item, { eq }) => eq(item.id, itemPastDateObj.itemId),
+      with: {
+        filesRootFolder: {
+          with: { files: true },
+        },
+      },
+    });
+
+    if (item) {
+      item.date = itemPastDateObj.date;
+      items.push(item);
+    }
+  }
+  return items;
+}
+
+export async function getSchedule({
+  propertyId,
+  currentDate,
+  pastMonths,
+  futureMonths,
+}: {
+  propertyId: string;
+  currentDate: Date;
+  pastMonths: number;
+  futureMonths: number;
+}) {
+  const items = await db.query.item.findMany({
+    where: (item, { eq, and }) => eq(item.propertyId, propertyId),
+  });
+  //curretnDate plus 6 months
+  const endDate = new Date(
+    currentDate.setMonth(currentDate.getMonth() + futureMonths),
+  );
+  const startDate = new Date(
+    currentDate.setMonth(currentDate.getMonth() - pastMonths),
+  );
+
+  const filteredItems = items.filter((item) => {
+    const itemDate = new Date(item.date);
+    return itemDate >= startDate && itemDate <= endDate;
+  });
+
+  return filteredItems;
 }

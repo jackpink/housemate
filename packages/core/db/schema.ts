@@ -159,8 +159,15 @@ export const itemPastDate = sqliteTable("item_past_date", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  itemId: text("itemId").references(() => item.id, { onDelete: "cascade" }),
+  itemId: text("itemId")
+    .notNull()
+    .references(() => item.id, { onDelete: "cascade" }),
   date: text("date").notNull(),
+  propertyId: text("propertyId")
+    .notNull()
+    .references(() => property.id, {
+      onDelete: "cascade",
+    }),
 });
 
 export const itemPastDateRelations = relations(itemPastDate, ({ one }) => ({
