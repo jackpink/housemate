@@ -85,6 +85,7 @@ export default async function TodoItemPage({
               <Files
                 rootFolder={item.filesRootFolder}
                 deviceType={deviceType}
+                propertyId={params.propertyId}
               />
             }
             deviceType={deviceType}
