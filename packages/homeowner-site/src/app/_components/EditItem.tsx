@@ -374,7 +374,9 @@ function JobOneOffRecurring({
           value={item.recurringSchedule}
           EditModeComponent={EditableSchedule}
           StandardComponent={Schedule}
-          updateValue={async (value) => console.log("value", value)}
+          updateValue={async (value) =>
+            updateItem({ recurringSchedule: value })
+          }
           editable
           deviceType={deviceType}
         />
@@ -543,13 +545,13 @@ function Status({
     return (
       <div className="w-full">
         <EditableComponentLabel label="Status" />
-        <div className="bg-completed flex items-center justify-center rounded-full p-6 text-center ">
+        <div className="flex items-center justify-center rounded-full bg-completed p-6 text-center ">
           <CompletedIcon width={50} height={50} />
           Completed
         </div>
         <div className="h-2"></div>
         <button
-          className="bg-todo/80 rounded-full p-1 text-center"
+          className="rounded-full bg-todo/80 p-1 text-center"
           onClick={() => updateItem({ status: ItemStatus.TODO })}
         >
           <span className="flex items-center justify-center">
@@ -563,13 +565,13 @@ function Status({
   return (
     <div className="w-full">
       <EditableComponentLabel label="Status" />
-      <div className="bg-todo flex items-center justify-center rounded-full p-6 text-center">
+      <div className="flex items-center justify-center rounded-full bg-todo p-6 text-center">
         <ToDoIcon width={50} height={50} />
         To Do
       </div>
       <div className="h-2"></div>
       <button
-        className="bg-completed/50 rounded-full p-1 text-center"
+        className="rounded-full bg-completed/50 p-1 text-center"
         onClick={() => updateItem({ status: ItemStatus.COMPLETED })}
       >
         <span className="flex items-center justify-center">
