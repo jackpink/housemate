@@ -395,17 +395,7 @@ function ItemsForMobile({ items }: { items: CompletedItems }) {
       <h1>Items for Mobile</h1>
       <div className="grid gap-4 p-4">
         {reducedItems.map((item) => (
-          <ItemForMobile
-            key={item.id}
-            item={item}
-            colour={
-              item.category === "product"
-                ? "product"
-                : item.category === "issue"
-                  ? "issue"
-                  : "completed"
-            }
-          />
+          <ItemForMobile key={item.id} item={item} />
         ))}
         {itemsToShow < items.length && (
           <button
@@ -420,13 +410,7 @@ function ItemsForMobile({ items }: { items: CompletedItems }) {
   );
 }
 
-export function ItemForMobile({
-  item,
-  colour,
-}: {
-  item: CompletedItems[0];
-  colour: "product" | "completed" | "todo" | "issue";
-}) {
+export function ItemForMobile({ item }: { item: CompletedItems[0] }) {
   const dateString = new Date(item.date).toDateString();
   const category =
     item.category === "job"
@@ -434,6 +418,14 @@ export function ItemForMobile({
       : item.category === "issue"
         ? "Issue"
         : "Product";
+  const colour =
+    item.category === "product"
+      ? "product"
+      : item.category === "issue"
+        ? "issue"
+        : item.category === "job" && item.status === "completed"
+          ? "completed"
+          : "todo";
   return (
     <div
       className={clsx(
@@ -449,10 +441,7 @@ export function ItemForMobile({
         <p className="text-center text-lg font-semibold">{item.title}</p>
         <p>{category}</p>
       </div>
-      <ItemQuickViewDialog
-        toDo={item}
-        colour={item.category === "product" ? "product" : "completed"}
-      />
+      <ItemQuickViewDialog toDo={item} colour={colour} />
     </div>
   );
 }

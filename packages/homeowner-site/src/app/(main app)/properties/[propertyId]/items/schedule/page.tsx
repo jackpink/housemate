@@ -39,14 +39,21 @@ export default async function ToDoPage({
 
   const completedItems = await Item.getCompleted(session.user.id);
 
+  const scheduledItems = await Item.getSchedule({
+    propertyId: params.propertyId,
+    currentDate: new Date(),
+    pastMonths: 1,
+    futureMonths: 12,
+  });
+
   return (
     <div>
       <PageTitle>
-        <CapitaliseText value={"Past Items"} />
+        <CapitaliseText value={"Schedule"} />
       </PageTitle>
       <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
-        <Schedule />
+        <Schedule scheduledItems={scheduledItems} deviceType={deviceType} />
       </PageWithSingleColumn>
     </div>
   );
