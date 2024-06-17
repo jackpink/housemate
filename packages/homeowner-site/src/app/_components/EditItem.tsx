@@ -13,6 +13,7 @@ import {
   ItemStatus,
   RecurringSchedule,
   item,
+  property,
 } from "../../../../core/db/schema";
 import ImageUploader from "../../../../ui/Molecules/ImageUploader";
 import { addFileToFolderAction, createFolderForItem } from "../actions";
@@ -787,7 +788,11 @@ function PhotosAndDocuments({
           onUploadComplete={onUploadComplete}
           bucketName={bucketName}
         />
-        <PhotosAndDocumentsAddFolder parentFolderId={folderId} />
+        <PhotosAndDocumentsAddFolder
+          parentFolderId={folderId}
+          propertyId={propertyId}
+          itemId={itemId}
+        />
       </div>
       {Files}
     </div>
@@ -796,10 +801,13 @@ function PhotosAndDocuments({
 
 function PhotosAndDocumentsAddFolder({
   parentFolderId,
+  propertyId,
+  itemId,
 }: {
   parentFolderId: string;
+  propertyId: string;
+  itemId: string;
 }) {
-  const [state, formAction] = useFormState(createFolder, emptyFormState);
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -812,26 +820,56 @@ function PhotosAndDocumentsAddFolder({
         <DialogHeading className="pt-3 text-xl">New Folder</DialogHeading>
         <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
           <EditableComponentLabel label="Folder Name" />
-          <form action={formAction}>
-            <TextInputWithError
-              label="Folder Name"
-              name="name"
-              error={!!state.fieldErrors["lastName"]?.[0]}
-              errorMessage={state.fieldErrors["lastName"]?.[0]}
-            />
-            <input
-              type="text"
-              value={parentFolderId}
-              name="parentId"
-              id="parentId"
-              hidden
-            />
-
-            <CTAButton rounded>Create Folder</CTAButton>
-          </form>
+          <AddFolderForm
+            parentFolderId={parentFolderId}
+            propertyId={propertyId}
+            itemId={itemId}
+          />
         </DialogDescription>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function AddFolderForm({
+  parentFolderId,
+  propertyId,
+  itemId,
+}: {
+  parentFolderId: string;
+  propertyId: string;
+  itemId: string;
+}) {
+  const [state, formAction] = useFormState(createFolder, emptyFormState);
+  return (
+    <>
+      <EditableComponentLabel label="Folder Name" />
+      <form action={formAction}>
+        <TextInputWithError
+          label="Folder Name"
+          name="name"
+          error={!!state.fieldErrors["lastName"]?.[0]}
+          errorMessage={state.fieldErrors["lastName"]?.[0]}
+        />
+        <input
+          type="text"
+          value={parentFolderId}
+          name="parentId"
+          id="parentId"
+          hidden
+        />
+        <input
+          type="text"
+          value={propertyId}
+          name="propertyId"
+          id="propertyId"
+          hidden
+        />
+        <input type="text" value={itemId} name="itemId" id="itemId" hidden />
+
+        <CTAButton rounded>Create Folder</CTAButton>
+      </form>
+    </>
   );
 }
 
@@ -850,6 +888,8 @@ function AddFolderButton({ onClick }: { onClick: () => void }) {
 export const addFolderSchema = z.object({
   name: z.string().min(1),
   parentId: z.string().min(1),
+  propertyId: z.string().min(1),
+  itemId: z.string().min(1),
 });
 
 const createFolder = async (
@@ -862,6 +902,8 @@ const createFolder = async (
     result = addFolderSchema.parse({
       name: formData.get("name"),
       parentId: formData.get("parentId"),
+      propertyId: formData.get("propertyId"),
+      itemId: formData.get("itemId"),
     });
 
     console.log("new folder", result.name);

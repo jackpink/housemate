@@ -233,9 +233,14 @@ export async function updateUser({
 export async function createFolderForItem({
   parentId,
   name,
+  propertyId,
+  itemId,
 }: {
   parentId: string;
   name: string;
+  propertyId: string;
+  itemId: string;
 }) {
   await Item.addFolder({ parentId, name });
+  revalidatePath(`/properties/${propertyId}/items/${itemId}`);
 }
