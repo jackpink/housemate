@@ -534,6 +534,23 @@ const EditableOneOffRecurring: EditModeComponent = function ({
   );
 };
 
+export function CompletedStatusLabel() {
+  return (
+    <div className="flex w-full items-center justify-center rounded-full bg-completed p-6 text-center ">
+      <CompletedIcon width={50} height={50} />
+      Completed
+    </div>
+  );
+}
+
+export function ToDoStatusLabel() {
+  return (
+    <div className="flex w-full items-center justify-center rounded-full bg-todo p-6 text-center">
+      <ToDoIcon width={50} height={50} />
+      To Do
+    </div>
+  );
+}
 function Status({
   status,
   updateItem,
@@ -545,10 +562,7 @@ function Status({
     return (
       <div className="w-full">
         <EditableComponentLabel label="Status" />
-        <div className="flex items-center justify-center rounded-full bg-completed p-6 text-center ">
-          <CompletedIcon width={50} height={50} />
-          Completed
-        </div>
+        <CompletedStatusLabel />
         <div className="h-2"></div>
         <button
           className="rounded-full bg-todo/80 p-1 text-center"
@@ -565,10 +579,7 @@ function Status({
   return (
     <div className="w-full">
       <EditableComponentLabel label="Status" />
-      <div className="flex items-center justify-center rounded-full bg-todo p-6 text-center">
-        <ToDoIcon width={50} height={50} />
-        To Do
-      </div>
+      <ToDoStatusLabel />
       <div className="h-2"></div>
       <button
         className="rounded-full bg-completed/50 p-1 text-center"

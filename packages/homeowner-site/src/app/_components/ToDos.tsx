@@ -6,7 +6,9 @@ import { Text } from "../../../../ui/Atoms/Text";
 import React, { DragEventHandler, useCallback } from "react";
 import clsx from "clsx";
 import {
+  CompletedIcon,
   DownArrowIcon,
+  ToDoIcon,
   UpArrowIcon,
   ViewIcon,
 } from "../../../../ui/Atoms/Icons";
@@ -23,6 +25,7 @@ import { ItemStatus } from "../../../../core/db/schema";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { EditableComponentLabel } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { ItemForMobile } from "./PastItems";
+import { CompletedStatusLabel, ToDoStatusLabel } from "./EditItem";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -464,9 +467,9 @@ function MobileTodoNew({
       <ItemForMobile item={toDo} rounded={false}>
         <button
           onClick={() => markAsCompleted(toDo)}
-          className="h-full w-20 rounded-sm bg-completed p-2 active:bg-green-400"
+          className="flex h-full w-20 flex-col items-center rounded-sm bg-completed p-2 active:bg-green-400"
         >
-          <p>✔</p>
+          <CompletedIcon width={30} height={30} />
           <p className="text-xs">Mark as Completed</p>
         </button>
       </ItemForMobile>
@@ -610,40 +613,30 @@ export function ItemQuickViewDialog({
           <EditableComponentLabel label="Date" />
           <Text>{date}</Text>
           <Line />
-          <Text>{toDo.description}</Text>
-          <Text>{toDo.status}</Text>
-          <Text>{toDo.category}</Text>
+          {toDo.description && (
+            <>
+              <EditableComponentLabel label="Description" />
+              <Text>{toDo.description}</Text>
+            </>
+          )}
+          {toDo.status === "todo" ? (
+            <>
+              <ToDoStatusLabel />
+              <Line />
+            </>
+          ) : (
+            <>
+              <CompletedStatusLabel />
+              <Line />
+            </>
+          )}
+          <EditableComponentLabel label="Category" />
+          <Text className="capitalize">{toDo.category}</Text>
+          <Line />
+          <EditableComponentLabel label="Recurring/One Off" />
           <Text>{toDo.recurring ? "Recurring" : "One-Off"}</Text>
-          <EditableComponentLabel label="Date" />
-          <Text>{date}</Text>
           <Line />
-          <EditableComponentLabel label="Date" />
-          <Text>{date}</Text>
-          <Line />
-          <EditableComponentLabel label="Date" />
-          <Text>{date}</Text>
-          <Line />
-          <EditableComponentLabel label="Date" />
-          <Text>{date}</Text>
-          <Line />
-          <EditableComponentLabel label="Date" />
-          <Text>{date}</Text>
-          <Line />
-          <EditableComponentLabel label="Date" />
-          <Text>{date}</Text>
-          <Line />
-          <EditableComponentLabel label="Date" />
-          <Text>{date}</Text>
-          <Line />
-          <EditableComponentLabel label="Date" />
-          <Text>{date}</Text>
-          <Line />
-          <EditableComponentLabel label="Date" />
-          <Text>{date}</Text>
-          <Line />
-          <EditableComponentLabel label="Date" />
-          <Text>{date}</Text>
-          <Line />
+          <div className="h-44"></div>
         </DialogDescription>
       </DialogContent>
     </Dialog>
@@ -819,8 +812,8 @@ function CompletedToDo2({
         {/* <div className="flex justify-center">
             <div className="h-5 w-5 border-2 border-dark"></div>
           </div> */}
-        <div className="text-xs">
-          <div className="text-xl">⇧</div>
+        <div className="flex flex-col items-center text-xs">
+          <ToDoIcon width={30} height={30} />
           Mark as
           <br />
           To Do
