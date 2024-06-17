@@ -24,8 +24,8 @@ function MobileSchedule({
 }) {
   return (
     <div className="grid gap-4 p-2">
-      {scheduledItems.map((item) => (
-        <ItemForMobile key={item.id} item={item} />
+      {scheduledItems.map((item, index) => (
+        <ItemForMobile key={index} item={item} />
       ))}
     </div>
   );

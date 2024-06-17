@@ -22,6 +22,7 @@ import {
 import { ItemStatus } from "../../../../core/db/schema";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { EditableComponentLabel } from "../../../../ui/Molecules/InPlaceEditableComponent";
+import { ItemForMobile } from "./PastItems";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -424,9 +425,9 @@ function MobileToDos({
   console.log("mobile");
 
   return (
-    <div className="flex flex-col gap-3 p-4">
+    <div className="flex flex-col gap-5 p-4">
       {optimisticToDos.map((toDo) => (
-        <MobileTodo
+        <MobileTodoNew
           toDo={toDo}
           key={toDo.id}
           moveUp={moveUp}
@@ -434,6 +435,50 @@ function MobileToDos({
           markAsCompleted={markAsCompleted}
         />
       ))}
+    </div>
+  );
+}
+
+function MobileTodoNew({
+  toDo,
+  moveUp,
+  moveDown,
+  markAsCompleted,
+}: {
+  toDo: ToDos[0];
+  moveUp: (toDo: ToDos[0]) => void;
+  moveDown: (toDo: ToDos[0]) => void;
+  markAsCompleted: (toDo: ToDos[0]) => void;
+}) {
+  return (
+    <div className={clsx("")}>
+      <button
+        onClick={() => moveUp(toDo)}
+        className={clsx(
+          " flex w-full flex-col items-center overflow-hidden rounded-t-full p-1 px-5 py-1 ",
+          toDo.category === "job" ? "bg-todo active:bg-todo/30" : "bg-issue",
+        )}
+      >
+        <UpArrowIcon width={30} height={30} />
+      </button>
+      <ItemForMobile item={toDo} rounded={false}>
+        <button
+          onClick={() => markAsCompleted(toDo)}
+          className="h-full w-20 rounded-sm bg-completed p-2 active:bg-green-400"
+        >
+          <p>✔</p>
+          <p className="text-xs">Mark as Completed</p>
+        </button>
+      </ItemForMobile>
+      <button
+        onClick={() => moveDown(toDo)}
+        className={clsx(
+          "flex w-full flex-col items-center rounded-b-full bg-altSecondary p-1",
+          toDo.category === "job" ? "bg-todo active:bg-todo/30" : "bg-issue",
+        )}
+      >
+        <DownArrowIcon width={30} height={30} />
+      </button>
     </div>
   );
 }
@@ -500,7 +545,7 @@ function MobileTodo({
       <div className="grow-0">
         <button
           onClick={() => markAsCompleted(toDo)}
-          className="bg-completed h-full w-20 rounded-sm p-2 active:bg-green-400"
+          className="h-full w-20 rounded-sm bg-completed p-2 active:bg-green-400"
         >
           <div>✔</div>
           <div className="text-xs">Mark as Completed</div>
@@ -753,9 +798,35 @@ function CompletedToDos({
     <div className="flex flex-col gap-3 p-4">
       <CompletedTodoMessage completedToDos={toDos} />
       {optimisticToDos.map((toDo) => (
-        <CompletedToDo key={toDo.id} toDo={toDo} markAsToDo={markAsToDo} />
+        <CompletedToDo2 key={toDo.id} toDo={toDo} markAsToDo={markAsToDo} />
       ))}
     </div>
+  );
+}
+function CompletedToDo2({
+  toDo,
+  markAsToDo,
+}: {
+  toDo: ToDos[0];
+  markAsToDo: (toDo: ToDos[0]) => void;
+}) {
+  return (
+    <ItemForMobile item={toDo} rounded={true}>
+      <button
+        onClick={() => markAsToDo(toDo)}
+        className="h-20 w-20 rounded-sm bg-todo p-2 hover:bg-green-400"
+      >
+        {/* <div className="flex justify-center">
+            <div className="h-5 w-5 border-2 border-dark"></div>
+          </div> */}
+        <div className="text-xs">
+          <div className="text-xl">⇧</div>
+          Mark as
+          <br />
+          To Do
+        </div>
+      </button>
+    </ItemForMobile>
   );
 }
 
@@ -767,14 +838,14 @@ function CompletedToDo({
   markAsToDo: (toDo: ToDos[0]) => void;
 }) {
   return (
-    <div className="bg-completed flex rounded-lg border-2 border-altSecondary p-2">
+    <div className="flex rounded-lg border-2 border-altSecondary bg-completed p-2">
       <div className="flex grow items-center justify-center">
         <Text className="text-xl font-semibold">{toDo.title}</Text>
       </div>
       <div className="grow-0">
         <button
           onClick={() => markAsToDo(toDo)}
-          className="bg-todo h-20 w-20 rounded-sm border-2 border-dark p-2 hover:bg-green-400"
+          className="h-20 w-20 rounded-sm border-2 border-dark bg-todo p-2 hover:bg-green-400"
         >
           {/* <div className="flex justify-center">
             <div className="h-5 w-5 border-2 border-dark"></div>

@@ -410,14 +410,24 @@ function ItemsForMobile({ items }: { items: CompletedItems }) {
   );
 }
 
-export function ItemForMobile({ item }: { item: CompletedItems[0] }) {
+export function ItemForMobile({
+  item,
+  children,
+  rounded = true,
+}: {
+  item: CompletedItems[0];
+  children?: React.ReactNode;
+  rounded?: boolean;
+}) {
   const dateString = new Date(item.date).toDateString();
   const category =
-    item.category === "job"
-      ? "Job"
-      : item.category === "issue"
-        ? "Issue"
-        : "Product";
+    item.category === "job" && item.status === "completed"
+      ? "Completed Job"
+      : item.category === "job" && item.status === "todo"
+        ? "Task"
+        : item.category === "issue"
+          ? "Issue"
+          : "Product";
   const colour =
     item.category === "product"
       ? "product"
@@ -426,22 +436,39 @@ export function ItemForMobile({ item }: { item: CompletedItems[0] }) {
         : item.category === "job" && item.status === "completed"
           ? "completed"
           : "todo";
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const isOverdue =
+    new Date(item.date) <= startOfToday && item.status !== "completed";
+
   return (
     <div
       className={clsx(
-        " flex rounded-xl p-3",
+        " flex  p-3",
         colour === "product" && "bg-product/50",
         colour === "completed" && "bg-completed/50",
         colour === "todo" && "bg-todo/50",
         colour === "issue" && "bg-issue/50",
+        rounded && "rounded-xl",
       )}
     >
       <div className="grow">
-        <p className="italic">{dateString}</p>
-        <p className="text-center text-lg font-semibold">{item.title}</p>
+        <p className="text-sm italic">
+          {dateString}
+          {isOverdue && (
+            <span className="ml-3 rounded-full bg-red-300 p-1 font-semibold not-italic text-red-700">
+              Overdue
+            </span>
+          )}
+        </p>
+        <p className="p-1 text-center text-lg font-semibold">{item.title}</p>
         <p>{category}</p>
       </div>
-      <ItemQuickViewDialog toDo={item} colour={colour} />
+      <div className="grow-0">
+        <ItemQuickViewDialog toDo={item} colour={colour} />
+      </div>
+
+      <div className="grow-0">{children}</div>
     </div>
   );
 }

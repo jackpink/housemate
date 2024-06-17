@@ -27,7 +27,7 @@ export default async function ToDoPage({
 
   const address = concatAddress(property);
 
-  console.log("session", session);
+  // console.log("session", session);
 
   if (!session || !session.user) {
     // redirect to login
@@ -56,9 +56,11 @@ export default async function ToDoPage({
 
   const toDos = await Item.getToDos(session.user.id);
 
-  const completedToDos = await Item.getToDosCompletedThisWeek(session.user.id);
+  const completedToDos = await Item.getToDosCompletedThisWeek(
+    params.propertyId,
+  );
 
-  console.log(toDos);
+  console.log("completedToDos", completedToDos);
   return (
     <div>
       <PageTitle>
