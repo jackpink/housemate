@@ -29,7 +29,7 @@ export default {
         altSecondary: "#86bbbd", //#
         todo: "#7FC8F8",
         completed: "#37D518", //#8ED081
-        issue: "#dc2626",
+        issue: "#fffa1a", //"#dc2626",
         product: "#ff871a",
       },
       transitionProperty: {
