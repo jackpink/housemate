@@ -304,9 +304,9 @@ export async function addFolder({
 }
 
 export async function getToDos(homeownerId: string) {
-  console.log("First recalibrate");
+  // console.log("First recalibrate");
   await recalibratePriority(homeownerId);
-  console.log("now query");
+  // console.log("now query");
   const items = await db.query.item.findMany({
     where: (item, { eq }) =>
       and(eq(item.homeownerId, homeownerId), eq(item.status, ItemStatus.TODO)),
@@ -315,18 +315,19 @@ export async function getToDos(homeownerId: string) {
       filesRootFolder: {
         with: { files: true },
       },
+      pastDates: true,
     },
     orderBy: [desc(item.toDoPriority)],
   });
-  console.log("items", items);
+  // console.log("items", items);
   return items;
 }
 
-export async function getToDosCompletedThisWeek(homeownerId: string) {
+export async function getToDosCompletedThisWeek(propertyId: string) {
   const items = await db.query.item.findMany({
     where: (item, {}) =>
       and(
-        eq(item.homeownerId, homeownerId),
+        eq(item.propertyId, propertyId),
         or(
           eq(item.category, ItemCategory.JOB),
           eq(item.category, ItemCategory.ISSUE),
@@ -340,27 +341,30 @@ export async function getToDosCompletedThisWeek(homeownerId: string) {
     },
   });
   const todaysDate = new Date();
-  items.filter((item) => {
+  const filteredItems = items.filter((item) => {
     const toDoDate = new Date(item.date);
     const timeDiff = Math.abs(toDoDate.getTime() - todaysDate.getTime());
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
     if (diffDays < 7 && item.status === ItemStatus.COMPLETED) {
-      return true;
-    } else if (
-      item.recurring &&
-      item.pastDates.length > 0 &&
-      item.pastDates.some((pastDate) => {
-        const pastDateObj = new Date(pastDate.date);
-        const timeDiff = Math.abs(pastDateObj.getTime() - todaysDate.getTime());
-        const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-        return diffDays < 7;
-      })
-    ) {
+      console.log("item is completed and within 7 days", item);
       return true;
     }
     return false;
   });
-  return items;
+
+  const today = new Date();
+  const WeekAgo = new Date();
+  WeekAgo.setDate(today.getDate() - 7);
+
+  const pastDates = await getItemPastDatesInDateRange({
+    propertyId,
+    startDate: `${WeekAgo.getFullYear()}-${WeekAgo.getMonth() < 9 ? "0" : ""}${WeekAgo.getMonth() + 1}-${WeekAgo.getDate() < 10 ? "0" : ""}${WeekAgo.getDate()}`,
+    endDate: `${today.getFullYear()}-${today.getMonth() < 9 ? "0" : ""}${today.getMonth() + 1}-${today.getDate() < 10 ? "0" : ""}${today.getDate()}`,
+  });
+
+  const allItems = [...filteredItems, ...pastDates];
+
+  return allItems;
 }
 
 async function recalibratePriority(homeownerId: string) {
@@ -370,12 +374,12 @@ async function recalibratePriority(homeownerId: string) {
     orderBy: [asc(item.toDoPriority)],
   });
   for (let index = 0; index < items.length; index++) {
-    console.log(
-      "index priority and item title",
-      index,
-      items[index]?.toDoPriority,
-      items[index]!.title,
-    );
+    // console.log(
+    //   "index priority and item title",
+    //   index,
+    //   items[index]?.toDoPriority,
+    //   items[index]!.title,
+    // );
     await db
       .update(item)
       .set({ toDoPriority: index * 2 })
@@ -403,6 +407,7 @@ export async function getCompleted(homeownerId: string) {
       (item.pastDates.length > 0 && item.recurring)
     );
   });
+
   return filteredItems;
 }
 
@@ -445,9 +450,19 @@ async function getItemPastDatesInDateRange({
     where: (itemPastDate, { eq, and }) =>
       eq(itemPastDate.propertyId, propertyId),
   });
+  console.log("itemPastDates", itemPastDates);
   const filteredItemPastDates = itemPastDates.filter((itemPastDate) => {
+    console.log(
+      "start and end date",
+      startDate,
+      endDate,
+      itemPastDate.date,
+      itemPastDate.date >= startDate,
+      itemPastDate.date <= endDate,
+    );
     return itemPastDate.date >= startDate && itemPastDate.date <= endDate;
   });
+  console.log("filteredItemPastDates", filteredItemPastDates);
   let items = [];
   for (const itemPastDateObj of filteredItemPastDates) {
     const item = await db.query.item.findFirst({
