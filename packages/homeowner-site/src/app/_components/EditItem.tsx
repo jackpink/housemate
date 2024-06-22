@@ -32,6 +32,7 @@ import {
   DialogDescription,
   DialogHeading,
   DialogTrigger,
+  useDialogContext,
 } from "../../../../ui/Atoms/Dialog";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { useFormState } from "react-dom";
@@ -840,7 +841,40 @@ function AddFolderForm({
   propertyId: string;
   itemId: string;
 }) {
+  const { setOpen } = useDialogContext();
+  const createFolder = async (
+    state: any,
+    formData: FormData,
+  ): Promise<FormState> => {
+    let result;
+
+    try {
+      result = addFolderSchema.parse({
+        name: formData.get("name"),
+        parentId: formData.get("parentId"),
+        propertyId: formData.get("propertyId"),
+        itemId: formData.get("itemId"),
+      });
+
+      console.log("new folder", result.name);
+    } catch (error) {
+      console.error("Error signing up", error);
+      return fromErrorToFormState(error);
+    }
+    await createFolderForItem(result);
+
+    //close the dialog
+    setOpen(false);
+
+    return {
+      error: false,
+      message: "Success",
+      fieldErrors: {},
+    };
+  };
+
   const [state, formAction] = useFormState(createFolder, emptyFormState);
+
   return (
     <>
       <EditableComponentLabel label="Folder Name" />
@@ -892,30 +926,30 @@ export const addFolderSchema = z.object({
   itemId: z.string().min(1),
 });
 
-const createFolder = async (
-  state: any,
-  formData: FormData,
-): Promise<FormState> => {
-  let result;
+// const createFolder = async (
+//   state: any,
+//   formData: FormData,
+// ): Promise<FormState> => {
+//   let result;
 
-  try {
-    result = addFolderSchema.parse({
-      name: formData.get("name"),
-      parentId: formData.get("parentId"),
-      propertyId: formData.get("propertyId"),
-      itemId: formData.get("itemId"),
-    });
+//   try {
+//     result = addFolderSchema.parse({
+//       name: formData.get("name"),
+//       parentId: formData.get("parentId"),
+//       propertyId: formData.get("propertyId"),
+//       itemId: formData.get("itemId"),
+//     });
 
-    console.log("new folder", result.name);
-  } catch (error) {
-    console.error("Error signing up", error);
-    return fromErrorToFormState(error);
-  }
-  await createFolderForItem(result);
+//     console.log("new folder", result.name);
+//   } catch (error) {
+//     console.error("Error signing up", error);
+//     return fromErrorToFormState(error);
+//   }
+//   await createFolderForItem(result);
 
-  return {
-    error: false,
-    message: "Success",
-    fieldErrors: {},
-  };
-};
+//   return {
+//     error: false,
+//     message: "Success",
+//     fieldErrors: {},
+//   };
+// };
