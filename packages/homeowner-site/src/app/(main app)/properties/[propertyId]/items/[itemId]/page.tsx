@@ -73,7 +73,7 @@ export default async function TodoItemPage({
   const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";
 
   return (
-    <div>
+    <div className="w-screen">
       <PageTitle>
         <CapitaliseText value={item.category} />
       </PageTitle>

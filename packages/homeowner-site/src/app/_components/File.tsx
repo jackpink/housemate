@@ -25,6 +25,16 @@ import {
 } from "../../../../ui/Atoms/Popover";
 import { type Folder } from "../../../../core/homeowner/item";
 import { on } from "events";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeading,
+  DialogTrigger,
+  useDialog,
+  useDialogContext,
+} from "../../../../ui/Atoms/Dialog";
 
 export type StandardComponent = ({
   value,
@@ -88,28 +98,23 @@ export function MobileFile({
 function StandardComponent({
   value,
   pending,
-  url,
   children,
+  onClick,
 }: {
   value: string;
   pending?: boolean;
-  url: string;
   children: ReactNode;
+  onClick: () => void;
 }) {
   return (
-    <>
-      <div className="w-10 flex-initial pr-2">{children}</div>
+    <button onClick={onClick} className="flex text-left">
+      <div className="w-14 flex-initial pr-2">{children}</div>
       <div className="flex h-auto flex-1 flex-col justify-center">
-        <p
-          className={clsx(
-            "table w-full table-fixed break-words align-bottom	text-sm",
-            pending && "text-slate-500",
-          )}
-        >
+        <p className={clsx(" break-word	text-sm ", pending && "text-slate-500")}>
           {value}
         </p>
       </div>
-    </>
+    </button>
   );
 }
 
@@ -126,7 +131,7 @@ function EditModeComponent({
 }) {
   return (
     <div className="flex items-center">
-      <div className="w-10 pr-2">{children}</div>
+      <div className="w-14 pr-2">{children}</div>
       <input
         type="text"
         className="grow rounded-lg border-2 border-slate-400 p-2 text-sm"
@@ -139,25 +144,71 @@ function EditModeComponent({
 
 const MobilePDF: StandardComponent = ({ url, pending, value }) => {
   return (
-    <StandardComponent value={value} pending={pending} url={url}>
-      <PdfFileIcon />
-    </StandardComponent>
+    <PdfDialog url={url}>
+      <StandardComponent value={value} pending={pending} onClick={() => {}}>
+        <PdfFileIcon />
+      </StandardComponent>
+    </PdfDialog>
   );
 };
 
 const MobileImage: StandardComponent = ({ value, pending, url }) => {
   return (
-    <StandardComponent value={value} pending={pending} url={url}>
-      <Image
-        src={url}
-        alt="house"
-        className="w-auto object-cover"
-        width={56}
-        height={56}
-      />
-    </StandardComponent>
+    <ImageDialog url={url}>
+      <StandardComponent value={value} pending={pending} onClick={() => {}}>
+        <Image
+          src={url}
+          alt="house"
+          className="w-auto object-cover"
+          width={56}
+          height={56}
+        />
+      </StandardComponent>
+    </ImageDialog>
   );
 };
+
+function ImageDialog({ url, children }: { url: string; children: ReactNode }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="Dialog">
+        <DialogClose className="float-end rounded-lg border-2 border-black p-2">
+          <p>Close</p>
+        </DialogClose>
+
+        <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
+          <Image
+            src={url}
+            alt="house"
+            className="w-auto object-cover"
+            width={400}
+            height={400}
+          />
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function PdfDialog({ url, children }: { url: string; children: ReactNode }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="Dialog">
+        <DialogClose className="float-end rounded-lg border-2 border-black p-2">
+          <p>Close</p>
+        </DialogClose>
+
+        <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
+          <object type="application/pdf" data={url}></object>
+          <iframe src={url} className="h-96 w-full" />
+          <embed src={url} className="" />
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 const EditableMobilePDF: EditModeComponent = ({ value, setValue, url }) => {
   return (
@@ -272,7 +323,7 @@ export function EditableComponent({
   }
 
   return (
-    <div className="flex justify-between">
+    <div className="inline-block  flex	 justify-between	">
       <StandardComponent value={optimisticValue} pending={pending} url={url} />
       <div className="flex-initial justify-self-end">
         <button
