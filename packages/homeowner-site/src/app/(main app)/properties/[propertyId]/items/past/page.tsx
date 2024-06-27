@@ -10,6 +10,7 @@ import React from "react";
 import { getDeviceType } from "~/app/actions";
 import { redirect } from "next/navigation";
 import PastItems from "~/app/_components/PastItems";
+import SideMenu from "~/app/_components/SideMenu";
 
 export default async function ToDoPage({
   params,
@@ -40,11 +41,8 @@ export default async function ToDoPage({
   const completedItems = await Item.getCompleted(session.user.id);
 
   return (
-    <div>
-      <PageTitle>
-        <CapitaliseText value={"Past Items"} />
-      </PageTitle>
-      <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
+    <div className="flex">
+      <SideMenu propertyId={params.propertyId} selected="past" />
       <PageWithSingleColumn>
         <PastItems completedItems={completedItems} deviceType={deviceType} />
       </PageWithSingleColumn>
