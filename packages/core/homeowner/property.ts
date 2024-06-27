@@ -67,7 +67,7 @@ export async function get(id: string) {
   return propertyObj;
 }
 
-type Property = InferSelectModel<typeof property>;
+export type Property = InferSelectModel<typeof property>;
 
 export const concatAddress = (property: Property) => {
   let address =
