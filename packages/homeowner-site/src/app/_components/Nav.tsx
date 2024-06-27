@@ -14,12 +14,19 @@ import {
   PopoverTrigger,
 } from "../../../../ui/Atoms/Popover";
 import clsx from "clsx";
+import { LargeSearchIcon } from "../../../../ui/Atoms/Icons";
+import { type Property } from "../../../../core/homeowner/property";
 
-export default function Nav() {
+export default function Nav({ properties }: { properties: Property[] }) {
   const session = useSession();
   if (session?.data?.user) {
     return (
       <NavWrapper>
+        <button></button>
+        <button className="flex items-center rounded-lg border-2 border-black p-2">
+          <LargeSearchIcon />
+          Search
+        </button>
         <UserButton user={session.data.user} />
       </NavWrapper>
     );
