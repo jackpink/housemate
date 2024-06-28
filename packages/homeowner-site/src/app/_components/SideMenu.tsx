@@ -17,7 +17,7 @@ export default function SideMenu({
   selected: "todo" | "schedule" | "past" | "add";
 }) {
   return (
-    <aside className="max-w-min">
+    <aside className="xs:block hidden max-w-min">
       <Link
         href={`/properties/${propertyId}/items/todo`}
         className={clsx("block", selected === "todo" && "bg-altSecondary")}

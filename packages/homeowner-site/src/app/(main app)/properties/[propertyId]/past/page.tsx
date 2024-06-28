@@ -1,11 +1,11 @@
 import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
-import { PageTitle } from "../../../../../../../../ui/Atoms/Title";
-import { CapitaliseText } from "../../../../../../../../ui/Molecules/InPlaceEditableComponent";
-import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayout";
+import { PageTitle } from "../../../../../../../ui/Atoms/Title";
+import { CapitaliseText } from "../../../../../../../ui/Molecules/InPlaceEditableComponent";
+import { PageWithSingleColumn } from "../../../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
-import { Property } from "../../../../../../../../core/homeowner/property";
+import { Property } from "../../../../../../../core/homeowner/property";
 import { concatAddress } from "~/utils/functions";
-import { Item } from "../../../../../../../../core/homeowner/item";
+import { Item } from "../../../../../../../core/homeowner/item";
 import React from "react";
 import { getDeviceType } from "~/app/actions";
 import { redirect } from "next/navigation";

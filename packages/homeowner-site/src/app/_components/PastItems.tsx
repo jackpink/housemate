@@ -417,7 +417,7 @@ function FilterContainer({
     <div
       className={clsx(
         "w-full rounded-lg border-2 border-black p-2",
-        filterStatus && "bg-altSecondary",
+        filterStatus && "bg-brandSecondary/70",
       )}
     >
       <input
@@ -448,7 +448,7 @@ function FiltersForDesktop({
   handleDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className="flex max-w-64 flex-col items-center gap-4 pt-4">
+    <div className="flex max-w-64 flex-col items-center gap-4 p-4">
       <FilterContainer
         filterName="title"
         filterStatus={filters.title.status}
@@ -516,7 +516,7 @@ function Items({ items }: { items: CompletedItems }) {
   const reducedItems = items.slice(0, itemsToShow);
 
   return (
-    <div className="min-w-80 max-w-md grow">
+    <div className="min-w-80 max-w-lg grow">
       <div className="grid gap-4 p-4">
         {reducedItems.map((item) => (
           <Item key={item.id} item={item} />

@@ -16,6 +16,7 @@ export default {
         "208": "88rem",
       },
       screens: {
+        xs: "500px",
         "3xl": "1800px",
       },
       colors: {
