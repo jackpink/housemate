@@ -1,14 +1,7 @@
 "use client";
 
 import { ReactNode, useState } from "react";
-import {
-  EditIconSmall,
-  PlusIcon,
-  CancelIcon,
-  ConfirmIcon,
-  CrossIcon,
-  TickIcon,
-} from "../Atoms/Icons";
+import { EditIconSmall, PlusIcon, CrossIcon, TickIcon } from "../Atoms/Icons";
 import { TextSpan, ParagraphText } from "../Atoms/Text";
 import clsx from "clsx";
 import React from "react";
@@ -19,7 +12,6 @@ export function InPlaceEditableComponent({
   EditModeComponent,
   updateValue,
   StandardComponent,
-  deviceType,
   editable = true,
 }: {
   title: string;
@@ -27,7 +19,6 @@ export function InPlaceEditableComponent({
   EditModeComponent: EditModeComponent;
   updateValue: (value: string) => Promise<void>;
   StandardComponent: StandardComponent;
-  deviceType: "mobile" | "desktop";
   editable?: boolean;
 }) {
   const [editMode, setEditMode] = useState(false);
@@ -56,7 +47,7 @@ export function InPlaceEditableComponent({
 
   if (!exists && editMode) {
     return (
-      <EditableComponentWrapper deviceType={deviceType}>
+      <EditableComponentWrapper>
         <EditMode
           onClickConfirm={onClickConfirmButton}
           onClickCancel={() => setEditMode(false)}
@@ -77,7 +68,6 @@ export function InPlaceEditableComponent({
       EditModeComponent={EditModeComponent}
       updateValue={updateValue}
       StandardComponent={StandardComponent}
-      deviceType={deviceType}
       editable={editable}
     />
   );
@@ -104,14 +94,12 @@ export function EditableComponent({
   EditModeComponent,
   updateValue,
   StandardComponent,
-  deviceType,
   editable,
 }: {
   value: string;
   EditModeComponent: EditModeComponent;
   updateValue: (value: string) => Promise<void>;
   StandardComponent: StandardComponent;
-  deviceType: "mobile" | "desktop";
   editable?: boolean;
 }) {
   const [editMode, setEditMode] = useState(false);
@@ -143,7 +131,7 @@ export function EditableComponent({
 
   if (editMode) {
     return (
-      <EditableComponentWrapper deviceType={deviceType}>
+      <EditableComponentWrapper>
         <EditMode
           onClickConfirm={onClickConfirmButton}
           onClickCancel={onClickCancelButton}
@@ -157,7 +145,7 @@ export function EditableComponent({
 
   if (!editable) {
     return (
-      <EditableComponentWrapper deviceType={deviceType}>
+      <EditableComponentWrapper>
         <StandardComponent value={optimisticValue} pending={pending} />
         <div className="justify-self-end"></div>
       </EditableComponentWrapper>
@@ -179,23 +167,8 @@ export function EditableComponent({
   );
 }
 
-function EditableComponentWrapper({
-  children,
-  deviceType,
-}: {
-  children: ReactNode;
-  deviceType: "mobile" | "desktop";
-}) {
-  return (
-    <div
-      className={clsx(
-        " w-full justify-between p-2",
-        deviceType === "desktop" && "flex",
-      )}
-    >
-      {children}
-    </div>
-  );
+function EditableComponentWrapper({ children }: { children: ReactNode }) {
+  return <div className={clsx(" w-full justify-between p-2")}>{children}</div>;
 }
 
 export const AddButton = ({
