@@ -1,8 +1,7 @@
-import Nav from "~/app/_components/Nav";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "~/auth";
-import { Property } from "../../../../core/homeowner/property";
-import { concatAddress } from "~/utils/functions";
+import React from "react";
+import { ViewportProvider } from "../_components/ContextProviders";
 
 export default async function MainAppLayout({
   children,
@@ -13,5 +12,9 @@ export default async function MainAppLayout({
 
   // get properties for user
 
-  return <SessionProvider session={session}>{children}</SessionProvider>;
+  return (
+    <SessionProvider session={session}>
+      <ViewportProvider>{children}</ViewportProvider>
+    </SessionProvider>
+  );
 }

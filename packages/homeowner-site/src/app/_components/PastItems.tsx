@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "../../../../ui/Atoms/Dialog";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useViewport } from "./ContextProviders";
 
 export default function PastItems({
   completedItems,
@@ -22,6 +23,7 @@ export default function PastItems({
   completedItems: CompletedItems;
   deviceType: "mobile" | "desktop";
 }) {
+  const { width, height } = useViewport();
   const [filteredItems, setFilteredItems] = React.useState(completedItems);
 
   // Filter by saerc params
@@ -51,7 +53,7 @@ export default function PastItems({
     return titleResult && categoryResult && dateResult;
   });
 
-  if (deviceType === "mobile") {
+  if (width < 660) {
     return (
       <div>
         <Filters isMobile={true} />
