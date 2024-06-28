@@ -15,6 +15,7 @@ import {
 } from "../../../../ui/Atoms/Dialog";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useViewport } from "./ContextProviders";
+import Link from "next/link";
 
 export default function PastItems({
   completedItems,
@@ -588,9 +589,32 @@ export function Item({
         <p className="p-1 text-center text-lg font-semibold">{item.title}</p>
         <p>{category}</p>
       </div>
-      <div className="grow-0">
-        <ItemQuickViewDialog toDo={item} colour={colour} />
-      </div>
+      <div className="grow-0"></div>
+      <Link
+        href={`/properties/${item.propertyId}/past/${item.id}`}
+        className={clsx(
+          "h-full w-20 rounded-sm py-3",
+          colour === "todo"
+            ? "bg-todo active:bg-todo/30"
+            : colour === "completed"
+              ? "bg-completed active:bg-completed/30"
+              : colour === "issue"
+                ? "bg-issue active:bg-issue/30"
+                : colour === "product"
+                  ? "bg-product active:bg-product/30"
+                  : "bg-todo active:bg-todo/30",
+        )}
+      >
+        <div className="flex justify-center pb-1"></div>
+        <div className="text-center text-xs">
+          Show
+          {item.category === "job"
+            ? " Job"
+            : item.category === "product"
+              ? " Product"
+              : " Issue"}
+        </div>
+      </Link>
 
       <div className="grow-0">{children}</div>
     </div>

@@ -78,269 +78,126 @@ export default function EditItem({
 }) {
   const date = new Date(item.date);
 
-  if (item.category === "product") {
+  return (
+    <div className="flex flex-wrap justify-center gap-4 p-4">
+      <div className="min-w-80 max-w-md">
+        <EditableComponent
+          value={item.title}
+          EditModeComponent={EditableTitle}
+          StandardComponent={Title}
+          updateValue={async (value: string) => updateItem({ title: value })}
+          editable
+          deviceType={deviceType}
+        />
+        <Line />
+        <InPlaceEditableComponent
+          title="Description"
+          value={item.description}
+          EditModeComponent={EditableDescription}
+          StandardComponent={Description}
+          updateValue={async (value: string) =>
+            updateItem({ description: value })
+          }
+          editable
+          deviceType={deviceType}
+        />
+        <Line />
+        <ItemDetails
+          item={item}
+          updateItem={updateItem}
+          date={date}
+          deviceType={deviceType}
+        />
+      </div>
+      <div className="min-w-80 max-w-lg">
+        <PhotosAndDocuments
+          itemId={item.id}
+          bucketName={bucketName}
+          propertyId={propertyId}
+          Files={Files}
+          folderId={item.filesRootFolderId!}
+          deviceType={deviceType}
+        />
+      </div>
+    </div>
+  );
+}
+
+function ItemDetails({
+  item,
+  updateItem,
+  date,
+  deviceType,
+}: {
+  item: ItemWithFiles;
+  updateItem: UpdateItemServerAction;
+  date: Date;
+  deviceType: "desktop" | "mobile";
+}) {
+  if (item.category === "issue") {
     return (
-      <EditProduct
-        item={item}
-        updateItem={updateItem}
-        bucketName={bucketName}
-        propertyId={propertyId}
-        Files={Files}
-        date={date}
-        deviceType={deviceType}
-      />
+      <>
+        <Status status={item.status} updateItem={updateItem} />
+        <Line />
+
+        <EditableComponent
+          value={date.toDateString()}
+          EditModeComponent={EditableDateOfItem}
+          StandardComponent={DateOfItem}
+          updateValue={async (value: string) => {
+            console.log("value before add", value);
+
+            updateItem({ date: value });
+          }}
+          editable
+          deviceType={deviceType}
+        />
+        <Line />
+      </>
+    );
+  } else if (item.category === "job") {
+    return (
+      <>
+        <Status status={item.status} updateItem={updateItem} />
+        <Line />
+        <JobOneOffRecurring
+          item={item}
+          updateItem={updateItem}
+          deviceType={deviceType}
+        />
+        <Line />
+      </>
     );
   }
-
-  return (
-    <EditJob
-      item={item}
-      updateItem={updateItem}
-      bucketName={bucketName}
-      propertyId={propertyId}
-      Files={Files}
-      date={date}
-      deviceType={deviceType}
-    />
-  );
-}
-
-function EditProduct({
-  item,
-  updateItem,
-  bucketName,
-  propertyId,
-  Files,
-  date,
-  deviceType,
-}: {
-  item: ItemWithFiles;
-  updateItem: UpdateItemServerAction;
-  bucketName: string;
-  propertyId: string;
-  Files: React.ReactNode;
-  date: Date;
-  deviceType: "desktop" | "mobile";
-}) {
   return (
     <>
-      <div className="py-4 pl-10">
-        <EditableComponent
-          value={item.title}
-          EditModeComponent={EditableTitle}
-          StandardComponent={Title}
-          updateValue={async (value: string) => updateItem({ title: value })}
-          editable
-          deviceType={deviceType}
-        />
-      </div>
+      <EditableComponent
+        value={date.toDateString()}
+        EditModeComponent={EditableDateOfItem}
+        StandardComponent={DateOfItem}
+        updateValue={async (value: string) => {
+          console.log("value before add", value);
+
+          updateItem({ date: value });
+        }}
+        editable
+        deviceType={deviceType}
+      />
+
       <Line />
-      <div className="flex flex-wrap-reverse items-center justify-center">
-        <div className="flex w-full flex-col items-center justify-center lg:w-96 2xl:w-128">
-          <InPlaceEditableComponent
-            title="Description"
-            value={item.description}
-            EditModeComponent={EditableDescription}
-            StandardComponent={Description}
-            updateValue={async (value: string) =>
-              updateItem({ description: value })
-            }
-            editable
-            deviceType={deviceType}
-          />
+      <EditableComponent
+        value={item.warrantyEndDate || "No Warranty"}
+        EditModeComponent={EditableWarrantyEndDate}
+        StandardComponent={WarrantyEndDate}
+        updateValue={async (value: string) => {
+          console.log("value before add", value);
 
-          <Line />
-          <EditableComponent
-            value={date.toDateString()}
-            EditModeComponent={EditableDateOfItem}
-            StandardComponent={DateOfItem}
-            updateValue={async (value: string) => {
-              console.log("value before add", value);
-
-              updateItem({ date: value });
-            }}
-            editable
-            deviceType={deviceType}
-          />
-
-          <Line />
-          <EditableComponent
-            value={item.warrantyEndDate || "No Warranty"}
-            EditModeComponent={EditableWarrantyEndDate}
-            StandardComponent={WarrantyEndDate}
-            updateValue={async (value: string) => {
-              console.log("value before add", value);
-
-              updateItem({ warrantyEndDate: value });
-            }}
-            editable
-            deviceType={deviceType}
-          />
-          <Line />
-
-          <PhotosAndDocuments
-            itemId={item.id}
-            bucketName={bucketName}
-            propertyId={propertyId}
-            Files={Files}
-            folderId={item.filesRootFolderId!}
-            deviceType={deviceType}
-          />
-        </div>
-      </div>
-    </>
-  );
-}
-
-function EditIssue({
-  item,
-  updateItem,
-  bucketName,
-  propertyId,
-  Files,
-  date,
-  deviceType,
-}: {
-  item: ItemWithFiles;
-  updateItem: UpdateItemServerAction;
-  bucketName: string;
-  propertyId: string;
-  Files: React.ReactNode;
-  date: Date;
-  deviceType: "desktop" | "mobile";
-}) {
-  return (
-    <>
-      <div className="py-4 pl-10">
-        <EditableComponent
-          value={item.title}
-          EditModeComponent={EditableTitle}
-          StandardComponent={Title}
-          updateValue={async (value: string) => updateItem({ title: value })}
-          editable
-          deviceType={deviceType}
-        />
-      </div>
+          updateItem({ warrantyEndDate: value });
+        }}
+        editable
+        deviceType={deviceType}
+      />
       <Line />
-      <div className="flex flex-wrap-reverse items-center justify-center">
-        <div className="flex w-full flex-col items-center justify-center lg:w-96 2xl:w-128">
-          <InPlaceEditableComponent
-            title="Description"
-            value={item.description}
-            EditModeComponent={EditableDescription}
-            StandardComponent={Description}
-            updateValue={async (value: string) =>
-              updateItem({ description: value })
-            }
-            editable
-            deviceType={deviceType}
-          />
-          <Line />
-          <Status status={item.status} updateItem={updateItem} />
-          <Line />
-
-          <EditableComponent
-            value={date.toDateString()}
-            EditModeComponent={EditableDateOfItem}
-            StandardComponent={DateOfItem}
-            updateValue={async (value: string) => {
-              console.log("value before add", value);
-
-              updateItem({ date: value });
-            }}
-            editable
-            deviceType={deviceType}
-          />
-
-          <div className="w-full">
-            <EditableComponent
-              value="Weekly"
-              EditModeComponent={EditableSchedule}
-              StandardComponent={Schedule}
-              updateValue={async (value) => console.log("value", value)}
-              editable
-              deviceType={deviceType}
-            />
-            <Line />
-          </div>
-          <PhotosAndDocuments
-            folderId={item.filesRootFolderId!}
-            itemId={item.id}
-            bucketName={bucketName}
-            propertyId={propertyId}
-            Files={Files}
-            deviceType={deviceType}
-          />
-        </div>
-      </div>
-    </>
-  );
-}
-
-function EditJob({
-  item,
-  updateItem,
-  bucketName,
-  propertyId,
-  Files,
-  date,
-  deviceType,
-}: {
-  item: ItemWithFiles;
-  updateItem: UpdateItemServerAction;
-  bucketName: string;
-  propertyId: string;
-  Files: React.ReactNode;
-  date: Date;
-  deviceType: "desktop" | "mobile";
-}) {
-  return (
-    <>
-      <div className="py-4">
-        <EditableComponent
-          value={item.title}
-          EditModeComponent={EditableTitle}
-          StandardComponent={Title}
-          updateValue={async (value: string) => updateItem({ title: value })}
-          editable
-          deviceType={deviceType}
-        />
-      </div>
-      <Line />
-      <div className="flex flex-wrap-reverse items-center justify-center">
-        <div className="flex w-full flex-col items-center justify-center lg:w-96 2xl:w-128">
-          <InPlaceEditableComponent
-            title="Description"
-            value={item.description}
-            EditModeComponent={EditableDescription}
-            StandardComponent={Description}
-            updateValue={async (value: string) =>
-              updateItem({ description: value })
-            }
-            editable
-            deviceType={deviceType}
-          />
-          <Line />
-          <Status status={item.status} updateItem={updateItem} />
-          <Line />
-          <JobOneOffRecurring
-            item={item}
-            updateItem={updateItem}
-            deviceType={deviceType}
-          />
-          <div className="w-full">
-            <Line />
-          </div>
-          <PhotosAndDocuments
-            folderId={item.filesRootFolderId!}
-            itemId={item.id}
-            bucketName={bucketName}
-            propertyId={propertyId}
-            Files={Files}
-            deviceType={deviceType}
-          />
-        </div>
-      </div>
     </>
   );
 }

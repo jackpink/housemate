@@ -15,6 +15,8 @@ import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
 import { revalidatePath } from "next/cache";
 import Files from "~/app/_components/Files";
 import { Bucket } from "sst/node/bucket";
+import { PastIcon } from "../../../../../../../../ui/Atoms/Icons";
+import Link from "next/link";
 
 export default async function ToDoPage({
   params,
@@ -75,12 +77,19 @@ export default async function ToDoPage({
   const completedItems = await Item.getCompleted(session.user.id);
 
   return (
-    <div className="flex">
+    <div className="flex justify-center">
       <SideMenu propertyId={params.propertyId} selected="past" />
-      <PageWithSingleColumn>
+      <div className="hidden lg:block">
         <PastItems completedItems={completedItems} deviceType={deviceType} />
-      </PageWithSingleColumn>
-      <PageWithSingleColumn>
+      </div>
+      <div>
+        <Link
+          href={`/properties/${params.propertyId}/past`}
+          className="flex items-center rounded-md bg-altSecondary p-2 text-xl lg:hidden"
+        >
+          Back to Past Items
+          <PastIcon width={60} height={40} />
+        </Link>
         <EditItem
           item={item}
           updateItem={updateItem}
@@ -95,7 +104,7 @@ export default async function ToDoPage({
           }
           deviceType={deviceType}
         />
-      </PageWithSingleColumn>
+      </div>
     </div>
   );
 }
