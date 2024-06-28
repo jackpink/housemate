@@ -86,7 +86,7 @@ const NavWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <div className="relative flex w-full items-center justify-between px-2 pt-6">
+      <div className="bg-brand/60 relative flex w-full items-center justify-between px-2 py-6">
         <Link href="/" className="mr-3  flex-none overflow-hidden md:w-auto">
           <HorizontalLogo height={40} />
         </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { CompletedItems } from "../../../../core/homeowner/item";
 import { ItemQuickViewDialog } from "./ToDos";
 import clsx from "clsx";
@@ -54,23 +54,23 @@ export default function PastItems({
   if (deviceType === "mobile") {
     return (
       <div>
-        <FiltersForMobile />
-        <ItemsForMobile items={newFilteredItems} />
+        <Filters isMobile={true} />
+        <Items items={newFilteredItems} />
       </div>
     );
   }
 
   return (
-    <div>
-      <FiltersForDesktop />
-      <ItemsForDesktop />
+    <div className="flex">
+      <Filters isMobile={false} />
+      <Items items={newFilteredItems} />
     </div>
   );
 }
 
 /* 
 ##########################################################################
-FOR MOBILE
+FILTERS
 ##########################################################################
 */
 
@@ -107,7 +107,10 @@ type Filter = { status: boolean; value: string };
 
 type Filters = { title: Filter; category: Filter; date: Filter };
 
-function FiltersForMobile() {
+function Filters({ isMobile }: { isMobile: boolean }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const dateObj = new Date();
   const todaysDate = dateObj.toISOString().split("T")[0];
 
@@ -119,8 +122,6 @@ function FiltersForMobile() {
     category: { status: false, value: "job" },
     date: { status: false, value: `${sixMonthsAgo} to ${todaysDate}` },
   };
-  const router = useRouter();
-  const pathname = usePathname();
 
   const searchParams = useSearchParams();
   const title = searchParams.get("title");
@@ -156,60 +157,6 @@ function FiltersForMobile() {
     },
     [searchParams],
   );
-
-  console.log("Active Filters", filters);
-
-  return (
-    <div className="p-4">
-      <div className="flex w-full flex-wrap gap-3 pb-4">
-        {activeFilters.map((filter) => (
-          <div
-            key={filter.value}
-            className="flex items-center rounded-full border-2 border-dark bg-brandSecondary/40 p-2"
-          >
-            <span className="font-medium capitalize">{filter.name}</span>
-            <span className="px-2">{":"}</span>
-            <span className="capitalize">{filter.value}</span>
-            <button
-              className="pl-4"
-              onClick={() => {
-                setFilters({
-                  ...filters,
-                  [filter.name as filterValues]: {
-                    status: false,
-                    value: filters[filter.name as filterValues].value,
-                  },
-                });
-                const newQueryString = removeQueryString(filter.name);
-                router.push(`${pathname}?${newQueryString}`);
-              }}
-            >
-              <CancelIcon width={27} />
-            </button>
-          </div>
-        ))}
-      </div>
-      <AddFilterDialog
-        filters={filters}
-        setFilters={setFilters}
-        removeQueryString={removeQueryString}
-      />
-    </div>
-  );
-}
-
-function AddFilterDialog({
-  filters,
-  setFilters,
-  removeQueryString,
-}: {
-  filters: Filters;
-  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
-  removeQueryString: (name: string) => string;
-}) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -253,7 +200,8 @@ function AddFilterDialog({
           value,
         },
       });
-      if (filters[name as filterValues]) {
+
+      if (filters[name as filterValues].status) {
         const newQueryString = createQueryString(name, value);
         router.push(`${pathname}?${newQueryString}`);
       }
@@ -285,6 +233,105 @@ function AddFilterDialog({
     [filters],
   );
 
+  console.log("Active Filters", filters);
+  if (isMobile) {
+    return (
+      <FiltersForMobile
+        activeFilters={activeFilters}
+        setFilters={setFilters}
+        filters={filters}
+        removeQueryString={removeQueryString}
+        toggleFilterStatus={toggleFilterStatus}
+        handleFilterChange={handleFilterChange}
+        handleDateChange={handleDateChange}
+      />
+    );
+  }
+
+  return (
+    <FiltersForDesktop
+      filters={filters}
+      toggleFilterStatus={toggleFilterStatus}
+      handleFilterChange={handleFilterChange}
+      handleDateChange={handleDateChange}
+    />
+  );
+}
+
+function FiltersForMobile({
+  activeFilters,
+  setFilters,
+  filters,
+  removeQueryString,
+  toggleFilterStatus,
+  handleFilterChange,
+  handleDateChange,
+}: {
+  activeFilters: { name: string; value: string }[];
+  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  filters: Filters;
+  removeQueryString: (name: string) => string;
+  toggleFilterStatus: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFilterChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => void;
+  handleDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  return (
+    <div className="p-4">
+      <div className="flex w-full flex-wrap gap-3 pb-4">
+        {activeFilters.map((filter) => (
+          <div
+            key={filter.value}
+            className="flex items-center rounded-full border-2 border-dark bg-brandSecondary/40 p-2"
+          >
+            <span className="font-medium capitalize">{filter.name}</span>
+            <span className="px-2">{":"}</span>
+            <span className="capitalize">{filter.value}</span>
+            <button
+              className="pl-4"
+              onClick={() => {
+                setFilters({
+                  ...filters,
+                  [filter.name as filterValues]: {
+                    status: false,
+                    value: filters[filter.name as filterValues].value,
+                  },
+                });
+                const newQueryString = removeQueryString(filter.name);
+                router.push(`${pathname}?${newQueryString}`);
+              }}
+            >
+              <CancelIcon width={27} />
+            </button>
+          </div>
+        ))}
+      </div>
+      <AddFilterDialog
+        filters={filters}
+        toggleFilterStatus={toggleFilterStatus}
+        handleFilterChange={handleFilterChange}
+        handleDateChange={handleDateChange}
+      />
+    </div>
+  );
+}
+
+function AddFilterDialog({
+  filters,
+  toggleFilterStatus,
+  handleFilterChange,
+  handleDateChange,
+}: {
+  filters: Filters;
+  toggleFilterStatus: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFilterChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => void;
+  handleDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -385,17 +432,92 @@ function FilterContainer({
   );
 }
 
-function ItemsForMobile({ items }: { items: CompletedItems }) {
+function FiltersForDesktop({
+  filters,
+  toggleFilterStatus,
+  handleFilterChange,
+  handleDateChange,
+}: {
+  filters: Filters;
+  toggleFilterStatus: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFilterChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => void;
+  handleDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <div className="flex max-w-64 flex-col items-center gap-4 pt-4">
+      <FilterContainer
+        filterName="title"
+        filterStatus={filters.title.status}
+        toggleFilterStatus={toggleFilterStatus}
+      >
+        <input
+          type="text"
+          placeholder="Enter Title to Search"
+          onChange={handleFilterChange}
+          name="title"
+          value={filters.title.value}
+          className="w-full rounded-full border-2 border-slate-400 p-4"
+        />
+      </FilterContainer>
+      <FilterContainer
+        filterName="category"
+        filterStatus={filters.category.status}
+        toggleFilterStatus={toggleFilterStatus}
+      >
+        <select
+          onChange={handleFilterChange}
+          name="category"
+          className="w-full rounded-full border-2 border-slate-400 p-4"
+        >
+          <option value="job">Job</option>
+          <option value="issue">Issue</option>
+          <option value="product">Product</option>
+        </select>
+      </FilterContainer>
+      <FilterContainer
+        filterName="date"
+        filterStatus={filters.date.status}
+        toggleFilterStatus={toggleFilterStatus}
+      >
+        <input
+          type="date"
+          placeholder="Enter Category to Search"
+          onChange={handleDateChange}
+          name="start"
+          value={filters.date.value.split(" to ")[0]}
+          className="w-full rounded-full border-2 border-slate-400 p-4"
+        />
+        <input
+          type="date"
+          placeholder="Enter Category to Search"
+          onChange={handleDateChange}
+          name="end"
+          value={filters.date.value.split(" to ")[1]}
+          className="w-full rounded-full border-2 border-slate-400 p-4"
+        />
+      </FilterContainer>
+    </div>
+  );
+}
+
+/*
+##########################################################################
+ITEMS
+##########################################################################
+*/
+
+function Items({ items }: { items: CompletedItems }) {
   const [itemsToShow, setItemsToShow] = React.useState(2);
 
   const reducedItems = items.slice(0, itemsToShow);
 
   return (
-    <div>
-      <h1>Items for Mobile</h1>
+    <div className="min-w-80 max-w-md grow">
       <div className="grid gap-4 p-4">
         {reducedItems.map((item) => (
-          <ItemForMobile key={item.id} item={item} />
+          <Item key={item.id} item={item} />
         ))}
         {itemsToShow < items.length && (
           <button
@@ -410,7 +532,7 @@ function ItemsForMobile({ items }: { items: CompletedItems }) {
   );
 }
 
-export function ItemForMobile({
+export function Item({
   item,
   children,
   rounded = true,
@@ -447,7 +569,7 @@ export function ItemForMobile({
         " flex  p-3",
         colour === "product" && "bg-product/50",
         colour === "completed" && "bg-completed/50",
-        colour === "todo" && "bg-todo/50",
+        colour === "todo" && "bg-todo/70",
         colour === "issue" && "bg-issue/50",
         rounded && "rounded-xl",
       )}
@@ -469,27 +591,6 @@ export function ItemForMobile({
       </div>
 
       <div className="grow-0">{children}</div>
-    </div>
-  );
-}
-/*
-##########################################################################
-FOR DESKTOP
-##########################################################################
-*/
-
-function FiltersForDesktop() {
-  return (
-    <div>
-      <h1>Filters for Desktop</h1>
-    </div>
-  );
-}
-
-function ItemsForDesktop() {
-  return (
-    <div>
-      <h1>Items for Desktop</h1>
     </div>
   );
 }

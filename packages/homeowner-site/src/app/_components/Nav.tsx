@@ -23,7 +23,7 @@ export default function Nav({ properties }: { properties: Property[] }) {
     return (
       <NavWrapper>
         <button></button>
-        <button className="flex items-center rounded-lg border-2 border-black p-2">
+        <button className="flex items-center rounded-lg border-2 border-black bg-brand p-2">
           <LargeSearchIcon />
           Search
         </button>
