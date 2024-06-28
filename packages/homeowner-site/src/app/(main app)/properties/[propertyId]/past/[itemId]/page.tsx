@@ -77,33 +77,40 @@ export default async function ToDoPage({
   const completedItems = await Item.getCompleted(session.user.id);
 
   return (
-    <div className="flex justify-center">
+    <div className="flex w-full">
       <SideMenu propertyId={params.propertyId} selected="past" />
-      <div className="hidden lg:block">
-        <PastItems completedItems={completedItems} deviceType={deviceType} />
-      </div>
-      <div>
-        <Link
-          href={`/properties/${params.propertyId}/past`}
-          className="flex items-center rounded-md bg-altSecondary p-2 text-xl lg:hidden"
-        >
-          Back to Past Items
-          <PastIcon width={60} height={40} />
-        </Link>
-        <EditItem
-          item={item}
-          updateItem={updateItem}
-          propertyId={params.propertyId}
-          bucketName={bucketName}
-          Files={
-            <Files
-              rootFolder={item.filesRootFolder}
+      <div className="flex-1">
+        <div className="flex justify-center ">
+          <div className="hidden max-w-[800px] grow lg:block">
+            <PastItems
+              completedItems={completedItems}
               deviceType={deviceType}
-              propertyId={params.propertyId}
             />
-          }
-          deviceType={deviceType}
-        />
+          </div>
+          <div className="grow">
+            <Link
+              href={`/properties/${params.propertyId}/past`}
+              className="flex items-center rounded-md bg-altSecondary p-2 text-xl lg:hidden"
+            >
+              Back to Past Items
+              <PastIcon width={60} height={40} />
+            </Link>
+            <EditItem
+              item={item}
+              updateItem={updateItem}
+              propertyId={params.propertyId}
+              bucketName={bucketName}
+              Files={
+                <Files
+                  rootFolder={item.filesRootFolder}
+                  deviceType={deviceType}
+                  propertyId={params.propertyId}
+                />
+              }
+              deviceType={deviceType}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

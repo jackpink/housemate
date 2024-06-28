@@ -79,8 +79,8 @@ export default function EditItem({
   const date = new Date(item.date);
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 p-4">
-      <div className="min-w-80 max-w-md">
+    <div className="flex flex-wrap gap-4 p-4">
+      <div className="min-w-80 max-w-lg grow">
         <EditableComponent
           value={item.title}
           EditModeComponent={EditableTitle}
@@ -109,7 +109,7 @@ export default function EditItem({
           deviceType={deviceType}
         />
       </div>
-      <div className="min-w-80 max-w-lg">
+      <div className="min-w-80 max-w-lg grow">
         <PhotosAndDocuments
           itemId={item.id}
           bucketName={bucketName}

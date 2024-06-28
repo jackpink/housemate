@@ -42,7 +42,7 @@ export default function SideMenu({
       </Link>
 
       <Link
-        href={`/properties/${propertyId}/items/past`}
+        href={`/properties/${propertyId}/past`}
         className={clsx("block", selected === "past" && "bg-altSecondary")}
       >
         <div className="h-full w-full  p-7">
