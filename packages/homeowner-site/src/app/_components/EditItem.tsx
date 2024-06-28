@@ -87,7 +87,6 @@ export default function EditItem({
           StandardComponent={Title}
           updateValue={async (value: string) => updateItem({ title: value })}
           editable
-          deviceType={deviceType}
         />
         <Line />
         <InPlaceEditableComponent
@@ -99,7 +98,6 @@ export default function EditItem({
             updateItem({ description: value })
           }
           editable
-          deviceType={deviceType}
         />
         <Line />
         <ItemDetails
@@ -150,7 +148,6 @@ function ItemDetails({
             updateItem({ date: value });
           }}
           editable
-          deviceType={deviceType}
         />
         <Line />
       </>
@@ -181,7 +178,6 @@ function ItemDetails({
           updateItem({ date: value });
         }}
         editable
-        deviceType={deviceType}
       />
 
       <Line />
@@ -195,7 +191,6 @@ function ItemDetails({
           updateItem({ warrantyEndDate: value });
         }}
         editable
-        deviceType={deviceType}
       />
       <Line />
     </>
@@ -226,7 +221,6 @@ function JobOneOffRecurring({
             console.log("recurring", recurring);
             updateItem({ recurring: recurring });
           }}
-          deviceType={deviceType}
           editable
         />
         <EditableComponent
@@ -237,7 +231,6 @@ function JobOneOffRecurring({
             updateItem({ recurringSchedule: value })
           }
           editable
-          deviceType={deviceType}
         />
         <EditableComponent
           value={date.toDateString()}
@@ -247,7 +240,6 @@ function JobOneOffRecurring({
             updateItem({ date: value });
           }}
           editable
-          deviceType={deviceType}
         />
         <PastDates pastDates={item.pastDates} />
       </>
@@ -265,7 +257,6 @@ function JobOneOffRecurring({
           updateItem({ recurring: recurring });
         }}
         editable
-        deviceType={deviceType}
       />
       <EditableComponent
         value={date.toDateString()}
@@ -275,7 +266,6 @@ function JobOneOffRecurring({
           updateItem({ date: value });
         }}
         editable
-        deviceType={deviceType}
       />
     </>
   );
@@ -636,6 +626,28 @@ function PhotosAndDocuments({
     });
   };
   console.log("deviceType", deviceType);
+  if (deviceType === "desktop") {
+    return (
+      <div className="w-full p-2">
+        <EditableComponentLabel label="Photos and Documents" />
+        <div className="w-full py-4">
+          <PhotosAndDocumentsAddFolder
+            parentFolderId={folderId}
+            propertyId={propertyId}
+            itemId={itemId}
+            deviceType={deviceType}
+          />
+          <ImageUploader
+            bucketKey={`${itemId}`}
+            deviceType={deviceType}
+            onUploadComplete={onUploadComplete}
+            bucketName={bucketName}
+          />
+        </div>
+        {Files}
+      </div>
+    );
+  }
   return (
     <div className="w-full p-2">
       <EditableComponentLabel label="Photos and Documents" />
@@ -650,6 +662,7 @@ function PhotosAndDocuments({
           parentFolderId={folderId}
           propertyId={propertyId}
           itemId={itemId}
+          deviceType={deviceType}
         />
       </div>
       {Files}
@@ -661,11 +674,28 @@ function PhotosAndDocumentsAddFolder({
   parentFolderId,
   propertyId,
   itemId,
+  deviceType,
 }: {
   parentFolderId: string;
   propertyId: string;
   itemId: string;
+  deviceType: "desktop" | "mobile";
 }) {
+  if (deviceType === "desktop") {
+    return (
+      <details className="border-2 border-slate-400 bg-altSecondary/50 transition ease-linear">
+        <summary className="flex w-full items-center justify-center  bg-altSecondary p-2">
+          <PlusIcon width={23} height={23} />
+          <p className="text-md font-semibold">Add Folder</p>
+        </summary>
+        <AddFolderFormDesktop
+          parentFolderId={parentFolderId}
+          propertyId={propertyId}
+          itemId={itemId}
+        />
+      </details>
+    );
+  }
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -678,7 +708,7 @@ function PhotosAndDocumentsAddFolder({
         <DialogHeading className="pt-3 text-xl">New Folder</DialogHeading>
         <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
           <EditableComponentLabel label="Folder Name" />
-          <AddFolderForm
+          <AddFolderFormMobile
             parentFolderId={parentFolderId}
             propertyId={propertyId}
             itemId={itemId}
@@ -689,7 +719,79 @@ function PhotosAndDocumentsAddFolder({
   );
 }
 
-function AddFolderForm({
+function AddFolderFormDesktop({
+  parentFolderId,
+  propertyId,
+  itemId,
+}: {
+  parentFolderId: string;
+  propertyId: string;
+  itemId: string;
+}) {
+  const createFolder = async (
+    state: any,
+    formData: FormData,
+  ): Promise<FormState> => {
+    let result;
+
+    try {
+      result = addFolderSchema.parse({
+        name: formData.get("name"),
+        parentId: formData.get("parentId"),
+        propertyId: formData.get("propertyId"),
+        itemId: formData.get("itemId"),
+      });
+
+      console.log("new folder", result.name);
+    } catch (error) {
+      console.error("Error signing up", error);
+      return fromErrorToFormState(error);
+    }
+    await createFolderForItem(result);
+
+    //close the details/summary
+
+    return {
+      error: false,
+      message: "Success",
+      fieldErrors: {},
+    };
+  };
+
+  const [state, formAction] = useFormState(createFolder, emptyFormState);
+
+  return (
+    <>
+      <form action={formAction} className="flex flex-col gap-4 py-4">
+        <TextInputWithError
+          label="Folder Name"
+          name="name"
+          error={!!state.fieldErrors["lastName"]?.[0]}
+          errorMessage={state.fieldErrors["lastName"]?.[0]}
+        />
+        <input
+          type="text"
+          value={parentFolderId}
+          name="parentId"
+          id="parentId"
+          hidden
+        />
+        <input
+          type="text"
+          value={propertyId}
+          name="propertyId"
+          id="propertyId"
+          hidden
+        />
+        <input type="text" value={itemId} name="itemId" id="itemId" hidden />
+
+        <CTAButton rounded>Create Folder</CTAButton>
+      </form>
+    </>
+  );
+}
+
+function AddFolderFormMobile({
   parentFolderId,
   propertyId,
   itemId,

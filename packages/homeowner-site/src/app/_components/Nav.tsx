@@ -49,13 +49,13 @@ function UserButton({ user }: { user: User }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <div
+        <button
           className={clsx(
-            "flex h-12 w-12 items-center justify-center rounded-full bg-altSecondary font-bold",
+            "flex h-12 w-12 items-center justify-center rounded-full border-2 border-black bg-brand font-bold",
           )}
         >
           {initials}
-        </div>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
         <PopoverHeading>
