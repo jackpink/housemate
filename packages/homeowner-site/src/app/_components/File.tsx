@@ -67,56 +67,40 @@ export function MobileFile({
   allFolders: Folder[];
   isThumbnail?: boolean;
 }) {
-  const isPdf = file.type.endsWith("pdf");
-
-  if (isPdf) {
+  if (!!isThumbnail) {
     return (
-      <EditableComponent
-        value={file.name}
-        EditModeComponent={EditableMobilePDF}
-        StandardComponent={MobilePDF}
+      <MobileFileListView
         url={url}
-        updateValue={async (value: string) => updateFile({ name: value })}
-        allFolders={allFolders}
         file={file}
         updateFile={updateFile}
-        editable
+        allFolders={allFolders}
+        onClick={() => {}}
       />
     );
   }
 
-  return (
-    <MobileFileImage
-      url={url}
-      file={file}
-      updateFile={updateFile}
-      allFolders={allFolders}
-    />
-  );
-}
-
-function MobileFileImage({
-  url,
-  file,
-  updateFile,
-  allFolders,
-}: {
-  url: string;
-  file: Files[number];
-  updateFile: UpdateFileServerAction;
-  allFolders: Folder[];
-}) {
   return (
     <MobileFileListView
       url={url}
       file={file}
       updateFile={updateFile}
       allFolders={allFolders}
+      onClick={() => {}}
     />
   );
 }
 
-function FileMenu({ onRename }: { onRename: () => void }) {
+function FileMenu({
+  onRename,
+  allFolders,
+  file,
+  updateFile,
+}: {
+  onRename: () => void;
+  allFolders: Folder[];
+  file: Files[number];
+  updateFile: UpdateFileServerAction;
+}) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -130,10 +114,13 @@ function FileMenu({ onRename }: { onRename: () => void }) {
             <EditIconSmall width={20} height={20} />{" "}
             <span className="pl-2">Rename</span>
           </button>
-          <button className="flex">
-            <MoveIcon width={20} height={20} />{" "}
-            <span className="pl-2">Move File</span>
-          </button>
+
+          <MoveButtonPopover
+            allFolders={allFolders}
+            file={file}
+            updateFile={updateFile}
+            onClickCancel={() => {}}
+          />
           <button className="flex">
             <DeleteIcon width={20} height={20} />{" "}
             <span className="pl-2">Delete</span>
@@ -149,25 +136,25 @@ function MobileFileListView({
   file,
   updateFile,
   allFolders,
+  onClick,
 }: {
   url: string;
   file: Files[number];
   updateFile: UpdateFileServerAction;
   allFolders: Folder[];
+  onClick: () => void;
 }) {
   const [isEditMode, setIsEditMode] = useState(false);
 
+  const isPdf = file.type.endsWith("pdf");
+
   return (
-    <button onClick={() => {}} className="flex text-left">
-      <div className="relative h-10 w-10 flex-none bg-slate-500">
-        <Image
-          src={url}
-          alt="house"
-          className=""
-          layout="fill"
-          objectFit="cover"
-        />
-      </div>
+    <div className="flex text-left">
+      {isPdf ? (
+        <MobilePdfWithDialog url={url} size="list" />
+      ) : (
+        <MobileImageWithDialog url={url} size="list" />
+      )}
 
       <EditableComponentNoButton
         value={file.name}
@@ -177,8 +164,67 @@ function MobileFileListView({
         isEditMode={isEditMode}
         setIsEditMode={setIsEditMode}
       />
-      {!isEditMode && <FileMenu onRename={() => setIsEditMode(true)} />}
-    </button>
+      {!isEditMode && (
+        <FileMenu
+          onRename={() => setIsEditMode(true)}
+          allFolders={allFolders}
+          file={file}
+          updateFile={updateFile}
+        />
+      )}
+    </div>
+  );
+}
+
+function MobileImageWithDialog({
+  url,
+  size,
+}: {
+  url: string;
+  size: "list" | "thumbnail";
+}) {
+  return (
+    <ImageDialog url={url}>
+      <button
+        onClick={() => {}}
+        className={clsx(
+          "relative  flex-none bg-slate-500",
+          size === "list" && "h-10 w-10",
+          size === "thumbnail" && "h-20 w-20",
+        )}
+      >
+        <Image
+          src={url}
+          alt="house"
+          className=""
+          layout="fill"
+          objectFit="cover"
+        />
+      </button>
+    </ImageDialog>
+  );
+}
+
+function MobilePdfWithDialog({
+  url,
+  size,
+}: {
+  url: string;
+  size: "list" | "thumbnail";
+}) {
+  return (
+    <PdfDialog url={url}>
+      <button
+        onClick={() => {}}
+        className={clsx(
+          "relative  flex-none bg-slate-500",
+          size === "list" && "h-10 w-10",
+          size === "thumbnail" && "h-20 w-20",
+        )}
+      >
+        <PdfFileIcon />
+      </button>
+    </PdfDialog>
   );
 }
 
@@ -191,7 +237,10 @@ function StandardComponent({
 }) {
   return (
     <p
-      className={clsx(" break-word	px-2 text-sm ", pending && "text-slate-500")}
+      className={clsx(
+        " break-word w-full	px-2 text-sm ",
+        pending && "text-slate-500",
+      )}
     >
       {value}
     </p>
@@ -214,32 +263,6 @@ function EditModeComponent({
     />
   );
 }
-
-const MobilePDF: StandardComponent = ({ url, pending, value }) => {
-  return (
-    <PdfDialog url={url}>
-      <StandardComponent value={value} pending={pending} onClick={() => {}}>
-        <PdfFileIcon />
-      </StandardComponent>
-    </PdfDialog>
-  );
-};
-
-const MobileImage: StandardComponent = ({ value, pending, url }) => {
-  return (
-    <ImageDialog url={url}>
-      <StandardComponent value={value} pending={pending} onClick={() => {}}>
-        <Image
-          src={url}
-          alt="house"
-          className="w-auto object-cover"
-          width={56}
-          height={56}
-        />
-      </StandardComponent>
-    </ImageDialog>
-  );
-};
 
 function ImageDialog({ url, children }: { url: string; children: ReactNode }) {
   return (
@@ -283,181 +306,6 @@ function PdfDialog({ url, children }: { url: string; children: ReactNode }) {
   );
 }
 
-const EditableMobilePDF: EditModeComponent = ({ value, setValue, url }) => {
-  return (
-    <EditModeComponent value={value} setValue={setValue} url={url}>
-      <PdfFileIcon />
-    </EditModeComponent>
-  );
-};
-
-const EditableMobileImage: EditModeComponent = ({ value, setValue, url }) => {
-  return (
-    <EditModeComponent value={value} setValue={setValue} url={url}>
-      <Image
-        src={url}
-        alt="house"
-        className="w-auto object-cover"
-        width={56}
-        height={56}
-      />
-    </EditModeComponent>
-  );
-};
-
-export type EditModeComponent = ({
-  value,
-  setValue,
-  url,
-}: {
-  value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-  url: string;
-}) => ReactNode;
-
-export function EditableComponent({
-  value,
-  EditModeComponent,
-  updateValue,
-  allFolders,
-  file,
-  updateFile,
-  StandardComponent,
-  url,
-  editable,
-}: {
-  value: string;
-  EditModeComponent: EditModeComponent;
-  updateValue: (value: string) => Promise<void>;
-  allFolders: Folder[];
-  file: Files[number];
-  updateFile: UpdateFileServerAction;
-  StandardComponent: StandardComponent;
-  url: string;
-  editable?: boolean;
-}) {
-  const [editMode, setEditMode] = useState(false);
-
-  const [inputValue, setInputValue] = useState(value);
-
-  const [pending, startTransition] = React.useTransition();
-
-  const [optimisticValue, setOptimisticValue] = React.useOptimistic(
-    value,
-    (state, newValue: string) => {
-      return newValue;
-    },
-  );
-
-  const onClickConfirmButton = () => {
-    console.log("input value", inputValue);
-    setEditMode(false);
-    startTransition(async () => {
-      setOptimisticValue(inputValue);
-      await updateValue(inputValue);
-    });
-  };
-
-  const onClickCancelButton = () => {
-    setEditMode(false);
-    setInputValue(optimisticValue ?? "");
-  };
-
-  if (editMode) {
-    return (
-      <EditMode
-        onClickConfirm={onClickConfirmButton}
-        onClickCancel={onClickCancelButton}
-        allFolders={allFolders}
-        file={file}
-        updateFile={updateFile}
-        EditableComponent={
-          <EditModeComponent
-            value={inputValue}
-            setValue={setInputValue}
-            url={url}
-          />
-        }
-      />
-    );
-  }
-
-  if (!editable) {
-    return (
-      <EditableComponentWrapper>
-        <StandardComponent
-          value={optimisticValue}
-          pending={pending}
-          url={url}
-        />
-        <div className="justify-self-end"></div>
-      </EditableComponentWrapper>
-    );
-  }
-
-  return (
-    <div className="inline-block  flex	 justify-between	">
-      <StandardComponent value={optimisticValue} pending={pending} url={url} />
-      <div className="flex-initial justify-self-end">
-        <button
-          onClick={() => setEditMode(true)}
-          className={clsx("pl-2", pending && "cursor-wait")}
-        >
-          <EditIconSmall />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function EditableComponentWrapper({ children }: { children: ReactNode }) {
-  return <div className="w-full justify-between p-2">{children}</div>;
-}
-
-export const EditMode: React.FC<{
-  onClickConfirm: () => void;
-  onClickCancel: () => void;
-  allFolders: Folder[];
-  file: Files[number];
-  updateFile: UpdateFileServerAction;
-  EditableComponent: ReactNode;
-}> = ({
-  onClickConfirm,
-  onClickCancel,
-  EditableComponent,
-  allFolders,
-  file,
-  updateFile,
-}) => {
-  return (
-    <div>
-      {EditableComponent}
-      <div className="flex flex-nowrap justify-around pt-2">
-        <MoveButtonPopover
-          allFolders={allFolders}
-          file={file}
-          updateFile={updateFile}
-          onClickCancel={onClickCancel}
-        />
-        <button
-          className="flex rounded-full border-2 border-black p-2 text-sm font-semibold"
-          onClick={onClickCancel}
-        >
-          <CrossIcon width={15} />
-          <span className="pl-1">Cancel</span>
-        </button>
-        <button
-          className="flex rounded-full border-2 border-black p-2 text-sm font-semibold"
-          onClick={onClickConfirm}
-        >
-          <TickIcon />
-          <span className="pl-1">Confirm</span>
-        </button>
-      </div>
-    </div>
-  );
-};
-
 function MoveButtonPopover({
   allFolders,
   file,
@@ -476,9 +324,9 @@ function MoveButtonPopover({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="flex rounded-full border-2 border-black p-2 text-sm font-semibold">
-          <MoveIcon />
-          Move
+        <button className="flex">
+          <MoveIcon width={20} height={20} />
+          <span className="pl-2">Move File</span>
         </button>
       </PopoverTrigger>
       <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">

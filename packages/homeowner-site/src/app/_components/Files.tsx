@@ -202,28 +202,12 @@ async function File({
   }
 
   return (
-    <div className="flex  flex-col items-center justify-center">
-      <div className="w-32 ">
-        {isPdf ? (
-          <PdfFileIcon />
-        ) : (
-          <Image
-            src={url}
-            alt="house"
-            className="h-full w-auto object-contain"
-            width={200}
-            height={200}
-          />
-          // <img
-          //   src={url}
-          //   alt="house"
-          //   className="h-full w-auto object-contain"
-          //   width={350}
-          //   height={330}
-          // />
-        )}
-        <Text className="text-wrap break-words text-sm">{file.name}</Text>
-      </div>
-    </div>
+    <MobileFile
+      url={url}
+      file={file}
+      updateFile={updateFile}
+      allFolders={allFolders}
+      isThumbnail={isThumbnail}
+    />
   );
 }
