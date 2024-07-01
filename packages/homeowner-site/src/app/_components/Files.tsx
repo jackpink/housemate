@@ -5,6 +5,7 @@ import {
   type RootFolder,
   Item,
 } from "../../../../core/homeowner/item";
+import { ItemFilesFolder } from "../../../../core/homeowner/folder";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
@@ -18,17 +19,9 @@ import {
   PlusIcon,
   UploadIcon,
 } from "../../../../ui/Atoms/Icons";
-import { Text } from "../../../../ui/Atoms/Text";
 import { MobileFile, UpdateFileServerAction } from "./File";
 import { revalidatePath } from "next/cache";
-import {
-  Popover,
-  PopoverContent,
-  PopoverDescription,
-  PopoverHeading,
-  PopoverTrigger,
-} from "../../../../ui/Atoms/Popover";
-import Folder from "./Folder";
+import Folder, { UpdateFolderServerAction } from "./Folder";
 
 export default function Files({
   rootFolder,
@@ -49,6 +42,21 @@ export default function Files({
   allFolders.push(rootFolder);
 
   console.log("rootFolder", rootFolder);
+
+  const updateFolder: UpdateFolderServerAction = async ({
+    name,
+    folderId,
+    itemId,
+  }) => {
+    "use server";
+    console.log("updateFile", name, folderId);
+    await ItemFilesFolder.update({
+      id: folderId,
+      name,
+    });
+    revalidatePath(`/properties/${propertyId}/items/${itemId}`);
+  };
+
   if (isThumbnail) {
     return (
       <FilesThumbnail
@@ -66,6 +74,8 @@ export default function Files({
       deviceType={deviceType}
       propertyId={propertyId}
       allFolders={allFolders}
+      itemId={rootFolder.itemId!}
+      updateFolder={updateFolder}
     />
   );
 }
@@ -101,15 +111,24 @@ function FilesList({
   deviceType,
   propertyId,
   allFolders,
+  itemId,
+  updateFolder,
 }: {
   rootFolder: RootFolder;
   deviceType: string;
   propertyId: string;
   allFolders: FolderType[];
+  itemId: string;
+  updateFolder: UpdateFolderServerAction;
 }) {
   return (
     <div>
-      <Folder folder={rootFolder}>
+      <Folder
+        folder={rootFolder}
+        propertyId={propertyId}
+        itemId={itemId}
+        updateFolder={updateFolder}
+      >
         {rootFolder.files.map((file) => (
           <File
             file={file}
@@ -122,7 +141,12 @@ function FilesList({
       </Folder>
       <div className="pl-6">
         {rootFolder.folders.map((folder) => (
-          <Folder folder={folder}>
+          <Folder
+            folder={folder}
+            propertyId={propertyId}
+            itemId={itemId}
+            updateFolder={updateFolder}
+          >
             {folder.files.map((file) => (
               <File
                 file={file}
