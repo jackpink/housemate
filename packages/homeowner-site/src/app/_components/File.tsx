@@ -197,8 +197,9 @@ function MobileImageWithDialog({
           src={url}
           alt="house"
           className=""
-          layout="fill"
-          objectFit="cover"
+          width={size === "list" ? 40 : 80}
+          height={size === "list" ? 40 : 80}
+          style={{ objectFit: "cover" }}
         />
       </button>
     </ImageDialog>
@@ -238,7 +239,7 @@ function StandardComponent({
   return (
     <p
       className={clsx(
-        " break-word w-full	px-2 text-sm ",
+        " w-full break-all	px-2 text-sm ",
         pending && "text-slate-500",
       )}
     >

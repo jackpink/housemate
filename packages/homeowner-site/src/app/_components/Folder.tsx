@@ -37,13 +37,14 @@ import {
   emptyFormState,
   fromErrorToFormState,
 } from "../../../../core/homeowner/forms";
-import { createFolderForItem } from "../actions";
+import { addFileToFolderAction, createFolderForItem } from "../actions";
 import { useFormState } from "react-dom";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { z } from "zod";
 import { useState } from "react";
 import clsx from "clsx";
+import ImageUploader from "../../../../ui/Molecules/ImageUploader";
 
 export type UpdateFolderServerAction = ({}: {
   name: string;
@@ -57,12 +58,16 @@ export default function Folder({
   propertyId,
   itemId,
   updateFolder,
+  bucketName,
+  deviceType,
 }: {
   folder: Folder;
   children: React.ReactNode;
   propertyId: string;
   itemId: string;
   updateFolder: UpdateFolderServerAction;
+  bucketName: string;
+  deviceType: "mobile" | "desktop";
 }) {
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -94,6 +99,8 @@ export default function Folder({
             propertyId={propertyId}
             itemId={itemId}
             onRename={() => setIsEditMode(true)}
+            bucketName={bucketName}
+            deviceType={deviceType}
           />
         )}
       </summary>
@@ -146,12 +153,36 @@ function FolderMenu({
   propertyId,
   itemId,
   onRename,
+  deviceType,
+  bucketName,
 }: {
   folderId: string;
   propertyId: string;
   itemId: string;
   onRename: () => void;
+  deviceType: "mobile" | "desktop";
+  bucketName: string;
 }) {
+  const onUploadComplete = ({
+    name,
+    key,
+    type,
+  }: {
+    name: string;
+    key: string;
+    type: string;
+  }) => {
+    addFileToFolderAction({
+      folderId,
+      itemId,
+      name,
+      key,
+      bucket: bucketName,
+      propertyId,
+      type,
+    });
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -174,10 +205,13 @@ function FolderMenu({
             propertyId={propertyId}
             itemId={itemId}
           />
-          <button className="flex">
-            <UploadIcon width={20} height={20} />
-            <span className="pl-2">Upload Files</span>
-          </button>
+
+          <UploadFile
+            bucketName={bucketName}
+            onUploadComplete={onUploadComplete}
+            deviceType={deviceType}
+            itemId={itemId}
+          />
         </PopoverDescription>
       </PopoverContent>
     </Popover>
@@ -211,6 +245,43 @@ function AddFolder({
             parentFolderId={folderId}
             propertyId={propertyId}
             itemId={itemId}
+          />
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function UploadFile({
+  bucketName,
+  onUploadComplete,
+  deviceType,
+  itemId,
+}: {
+  bucketName: string;
+  onUploadComplete: (file: any) => void;
+  deviceType: "mobile" | "desktop";
+  itemId: string;
+}) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="flex">
+          <UploadIcon width={20} height={20} />
+          <span className="pl-2">Upload Files</span>
+        </button>
+      </DialogTrigger>
+      <DialogContent className="Dialog">
+        <DialogClose className="float-end rounded-lg border-2 border-black p-2">
+          <p>Close</p>
+        </DialogClose>
+        <DialogHeading className="pt-3 text-xl">Upload Files</DialogHeading>
+        <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
+          <ImageUploader
+            bucketKey={`${itemId}`}
+            bucketName={bucketName}
+            onUploadComplete={onUploadComplete}
+            deviceType={deviceType}
           />
         </DialogDescription>
       </DialogContent>

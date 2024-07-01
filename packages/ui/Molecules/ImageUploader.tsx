@@ -9,19 +9,12 @@ import { ErrorMessage, Text } from "../Atoms/Text";
 import {
   CancelIcon,
   ConfirmIcon,
+  CrossIcon,
   PdfFileIcon,
   RetryIcon,
   UploadIcon,
   WarningIcon,
 } from "../Atoms/Icons";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeading,
-  DialogTrigger,
-} from "../Atoms/Dialog";
 
 type UploadStatus =
   | "fileSizeError"
@@ -537,56 +530,20 @@ function UploadButton({
   };
 
   return (
-    <div className="flex justify-around">
-      <CTAButton onClick={onClickUpload} rounded>
-        <div className="flex">
+    <div className="flex w-full justify-around">
+      <CTAButton onClick={onClickUpload}>
+        <div className="flex flex-col items-center">
           <UploadIcon />
           <Text className="pl-2">Upload All</Text>
         </div>
       </CTAButton>
-      <CTAButton rounded secondary onClick={() => setCurrentUploads([])}>
-        Clear
+      <CTAButton secondary onClick={() => setCurrentUploads([])}>
+        <div className="flex flex-col items-center">
+          <CrossIcon />
+          Clear
+        </div>
       </CTAButton>
     </div>
-  );
-}
-
-function UploadingBar({ progress }: { progress: number }) {
-  return (
-    <CTAButton
-      rounded
-      disabled={false}
-      loading={true}
-      className={clsx(
-        progress < 10 && "from-brand bg-gradient-to-r from-10% to-white",
-        progress >= 10 &&
-          progress < 20 &&
-          "from-brand bg-gradient-to-r from-20% to-white",
-        progress >= 20 &&
-          progress < 30 &&
-          "from-brand bg-gradient-to-r from-30% to-white",
-        progress >= 30 &&
-          progress < 40 &&
-          "from-brand bg-gradient-to-r from-40% to-white",
-        progress >= 40 &&
-          progress < 50 &&
-          "from-brand bg-gradient-to-r from-50% to-white",
-        progress >= 50 &&
-          progress < 60 &&
-          "from-brand bg-gradient-to-r from-60% to-white",
-        progress >= 60 &&
-          progress < 70 &&
-          "from-brand bg-gradient-to-r from-70% to-white",
-        progress >= 70 &&
-          progress < 80 &&
-          "from-brand bg-gradient-to-r from-80% to-white",
-        progress >= 80 &&
-          progress < 90 &&
-          "from-brand bg-gradient-to-r from-90% to-white",
-      )}
-    >
-      Uploading
-    </CTAButton>
   );
 }
 
@@ -609,73 +566,34 @@ function MobileFileUploadDialog({
 }) {
   if (currentUploads.length > 0) {
     return (
-      <Dialog>
-        <DialogTrigger asChild>
-          <MobileFileUploadButton onClick={() => {}} />
-        </DialogTrigger>
-        <DialogContent className="Dialog">
-          <DialogClose className="float-end rounded-lg border-2 border-black p-2">
-            <p>Close</p>
-          </DialogClose>
-          <DialogHeading className="pt-3 text-xl">Filters</DialogHeading>
-          <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
-            <UploadButton
-              currentUploads={currentUploads}
-              setCurrentUploads={setCurrentUploads}
+      <>
+        <UploadButton
+          currentUploads={currentUploads}
+          setCurrentUploads={setCurrentUploads}
+          uploadImageToBucket={uploadImageToBucket}
+        />
+        <div className="flex w-full flex-col justify-center gap-4 py-4">
+          {currentUploads.map((upload, index) => (
+            <UploadSelectedImage
+              filePreviewUrl={URL.createObjectURL(upload.file)}
+              fileName={upload.file.name}
+              key={index}
+              status={upload.status}
+              progress={upload.progress}
               uploadImageToBucket={uploadImageToBucket}
+              index={index}
+              deviceType={deviceType}
             />
-            <div className="flex w-full flex-col justify-center gap-4 py-4">
-              {currentUploads.map((upload, index) => (
-                <UploadSelectedImage
-                  filePreviewUrl={URL.createObjectURL(upload.file)}
-                  fileName={upload.file.name}
-                  key={index}
-                  status={upload.status}
-                  progress={upload.progress}
-                  uploadImageToBucket={uploadImageToBucket}
-                  index={index}
-                  deviceType={deviceType}
-                />
-              ))}
-            </div>
-          </DialogDescription>
-        </DialogContent>
-      </Dialog>
+          ))}
+        </div>
+      </>
     );
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <MobileFileUploadButton onClick={() => {}} />
-      </DialogTrigger>
-      <DialogContent className="Dialog">
-        <DialogClose className="float-end rounded-lg border-2 border-black p-2">
-          <p>Close</p>
-        </DialogClose>
-        <DialogHeading className="pt-3 text-xl">File Upload</DialogHeading>
-        <DialogDescription className="flex w-full flex-col items-center gap-4 pt-4">
-          <SelectImageToUpload
-            setCurrentUploads={setCurrentUploads}
-            deviceType="mobile"
-          />
-          <div className="flex w-full flex-wrap justify-center gap-8 py-4">
-            Select Files to Upload
-          </div>
-        </DialogDescription>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function MobileFileUploadButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="bg-brand flex w-32 flex-col items-center justify-center rounded-lg p-2"
-    >
-      <UploadIcon />
-      <p className="text-md font-semibold ">Upload Image</p>
-    </button>
+    <SelectImageToUpload
+      setCurrentUploads={setCurrentUploads}
+      deviceType="mobile"
+    />
   );
 }

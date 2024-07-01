@@ -8,17 +8,7 @@ import {
 import { ItemFilesFolder } from "../../../../core/homeowner/folder";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import Image from "next/image";
-import {
-  DropDownIcon,
-  EditIconSmall,
-  FolderIcon,
-  MoveIcon,
-  OptionsIcon,
-  PdfFileIcon,
-  PlusIcon,
-  UploadIcon,
-} from "../../../../ui/Atoms/Icons";
+import { Bucket } from "sst/node/bucket";
 import { MobileFile, UpdateFileServerAction } from "./File";
 import { revalidatePath } from "next/cache";
 import Folder, { UpdateFolderServerAction } from "./Folder";
@@ -30,7 +20,7 @@ export default function Files({
   isThumbnail = false,
 }: {
   rootFolder: ItemWithFiles["filesRootFolder"];
-  deviceType: string;
+  deviceType: "mobile" | "desktop";
   propertyId: string;
   isThumbnail?: boolean;
 }) {
@@ -115,12 +105,14 @@ function FilesList({
   updateFolder,
 }: {
   rootFolder: RootFolder;
-  deviceType: string;
+  deviceType: "mobile" | "desktop";
   propertyId: string;
   allFolders: FolderType[];
   itemId: string;
   updateFolder: UpdateFolderServerAction;
 }) {
+  // @ts-ignore
+  const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";
   return (
     <div>
       <Folder
@@ -128,6 +120,8 @@ function FilesList({
         propertyId={propertyId}
         itemId={itemId}
         updateFolder={updateFolder}
+        bucketName={bucketName}
+        deviceType={deviceType}
       >
         {rootFolder.files.map((file) => (
           <File
@@ -146,6 +140,8 @@ function FilesList({
             propertyId={propertyId}
             itemId={itemId}
             updateFolder={updateFolder}
+            bucketName={bucketName}
+            deviceType={deviceType}
           >
             {folder.files.map((file) => (
               <File

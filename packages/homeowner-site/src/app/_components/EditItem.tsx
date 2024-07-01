@@ -630,14 +630,7 @@ function PhotosAndDocuments({
     return (
       <div className="w-full p-2">
         <EditableComponentLabel label="Photos and Documents" />
-        <div className="w-full py-4">
-          <ImageUploader
-            bucketKey={`${itemId}`}
-            deviceType={deviceType}
-            onUploadComplete={onUploadComplete}
-            bucketName={bucketName}
-          />
-        </div>
+
         {Files}
       </div>
     );
@@ -645,14 +638,7 @@ function PhotosAndDocuments({
   return (
     <div className="w-full p-2">
       <EditableComponentLabel label="Photos and Documents" />
-      <div className="flex w-full justify-around py-4">
-        <ImageUploader
-          bucketKey={`${itemId}`}
-          deviceType={deviceType}
-          onUploadComplete={onUploadComplete}
-          bucketName={bucketName}
-        />
-      </div>
+
       {Files}
     </div>
   );
