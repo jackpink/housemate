@@ -9,8 +9,7 @@ import Nav from "~/app/_components/Nav";
 
 async function getAddresses({ userId }: { userId: string }) {
   console.log("Getting properties for user", userId);
-  const properties = await Property.getByHomeownerId(userId);
-  return properties.map((property) => concatAddress(property));
+  return await Property.getByHomeownerId(userId);
 }
 export default async function MainAppLayout({
   children,
@@ -26,7 +25,7 @@ export default async function MainAppLayout({
   const properties = await getAddresses({ userId: session.user.id! });
   return (
     <>
-      <Nav />
+      <Nav properties={properties} />
       {children}
     </>
   );
