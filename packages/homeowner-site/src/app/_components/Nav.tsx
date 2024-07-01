@@ -14,20 +14,38 @@ import {
   PopoverTrigger,
 } from "../../../../ui/Atoms/Popover";
 import clsx from "clsx";
-import { LargeSearchIcon } from "../../../../ui/Atoms/Icons";
+import { LargeSearchIcon, MoveIcon } from "../../../../ui/Atoms/Icons";
 import { type Property } from "../../../../core/homeowner/property";
+import { concatAddress } from "~/utils/functions";
 
-export default function Nav({ properties }: { properties: Property[] }) {
+export default function Nav({
+  properties,
+  currentPropertyId,
+}: {
+  properties: Property[];
+  currentPropertyId: string;
+}) {
+  console.log("currentPropertyId", currentPropertyId);
+  const currentProperty = properties.find((p) => p.id === currentPropertyId);
+  const currentAddress = currentProperty
+    ? concatAddress(currentProperty).split(",")[0]
+    : "";
   const session = useSession();
   if (session?.data?.user) {
     return (
       <NavWrapper>
-        <button></button>
-        <button className="flex items-center rounded-lg border-2 border-black bg-brand p-2">
-          <LargeSearchIcon />
-          Search
-        </button>
-        <UserButton user={session.data.user} />
+        <div className="flex gap-4">
+          <button className="flex items-center rounded-lg border-black bg-brand  p-2 shadow-sm shadow-black">
+            <MoveIcon />
+            <p>{currentAddress}</p>
+          </button>
+
+          <button className="flex items-center rounded-lg bg-brand p-2 shadow-sm shadow-black">
+            <LargeSearchIcon />
+            Search
+          </button>
+          <UserButton user={session.data.user} />
+        </div>
       </NavWrapper>
     );
   }
@@ -51,13 +69,13 @@ function UserButton({ user }: { user: User }) {
       <PopoverTrigger asChild>
         <button
           className={clsx(
-            "flex h-12 w-12 items-center justify-center rounded-full border-2 border-black bg-brand font-bold",
+            "flex h-12 w-12 items-center justify-center rounded-full border-black bg-brand font-bold shadow-sm shadow-black",
           )}
         >
           {initials}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
+      <PopoverContent className="rounded-lg bg-light p-4 shadow-lg">
         <PopoverHeading>
           Logged in as
           <br />
