@@ -80,7 +80,7 @@ export default async function PropertyPage({
             </div>
           </Link>
           <Link
-            href={`/properties/${params.propertyId}/items/past`}
+            href={`/properties/${params.propertyId}/past`}
             className="block"
           >
             <div className="h-full w-full  p-7">

@@ -24,7 +24,7 @@ import {
 import { ItemStatus } from "../../../../core/db/schema";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { EditableComponentLabel } from "../../../../ui/Molecules/InPlaceEditableComponent";
-import { ItemForMobile } from "./PastItems";
+import { Item } from "./PastItems";
 import { CompletedStatusLabel, ToDoStatusLabel } from "./EditItem";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
@@ -464,7 +464,7 @@ function MobileTodoNew({
       >
         <UpArrowIcon width={30} height={30} />
       </button>
-      <ItemForMobile item={toDo} rounded={false}>
+      <Item item={toDo} rounded={false}>
         <button
           onClick={() => markAsCompleted(toDo)}
           className="flex h-full w-20 flex-col items-center rounded-sm bg-completed p-2 active:bg-green-400"
@@ -472,7 +472,7 @@ function MobileTodoNew({
           <CompletedIcon width={30} height={30} />
           <p className="text-xs">Mark as Completed</p>
         </button>
-      </ItemForMobile>
+      </Item>
       <button
         onClick={() => moveDown(toDo)}
         className={clsx(
@@ -803,24 +803,7 @@ function CompletedToDo2({
   toDo: ToDos[0];
   markAsToDo: (toDo: ToDos[0]) => void;
 }) {
-  return (
-    <ItemForMobile item={toDo} rounded={true}>
-      <button
-        onClick={() => markAsToDo(toDo)}
-        className="h-20 w-20 rounded-sm bg-todo p-2 hover:bg-green-400"
-      >
-        {/* <div className="flex justify-center">
-            <div className="h-5 w-5 border-2 border-dark"></div>
-          </div> */}
-        <div className="flex flex-col items-center text-xs">
-          <ToDoIcon width={30} height={30} />
-          Mark as
-          <br />
-          To Do
-        </div>
-      </button>
-    </ItemForMobile>
-  );
+  return <Item item={toDo} rounded={true} />;
 }
 
 function CompletedToDo({

@@ -1,7 +1,7 @@
 "use client";
 
 import { type ScheduledItems } from "../../../../core/homeowner/item";
-import { ItemForMobile } from "./PastItems";
+import { Item } from "./PastItems";
 
 export default function Schedule({
   scheduledItems,
@@ -25,7 +25,7 @@ function MobileSchedule({
   return (
     <div className="grid gap-4 p-2">
       {scheduledItems.map((item, index) => (
-        <ItemForMobile key={index} item={item} />
+        <Item key={index} item={item} />
       ))}
     </div>
   );

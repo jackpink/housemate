@@ -33,7 +33,6 @@ export function GeneralSettings({
           updateUser({ id: user.id, firstName: value })
         }
         editable
-        deviceType={deviceType}
       />
       <EditableComponent
         value={user.lastName}
@@ -43,7 +42,6 @@ export function GeneralSettings({
           updateUser({ id: user.id, lastName: value })
         }
         editable
-        deviceType={deviceType}
       />
       <div className="flex w-full justify-between p-2">
         <EditableComponentLabel label="Password: " />
@@ -141,7 +139,6 @@ export function AlertSettings({
           });
         }}
         editable
-        deviceType={deviceType}
       />
       <EditableComponent
         value={taskReminderValue}
@@ -154,7 +151,6 @@ export function AlertSettings({
           });
         }}
         editable
-        deviceType={deviceType}
       />
       <EditableComponent
         value={taskOverdueValue}
@@ -167,7 +163,6 @@ export function AlertSettings({
           });
         }}
         editable
-        deviceType={deviceType}
       />
     </div>
   );
