@@ -159,16 +159,16 @@ function MobileFileListView({
 
   return (
     <button onClick={() => {}} className="flex text-left">
-      <div className="w-14 flex-initial pr-2">
-        {" "}
+      <div className="relative h-10 w-10 flex-none bg-slate-500">
         <Image
           src={url}
           alt="house"
-          className="w-auto object-cover"
-          width={56}
-          height={56}
+          className=""
+          layout="fill"
+          objectFit="cover"
         />
       </div>
+
       <EditableComponentNoButton
         value={file.name}
         updateValue={async (value: string) => updateFile({ name: value })}
@@ -190,11 +190,11 @@ function StandardComponent({
   pending?: boolean;
 }) {
   return (
-    <div className="flex h-auto flex-1 flex-col justify-center">
-      <p className={clsx(" break-word	text-sm ", pending && "text-slate-500")}>
-        {value}
-      </p>
-    </div>
+    <p
+      className={clsx(" break-word	px-2 text-sm ", pending && "text-slate-500")}
+    >
+      {value}
+    </p>
   );
 }
 
@@ -208,7 +208,7 @@ function EditModeComponent({
   return (
     <input
       type="text"
-      className="grow rounded-lg border-2 border-slate-400 p-2 text-sm"
+      className=" w-full min-w-20  grow rounded-lg border-2 border-slate-400 p-2 text-sm"
       value={value}
       onChange={(e) => setValue(e.currentTarget.value)}
     />

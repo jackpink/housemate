@@ -168,7 +168,7 @@ export function EditableComponent({
 }
 
 function EditableComponentWrapper({ children }: { children: ReactNode }) {
-  return <div className={clsx(" w-full justify-between p-2")}>{children}</div>;
+  return <div className={clsx(" w-full justify-between px-2")}>{children}</div>;
 }
 
 export const AddButton = ({
@@ -316,18 +316,8 @@ export function EditableComponentNoButton({
   }
 
   if (!editable) {
-    return (
-      <EditableComponentWrapper>
-        <StandardComponent value={optimisticValue} pending={pending} />
-        <div className="justify-self-end"></div>
-      </EditableComponentWrapper>
-    );
+    return <StandardComponent value={optimisticValue} pending={pending} />;
   }
 
-  return (
-    <div className="flex w-full justify-between">
-      <StandardComponent value={optimisticValue} pending={pending} />
-      <div className="justify-self-end"></div>
-    </div>
-  );
+  return <StandardComponent value={optimisticValue} pending={pending} />;
 }
