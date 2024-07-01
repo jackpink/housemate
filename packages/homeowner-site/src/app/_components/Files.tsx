@@ -1,7 +1,7 @@
 import {
   type ItemWithFiles,
   type Files,
-  type Folder,
+  type Folder as FolderType,
   type RootFolder,
   Item,
 } from "../../../../core/homeowner/item";
@@ -10,13 +10,25 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
 import {
   DropDownIcon,
+  EditIconSmall,
   FolderIcon,
+  MoveIcon,
   OptionsIcon,
   PdfFileIcon,
+  PlusIcon,
+  UploadIcon,
 } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
 import { MobileFile, UpdateFileServerAction } from "./File";
 import { revalidatePath } from "next/cache";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeading,
+  PopoverTrigger,
+} from "../../../../ui/Atoms/Popover";
+import Folder from "./Folder";
 
 export default function Files({
   rootFolder,
@@ -67,7 +79,7 @@ function FilesThumbnail({
   rootFolder: RootFolder;
   deviceType: string;
   propertyId: string;
-  allFolders: Folder[];
+  allFolders: FolderType[];
 }) {
   return (
     <div className="flex w-full flex-wrap justify-center gap-8 py-4">
@@ -93,7 +105,7 @@ function FilesList({
   rootFolder: RootFolder;
   deviceType: string;
   propertyId: string;
-  allFolders: Folder[];
+  allFolders: FolderType[];
 }) {
   return (
     <div>
@@ -127,37 +139,6 @@ function FilesList({
   );
 }
 
-function Folder({
-  folder,
-  children,
-}: {
-  folder: Folder;
-  children: React.ReactNode;
-}) {
-  return (
-    <details
-      className="group cursor-pointer border-b border-slate-300 pt-2 "
-      open
-    >
-      <summary className="flex items-center justify-between rounded-md bg-slate-300 p-2 capitalize transition-all duration-500 ease-out group-open:mb-10">
-        <span className="transition group-open:rotate-180">
-          <DropDownIcon />
-        </span>
-        <div className="flex grow items-center pl-4">
-          <FolderIcon width={20} height={20} />
-          <Text>{folder.name}</Text>
-        </div>
-
-        <OptionsIcon />
-      </summary>
-
-      <div className="grid gap-4 py-2 pl-4 transition-all duration-300 ease-in-out">
-        {children}
-      </div>
-    </details>
-  );
-}
-
 async function File({
   file,
   deviceType,
@@ -169,7 +150,7 @@ async function File({
   deviceType: string;
   itemId: string;
   propertyId: string;
-  allFolders: Folder[];
+  allFolders: FolderType[];
 }) {
   const getImageFromBucket = async ({
     key,
