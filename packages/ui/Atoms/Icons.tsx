@@ -1561,3 +1561,75 @@ export function DeleteIcon({
     </svg>
   );
 }
+
+export function OptionsIcon({
+  width = 20,
+  height = 20,
+}: {
+  width?: number;
+  height?: number;
+}) {
+  return (
+    <svg
+      width={width}
+      zoomAndPan="magnify"
+      viewBox="0 0 375 374.999991"
+      height={height}
+      preserveAspectRatio="xMidYMid meet"
+      version="1.0"
+    >
+      <defs>
+        <clipPath id="fc0cf03109">
+          <path
+            d="M 37.5 37.5 L 112.5 37.5 L 112.5 337.5 L 37.5 337.5 Z M 37.5 37.5 "
+            clipRule="nonzero"
+          />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#fc0cf03109)">
+        <path
+          fill="#000000"
+          d="M 37.5 300 C 37.5 320.71875 54.28125 337.5 75 337.5 C 95.71875 337.5 112.5 320.71875 112.5 300 C 112.5 279.28125 95.71875 262.5 75 262.5 C 54.28125 262.5 37.5 279.28125 37.5 300 Z M 37.5 75 C 37.5 95.71875 54.28125 112.5 75 112.5 C 95.71875 112.5 112.5 95.71875 112.5 75 C 112.5 54.28125 95.71875 37.5 75 37.5 C 54.28125 37.5 37.5 54.28125 37.5 75 Z M 37.5 187.5 C 37.5 208.21875 54.28125 225 75 225 C 95.71875 225 112.5 208.21875 112.5 187.5 C 112.5 166.78125 95.71875 150 75 150 C 54.28125 150 37.5 166.78125 37.5 187.5 Z M 37.5 187.5 "
+          fillOpacity="1"
+          fillRule="nonzero"
+        />
+      </g>
+    </svg>
+  );
+}
+
+export function DropDownIcon({
+  width = 20,
+  height = 20,
+}: {
+  width?: number;
+  height?: number;
+}) {
+  return (
+    <svg
+      width={width}
+      zoomAndPan="magnify"
+      viewBox="0 0 375 374.999991"
+      height={height}
+      preserveAspectRatio="xMidYMid meet"
+      version="1.0"
+    >
+      <defs>
+        <clipPath id="b713326f2a">
+          <path
+            d="M 41 106 L 335 106 L 335 270.75 L 41 270.75 Z M 41 106 "
+            clipRule="nonzero"
+          />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#b713326f2a)">
+        <path
+          fill="#040606"
+          d="M 187.832031 271.082031 C 183.148438 271.082031 178.46875 269.289062 174.878906 265.722656 L 46.671875 137.519531 C 39.519531 130.339844 39.519531 118.789062 46.671875 111.605469 C 53.851562 104.453125 65.402344 104.453125 72.582031 111.605469 L 187.832031 226.882812 L 303.082031 111.605469 C 310.238281 104.453125 321.8125 104.453125 328.96875 111.605469 C 336.148438 118.789062 336.148438 130.363281 328.96875 137.519531 L 200.761719 265.722656 C 197.199219 269.289062 192.515625 271.082031 187.832031 271.082031 "
+          fillOpacity="1"
+          fillRule="nonzero"
+        />
+      </g>
+    </svg>
+  );
+}

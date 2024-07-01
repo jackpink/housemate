@@ -8,7 +8,12 @@ import {
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Image from "next/image";
-import { FolderIcon, PdfFileIcon } from "../../../../ui/Atoms/Icons";
+import {
+  DropDownIcon,
+  FolderIcon,
+  OptionsIcon,
+  PdfFileIcon,
+} from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
 import { MobileFile, UpdateFileServerAction } from "./File";
 import { revalidatePath } from "next/cache";
@@ -17,10 +22,12 @@ export default function Files({
   rootFolder,
   deviceType,
   propertyId,
+  isThumbnail = false,
 }: {
   rootFolder: ItemWithFiles["filesRootFolder"];
   deviceType: string;
   propertyId: string;
+  isThumbnail?: boolean;
 }) {
   if (!rootFolder) {
     return <div>No files</div>;
@@ -30,10 +37,9 @@ export default function Files({
   allFolders.push(rootFolder);
 
   console.log("rootFolder", rootFolder);
-
-  if (deviceType === "mobile") {
+  if (isThumbnail) {
     return (
-      <MobileFiles
+      <FilesThumbnail
         rootFolder={rootFolder}
         deviceType={deviceType}
         propertyId={propertyId}
@@ -42,6 +48,27 @@ export default function Files({
     );
   }
 
+  return (
+    <FilesList
+      rootFolder={rootFolder}
+      deviceType={deviceType}
+      propertyId={propertyId}
+      allFolders={allFolders}
+    />
+  );
+}
+
+function FilesThumbnail({
+  rootFolder,
+  deviceType,
+  propertyId,
+  allFolders,
+}: {
+  rootFolder: RootFolder;
+  deviceType: string;
+  propertyId: string;
+  allFolders: Folder[];
+}) {
   return (
     <div className="flex w-full flex-wrap justify-center gap-8 py-4">
       {rootFolder.files.map((file) => (
@@ -57,7 +84,7 @@ export default function Files({
   );
 }
 
-function MobileFiles({
+function FilesList({
   rootFolder,
   deviceType,
   propertyId,
@@ -70,7 +97,7 @@ function MobileFiles({
 }) {
   return (
     <div>
-      <MobileFolder folder={rootFolder}>
+      <Folder folder={rootFolder}>
         {rootFolder.files.map((file) => (
           <File
             file={file}
@@ -80,10 +107,10 @@ function MobileFiles({
             allFolders={allFolders}
           />
         ))}
-      </MobileFolder>
+      </Folder>
       <div className="pl-6">
         {rootFolder.folders.map((folder) => (
-          <MobileFolder folder={folder}>
+          <Folder folder={folder}>
             {folder.files.map((file) => (
               <File
                 file={file}
@@ -93,14 +120,14 @@ function MobileFiles({
                 allFolders={allFolders}
               />
             ))}
-          </MobileFolder>
+          </Folder>
         ))}
       </div>
     </div>
   );
 }
 
-function MobileFolder({
+function Folder({
   folder,
   children,
 }: {
@@ -108,15 +135,25 @@ function MobileFolder({
   children: React.ReactNode;
 }) {
   return (
-    <details className="pt-2" open>
-      <summary className="rounded-md bg-slate-300 p-2 capitalize ">
-        <span className="flex items-center">
+    <details
+      className="group cursor-pointer border-b border-slate-300 pt-2 "
+      open
+    >
+      <summary className="flex items-center justify-between rounded-md bg-slate-300 p-2 capitalize transition-all duration-500 ease-out group-open:mb-10">
+        <span className="transition group-open:rotate-180">
+          <DropDownIcon />
+        </span>
+        <div className="flex grow items-center pl-4">
           <FolderIcon width={20} height={20} />
           <Text>{folder.name}</Text>
-        </span>
+        </div>
+
+        <OptionsIcon />
       </summary>
 
-      <div className="grid gap-4 py-2 pl-4">{children}</div>
+      <div className="grid gap-4 py-2 pl-4 transition-all duration-300 ease-in-out">
+        {children}
+      </div>
     </details>
   );
 }
