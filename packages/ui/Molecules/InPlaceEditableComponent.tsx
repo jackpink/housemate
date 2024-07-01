@@ -258,3 +258,76 @@ export function EditableComponentValueLargeText({ value }: { value: string }) {
     </>
   );
 }
+
+export function EditableComponentNoButton({
+  value,
+  EditModeComponent,
+  updateValue,
+  StandardComponent,
+  isEditMode,
+  setIsEditMode,
+  editable,
+}: {
+  value: string;
+  EditModeComponent: EditModeComponent;
+  updateValue: (value: string) => Promise<void>;
+  StandardComponent: StandardComponent;
+  isEditMode: boolean;
+  setIsEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+  editable?: boolean;
+}) {
+  const [inputValue, setInputValue] = useState(value);
+
+  const [pending, startTransition] = React.useTransition();
+
+  const [optimisticValue, setOptimisticValue] = React.useOptimistic(
+    value,
+    (state, newValue: string) => {
+      return newValue;
+    },
+  );
+
+  const onClickConfirmButton = () => {
+    console.log("input value", inputValue);
+    setIsEditMode(false);
+    startTransition(async () => {
+      setOptimisticValue(inputValue);
+      await updateValue(inputValue);
+    });
+  };
+
+  const onClickCancelButton = () => {
+    setIsEditMode(false);
+    setInputValue(optimisticValue ?? "");
+  };
+
+  if (isEditMode) {
+    return (
+      <EditableComponentWrapper>
+        <EditMode
+          onClickConfirm={onClickConfirmButton}
+          onClickCancel={onClickCancelButton}
+          EditableComponent={
+            <EditModeComponent value={inputValue} setValue={setInputValue} />
+          }
+        />
+      </EditableComponentWrapper>
+    );
+  }
+
+  if (!editable) {
+    return (
+      <EditableComponentWrapper>
+        <StandardComponent value={optimisticValue} pending={pending} />
+        <div className="justify-self-end"></div>
+      </EditableComponentWrapper>
+    );
+  }
+
+  return (
+    <div className="flex w-full justify-between">
+      <StandardComponent value={optimisticValue} pending={pending} />
+      <div className="justify-self-end"></div>
+    </div>
+  );
+}

@@ -7,9 +7,11 @@ import {
   CancelIcon,
   ConfirmIcon,
   CrossIcon,
+  DeleteIcon,
   EditIconSmall,
   FolderIcon,
   MoveIcon,
+  OptionsIcon,
   PdfFileIcon,
   TickIcon,
 } from "../../../../ui/Atoms/Icons";
@@ -35,6 +37,7 @@ import {
   useDialog,
   useDialogContext,
 } from "../../../../ui/Atoms/Dialog";
+import { EditableComponentNoButton } from "../../../../ui/Molecules/InPlaceEditableComponent";
 
 export type StandardComponent = ({
   value,
@@ -56,11 +59,13 @@ export function MobileFile({
   file,
   updateFile,
   allFolders,
+  isThumbnail = false,
 }: {
   url: string;
   file: Files[number];
   updateFile: UpdateFileServerAction;
   allFolders: Folder[];
+  isThumbnail?: boolean;
 }) {
   const isPdf = file.type.endsWith("pdf");
 
@@ -81,64 +86,132 @@ export function MobileFile({
   }
 
   return (
-    <EditableComponent
-      value={file.name}
-      EditModeComponent={EditableMobileImage}
-      StandardComponent={MobileImage}
+    <MobileFileImage
       url={url}
-      updateValue={async (value: string) => updateFile({ name: value })}
-      allFolders={allFolders}
       file={file}
       updateFile={updateFile}
-      editable
+      allFolders={allFolders}
     />
+  );
+}
+
+function MobileFileImage({
+  url,
+  file,
+  updateFile,
+  allFolders,
+}: {
+  url: string;
+  file: Files[number];
+  updateFile: UpdateFileServerAction;
+  allFolders: Folder[];
+}) {
+  return (
+    <MobileFileListView
+      url={url}
+      file={file}
+      updateFile={updateFile}
+      allFolders={allFolders}
+    />
+  );
+}
+
+function FileMenu({ onRename }: { onRename: () => void }) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button className="px-1">
+          <OptionsIcon />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
+        <PopoverDescription className="flex flex-col items-start gap-4 pt-5">
+          <button onClick={onRename} className="flex">
+            <EditIconSmall width={20} height={20} />{" "}
+            <span className="pl-2">Rename</span>
+          </button>
+          <button className="flex">
+            <MoveIcon width={20} height={20} />{" "}
+            <span className="pl-2">Move File</span>
+          </button>
+          <button className="flex">
+            <DeleteIcon width={20} height={20} />{" "}
+            <span className="pl-2">Delete</span>
+          </button>
+        </PopoverDescription>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function MobileFileListView({
+  url,
+  file,
+  updateFile,
+  allFolders,
+}: {
+  url: string;
+  file: Files[number];
+  updateFile: UpdateFileServerAction;
+  allFolders: Folder[];
+}) {
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  return (
+    <button onClick={() => {}} className="flex text-left">
+      <div className="w-14 flex-initial pr-2">
+        {" "}
+        <Image
+          src={url}
+          alt="house"
+          className="w-auto object-cover"
+          width={56}
+          height={56}
+        />
+      </div>
+      <EditableComponentNoButton
+        value={file.name}
+        updateValue={async (value: string) => updateFile({ name: value })}
+        StandardComponent={StandardComponent}
+        EditModeComponent={EditModeComponent}
+        isEditMode={isEditMode}
+        setIsEditMode={setIsEditMode}
+      />
+      {!isEditMode && <FileMenu onRename={() => setIsEditMode(true)} />}
+    </button>
   );
 }
 
 function StandardComponent({
   value,
   pending,
-  children,
-  onClick,
 }: {
   value: string;
   pending?: boolean;
-  children: ReactNode;
-  onClick: () => void;
 }) {
   return (
-    <button onClick={onClick} className="flex text-left">
-      <div className="w-14 flex-initial pr-2">{children}</div>
-      <div className="flex h-auto flex-1 flex-col justify-center">
-        <p className={clsx(" break-word	text-sm ", pending && "text-slate-500")}>
-          {value}
-        </p>
-      </div>
-    </button>
+    <div className="flex h-auto flex-1 flex-col justify-center">
+      <p className={clsx(" break-word	text-sm ", pending && "text-slate-500")}>
+        {value}
+      </p>
+    </div>
   );
 }
 
 function EditModeComponent({
   value,
   setValue,
-  url,
-  children,
 }: {
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
-  url: string;
-  children: ReactNode;
 }) {
   return (
-    <div className="flex items-center">
-      <div className="w-14 pr-2">{children}</div>
-      <input
-        type="text"
-        className="grow rounded-lg border-2 border-slate-400 p-2 text-sm"
-        value={value}
-        onChange={(e) => setValue(e.currentTarget.value)}
-      />
-    </div>
+    <input
+      type="text"
+      className="grow rounded-lg border-2 border-slate-400 p-2 text-sm"
+      value={value}
+      onChange={(e) => setValue(e.currentTarget.value)}
+    />
   );
 }
 

@@ -145,12 +145,14 @@ async function File({
   itemId,
   propertyId,
   allFolders,
+  isThumbnail = false,
 }: {
   file: Files[number];
   deviceType: string;
   itemId: string;
   propertyId: string;
   allFolders: FolderType[];
+  isThumbnail?: boolean;
 }) {
   const getImageFromBucket = async ({
     key,
@@ -188,7 +190,7 @@ async function File({
 
   const isPdf = file.type.endsWith("pdf");
 
-  if (deviceType === "mobile") {
+  if (!isThumbnail) {
     return (
       <MobileFile
         url={url}
