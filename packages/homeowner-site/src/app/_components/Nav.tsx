@@ -35,10 +35,11 @@ export default function Nav({
     return (
       <NavWrapper>
         <div className="flex gap-4">
-          <button className="flex items-center rounded-lg border-black bg-brand  p-2 shadow-sm shadow-black">
-            <MoveIcon />
-            <p>{currentAddress}</p>
-          </button>
+          <PropertySelector
+            address={currentAddress}
+            properties={properties}
+            onClickCancel={() => {}}
+          />
 
           <button className="flex items-center rounded-lg bg-brand p-2 shadow-sm shadow-black">
             <LargeSearchIcon />
@@ -55,6 +56,63 @@ export default function Nav({
         <CTAButton rounded>Sign In</CTAButton>
       </Link>
     </NavWrapper>
+  );
+}
+
+function PropertySelector({
+  address,
+  properties,
+  onClickCancel,
+}: {
+  address: string | undefined;
+  properties: Property[];
+  onClickCancel: () => void;
+}) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button className="flex items-center rounded-lg border-black bg-brand p-2 shadow-sm shadow-black">
+          <MoveIcon />
+          <p>{address}</p>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
+        <PopoverHeading>Choose a Property</PopoverHeading>
+        <PopoverDescription className="flex flex-col items-center gap-4 pt-5">
+          <div className="grid w-full gap-4">
+            {properties.map((property) => (
+              <PropertyButton
+                property={property}
+                key={property.id}
+                onClickCancel={onClickCancel}
+              />
+            ))}
+            <Link href={`/properties/create`}>
+              <button className=" w-full rounded-full bg-brand p-3 font-semibold">
+                Create New Property
+              </button>
+            </Link>
+          </div>
+        </PopoverDescription>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function PropertyButton({
+  property,
+  onClickCancel,
+}: {
+  property: Property;
+  onClickCancel: () => void;
+}) {
+  return (
+    <button
+      className="rounded-full bg-altSecondary p-3"
+      onClick={onClickCancel}
+    >
+      {concatAddress(property)}
+    </button>
   );
 }
 
