@@ -90,7 +90,7 @@ export default async function ToDoPage({
           <div className="grow">
             <Link
               href={`/properties/${params.propertyId}/past`}
-              className="flex items-center rounded-md bg-altSecondary p-2 text-xl lg:hidden"
+              className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black lg:hidden"
             >
               Back to Past Items
               <PastIcon width={60} height={40} />
