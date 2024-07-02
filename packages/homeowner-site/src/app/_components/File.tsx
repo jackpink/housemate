@@ -74,7 +74,6 @@ export function MobileFile({
         file={file}
         updateFile={updateFile}
         allFolders={allFolders}
-        onClick={() => {}}
       />
     );
   }
@@ -85,7 +84,6 @@ export function MobileFile({
       file={file}
       updateFile={updateFile}
       allFolders={allFolders}
-      onClick={() => {}}
     />
   );
 }
@@ -121,13 +119,45 @@ function FileMenu({
             updateFile={updateFile}
             onClickCancel={() => {}}
           />
-          <button className="flex">
-            <DeleteIcon width={20} height={20} />{" "}
-            <span className="pl-2">Delete</span>
-          </button>
+
+          <DeleteButtonDialog />
         </PopoverDescription>
       </PopoverContent>
     </Popover>
+  );
+}
+
+function DeleteButtonDialog({}: {}) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="flex">
+          <DeleteIcon width={20} height={20} />
+          <span className="pl-2">Delete</span>
+        </button>
+      </DialogTrigger>
+      <DialogContent className="Dialog">
+        <DialogClose className="float-end rounded-lg border-2 border-black p-2">
+          <p>Close</p>
+        </DialogClose>
+
+        <DialogDescription className="flex  flex-col items-center gap-4 p-2 pt-14">
+          <div className="max-w-96">
+            <p className="pb-4">Are you sure you want to delete this file?</p>
+            <div className="flex w-full justify-between gap-4">
+              <button className="flex rounded-md bg-slate-300 p-2 shadow-sm shadow-black">
+                <CrossIcon />
+                Cancel
+              </button>
+              <button className="flex rounded-md bg-red-400 p-2 shadow-sm shadow-black">
+                <DeleteIcon />
+                Delete
+              </button>
+            </div>
+          </div>
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -136,13 +166,11 @@ function MobileFileListView({
   file,
   updateFile,
   allFolders,
-  onClick,
 }: {
   url: string;
   file: Files[number];
   updateFile: UpdateFileServerAction;
   allFolders: Folder[];
-  onClick: () => void;
 }) {
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -155,7 +183,6 @@ function MobileFileListView({
       ) : (
         <MobileImageWithDialog url={url} size="list" />
       )}
-
       <EditableComponentNoButton
         value={file.name}
         updateValue={async (value: string) => updateFile({ name: value })}
