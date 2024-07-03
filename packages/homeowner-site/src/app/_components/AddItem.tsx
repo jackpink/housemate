@@ -39,7 +39,7 @@ export default function AddItem({
       console.log(result);
       createItemAction(result)
         .then((itemId) => {
-          router.push(`/properties/${result.propertyId}/items/${itemId}`);
+          router.push(`/properties/${result.propertyId}/add/${itemId}`);
         })
         .catch((error) => {
           throw error;
@@ -58,7 +58,7 @@ export default function AddItem({
   const [state, formAction] = useFormState(createItem, emptyFormState);
 
   return (
-    <form className="flex flex-col gap-4" action={formAction}>
+    <form className="flex max-w-96 flex-col gap-4" action={formAction}>
       <TextInputWithError
         label="Title"
         name="title"

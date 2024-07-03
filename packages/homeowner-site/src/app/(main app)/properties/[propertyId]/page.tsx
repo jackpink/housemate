@@ -68,17 +68,7 @@ export default async function PropertyPage({
               </div>
             </div>
           </Link>
-          <Link
-            href={`/properties/${params.propertyId}/trade-requests`}
-            className="block"
-          >
-            <div className="h-full w-full  p-7">
-              <div className="flex w-full flex-col items-center justify-center">
-                <TradeRequestIcon width={45} height={45} />
-                <Text className="text-xl font-bold">Trade Request</Text>
-              </div>
-            </div>
-          </Link>
+
           <Link
             href={`/properties/${params.propertyId}/past`}
             className="block"
@@ -90,10 +80,7 @@ export default async function PropertyPage({
               </div>
             </div>
           </Link>
-          <Link
-            href={`/properties/${params.propertyId}/items/add`}
-            className="block"
-          >
+          <Link href={`/properties/${params.propertyId}/add`} className="block">
             <div className="h-full w-full  p-7">
               <div className="flex w-full flex-col items-center justify-center">
                 <LargeAddIcon width={45} height={45} />
