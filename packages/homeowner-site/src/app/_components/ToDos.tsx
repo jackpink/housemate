@@ -484,6 +484,9 @@ function MobileTodo({
                 setIsMoving(true);
               }}
               isTask={toDo.category === "job"}
+              markAsCompleted={() => {
+                markAsCompleted(toDo);
+              }}
             />
           </Item>
           <button
@@ -508,6 +511,9 @@ function MobileTodo({
           setIsMoving(true);
         }}
         isTask={toDo.category === "job"}
+        markAsCompleted={() => {
+          markAsCompleted(toDo);
+        }}
       />
     </Item>
   );
@@ -515,9 +521,11 @@ function MobileTodo({
 
 function ToDoOptionsPopover({
   setIsMovingActive,
+  markAsCompleted,
   isTask,
 }: {
   setIsMovingActive: () => void;
+  markAsCompleted: () => void;
   isTask: boolean;
 }) {
   return (
@@ -547,7 +555,7 @@ function ToDoOptionsPopover({
             </div>
             <span className="pl-5">Move</span>
           </button>
-          <button onClick={() => {}} className="flex items-center">
+          <button onClick={markAsCompleted} className="flex items-center">
             <CompletedIcon width={40} height={40} />
             <span className="pl-2">Mark as Completed</span>
           </button>
