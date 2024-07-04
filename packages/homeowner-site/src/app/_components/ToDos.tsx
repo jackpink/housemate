@@ -884,12 +884,16 @@ function CompletedToDo2({
 }) {
   return (
     <Item item={toDo} rounded={true}>
-      <CompletedOptionsPopover />
+      <CompletedOptionsPopover
+        markAsToDo={() => {
+          markAsToDo(toDo);
+        }}
+      />
     </Item>
   );
 }
 
-function CompletedOptionsPopover({}: {}) {
+function CompletedOptionsPopover({ markAsToDo }: { markAsToDo: () => void }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -907,7 +911,7 @@ function CompletedOptionsPopover({}: {}) {
             <span className="pl-6">Show</span>
           </button>
 
-          <button onClick={() => {}} className="flex items-center">
+          <button onClick={markAsToDo} className="flex items-center">
             <ToDoIcon width={40} height={40} />
             <span className="pl-2">Mark as To Do</span>
           </button>
