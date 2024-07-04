@@ -35,6 +35,7 @@ import {
   PopoverDescription,
   PopoverTrigger,
 } from "../../../../ui/Atoms/Popover";
+import { usePathname, useRouter } from "next/navigation";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -480,6 +481,7 @@ function MobileTodo({
           </button>
           <Item item={toDo} rounded={false}>
             <ToDoOptionsPopover
+              itemId={toDo.id}
               setIsMovingActive={() => {
                 setIsMoving(true);
               }}
@@ -507,6 +509,7 @@ function MobileTodo({
   return (
     <Item item={toDo} rounded={true}>
       <ToDoOptionsPopover
+        itemId={toDo.id}
         setIsMovingActive={() => {
           setIsMoving(true);
         }}
@@ -520,14 +523,18 @@ function MobileTodo({
 }
 
 function ToDoOptionsPopover({
+  itemId,
   setIsMovingActive,
   markAsCompleted,
   isTask,
 }: {
+  itemId: string;
   setIsMovingActive: () => void;
   markAsCompleted: () => void;
   isTask: boolean;
 }) {
+  const pathname = usePathname().split("todo")[0];
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -543,12 +550,15 @@ function ToDoOptionsPopover({
       </PopoverTrigger>
       <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
         <PopoverDescription className="flex flex-col items-start gap-4 pt-5">
-          <button onClick={() => {}} className="flex items-center">
+          <Link
+            href={`${pathname}/todo/${itemId}`}
+            className="flex items-center"
+          >
             <div className="pl-1">
               <ViewIcon width={15} height={15} />
             </div>
             <span className="pl-6">Show</span>
-          </button>
+          </Link>
           <button onClick={setIsMovingActive} className="flex items-center">
             <div className="pl-2">
               <MoveIcon width={20} height={20} />
