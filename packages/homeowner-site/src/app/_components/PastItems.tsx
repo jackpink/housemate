@@ -520,7 +520,9 @@ function Items({ items }: { items: CompletedItems }) {
     <div className="min-w-80 max-w-lg grow">
       <div className="grid gap-4 p-4">
         {reducedItems.map((item) => (
-          <Item key={item.id} item={item} />
+          <Item key={item.id} item={item}>
+            <ShowButton item={item} colour="todo" />
+          </Item>
         ))}
         {itemsToShow < items.length && (
           <button
@@ -569,7 +571,7 @@ export function Item({
   return (
     <div
       className={clsx(
-        " flex  p-3",
+        "flex p-3",
         colour === "product" && "bg-product/50",
         colour === "completed" && "bg-completed/50",
         colour === "todo" && "bg-todo/70",
@@ -589,8 +591,8 @@ export function Item({
         <p className="p-1 text-center text-lg font-semibold">{item.title}</p>
         <p>{category}</p>
       </div>
-      <div className="grow-0"></div>
-      <Link
+
+      {/* <Link
         href={`/properties/${item.propertyId}/past/${item.id}`}
         className={clsx(
           "h-full w-20 rounded-sm py-3",
@@ -614,9 +616,45 @@ export function Item({
               ? " Product"
               : " Issue"}
         </div>
-      </Link>
+      </Link> */}
 
-      <div className="grow-0">{children}</div>
+      {children}
     </div>
+  );
+}
+
+function ShowButton({
+  item,
+  colour,
+}: {
+  item: CompletedItems[0];
+  colour: string;
+}) {
+  return (
+    <Link
+      href={`/properties/${item.propertyId}/past/${item.id}`}
+      className={clsx(
+        "h-full w-20 rounded-sm py-3",
+        colour === "todo"
+          ? "bg-todo active:bg-todo/30"
+          : colour === "completed"
+            ? "bg-completed active:bg-completed/30"
+            : colour === "issue"
+              ? "bg-issue active:bg-issue/30"
+              : colour === "product"
+                ? "bg-product active:bg-product/30"
+                : "bg-todo active:bg-todo/30",
+      )}
+    >
+      <div className="flex justify-center pb-1"></div>
+      <div className="text-center text-xs font-bold">
+        Show
+        {item.category === "job"
+          ? " Job"
+          : item.category === "product"
+            ? " Product"
+            : " Issue"}
+      </div>
+    </Link>
   );
 }

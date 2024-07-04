@@ -8,6 +8,8 @@ import clsx from "clsx";
 import {
   CompletedIcon,
   DownArrowIcon,
+  MoveIcon,
+  OptionsIcon,
   ToDoIcon,
   UpArrowIcon,
   ViewIcon,
@@ -23,9 +25,16 @@ import {
 } from "../../../../ui/Atoms/Dialog";
 import { ItemStatus } from "../../../../core/db/schema";
 import { CTAButton } from "../../../../ui/Atoms/Button";
+import ClickAwayListener from "../../../../ui/Atoms/ClickAwayListener";
 import { EditableComponentLabel } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { Item } from "./PastItems";
 import { CompletedStatusLabel, ToDoStatusLabel } from "./EditItem";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTrigger,
+} from "../../../../ui/Atoms/Popover";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -79,7 +88,7 @@ export default function ToDos({
   console.log("filteredToDos", filteredToDos);
   if (deviceType === "mobile") {
     return (
-      <div>
+      <div className=" max-w-lg">
         <ToDoFilter
           filter={filter}
           setFilter={setfilter}
@@ -92,7 +101,7 @@ export default function ToDos({
     );
   }
   return (
-    <div>
+    <div className=" max-w-lg">
       <ToDoFilter
         filter={filter}
         setFilter={setfilter}
@@ -430,7 +439,7 @@ function MobileToDos({
   return (
     <div className="flex flex-col gap-5 p-4">
       {optimisticToDos.map((toDo) => (
-        <MobileTodoNew
+        <MobileTodo
           toDo={toDo}
           key={toDo.id}
           moveUp={moveUp}
@@ -438,50 +447,6 @@ function MobileToDos({
           markAsCompleted={markAsCompleted}
         />
       ))}
-    </div>
-  );
-}
-
-function MobileTodoNew({
-  toDo,
-  moveUp,
-  moveDown,
-  markAsCompleted,
-}: {
-  toDo: ToDos[0];
-  moveUp: (toDo: ToDos[0]) => void;
-  moveDown: (toDo: ToDos[0]) => void;
-  markAsCompleted: (toDo: ToDos[0]) => void;
-}) {
-  return (
-    <div className={clsx("")}>
-      <button
-        onClick={() => moveUp(toDo)}
-        className={clsx(
-          " flex w-full flex-col items-center overflow-hidden rounded-t-full p-1 px-5 py-1 ",
-          toDo.category === "job" ? "bg-todo active:bg-todo/30" : "bg-issue",
-        )}
-      >
-        <UpArrowIcon width={30} height={30} />
-      </button>
-      <Item item={toDo} rounded={false}>
-        <button
-          onClick={() => markAsCompleted(toDo)}
-          className="flex h-full w-20 flex-col items-center rounded-sm bg-completed p-2 active:bg-green-400"
-        >
-          <CompletedIcon width={30} height={30} />
-          <p className="text-xs">Mark as Completed</p>
-        </button>
-      </Item>
-      <button
-        onClick={() => moveDown(toDo)}
-        className={clsx(
-          "flex w-full flex-col items-center rounded-b-full bg-altSecondary p-1",
-          toDo.category === "job" ? "bg-todo active:bg-todo/30" : "bg-issue",
-        )}
-      >
-        <DownArrowIcon width={30} height={30} />
-      </button>
     </div>
   );
 }
@@ -497,66 +462,159 @@ function MobileTodo({
   moveDown: (toDo: ToDos[0]) => void;
   markAsCompleted: (toDo: ToDos[0]) => void;
 }) {
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-  const toDoDate = new Date(toDo.date);
-  console.log("toDoDate", toDoDate);
-  console.log("startOfToday", startOfToday);
-  const isOverdue = new Date(toDo.date) <= startOfToday;
+  const [isMoving, setIsMoving] = React.useState(false);
+  if (isMoving) {
+    return (
+      <ClickAwayListener onClickAway={() => setIsMoving(false)}>
+        <div className={clsx("animate-pulse")}>
+          <button
+            onClick={() => moveUp(toDo)}
+            className={clsx(
+              " flex w-full flex-col items-center overflow-hidden rounded-t-full p-1 px-5 py-1 ",
+              toDo.category === "job"
+                ? "bg-todo active:bg-todo/30"
+                : "bg-issue",
+            )}
+          >
+            <UpArrowIcon width={30} height={30} />
+          </button>
+          <Item item={toDo} rounded={false}>
+            <OptionsPopover
+              setIsMovingActive={() => {
+                setIsMoving(true);
+              }}
+            />
+          </Item>
+          <button
+            onClick={() => moveDown(toDo)}
+            className={clsx(
+              "flex w-full flex-col items-center rounded-b-full bg-altSecondary p-1",
+              toDo.category === "job"
+                ? "bg-todo active:bg-todo/30"
+                : "bg-issue",
+            )}
+          >
+            <DownArrowIcon width={30} height={30} />
+          </button>
+        </div>
+      </ClickAwayListener>
+    );
+  }
   return (
-    <div
-      className={clsx(
-        "flex rounded-lg border-2 border-dark p-2",
-        isOverdue ? "bg-red-300" : " bg-todo/70",
-      )}
-    >
-      <div className="flex h-full flex-col items-center gap-2 rounded-sm">
-        <button
-          onClick={() => moveUp(toDo)}
-          className={clsx(
-            "flex w-full flex-col items-center rounded-md  p-1 px-5 py-1 ",
-            isOverdue
-              ? "bg-red-400 active:bg-red-600"
-              : "bg-todo active:bg-todo/30",
-          )}
-        >
-          <UpArrowIcon width={30} height={30} />
-        </button>
-
-        <button
-          onClick={() => moveDown(toDo)}
-          className={clsx(
-            "flex w-full flex-col items-center rounded-md bg-altSecondary p-1",
-            isOverdue
-              ? "bg-red-400 active:bg-red-600"
-              : "bg-todo active:bg-todo/30",
-          )}
-        >
-          <DownArrowIcon width={30} height={30} />
-        </button>
-      </div>
-      <div className="flex grow items-center justify-center">
-        <Text className="text-xl font-semibold">{toDo.title}</Text>
-      </div>
-
-      <div className="grow-0">
-        <ItemQuickViewDialog
-          toDo={toDo}
-          colour={toDo.category === "job" ? "todo" : "issue"}
-        />
-      </div>
-      <div className="grow-0">
-        <button
-          onClick={() => markAsCompleted(toDo)}
-          className="h-full w-20 rounded-sm bg-completed p-2 active:bg-green-400"
-        >
-          <div>✔</div>
-          <div className="text-xs">Mark as Completed</div>
-        </button>
-      </div>
-    </div>
+    <Item item={toDo} rounded={false}>
+      <OptionsPopover
+        setIsMovingActive={() => {
+          setIsMoving(true);
+        }}
+      />
+    </Item>
   );
 }
+
+function OptionsPopover({
+  setIsMovingActive,
+}: {
+  setIsMovingActive: () => void;
+}) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button className="bg-black/20 px-1">
+          <OptionsIcon />
+          Options
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
+        <PopoverDescription className="flex flex-col items-start gap-4 pt-5">
+          <button onClick={() => {}} className="flex items-center">
+            <ViewIcon width={15} height={15} />{" "}
+            <span className="pl-7">Show</span>
+          </button>
+          <button onClick={setIsMovingActive} className="flex items-center">
+            <MoveIcon width={20} height={20} />{" "}
+            <span className="pl-7">Move</span>
+          </button>
+          <button onClick={() => {}} className="flex items-center">
+            <CompletedIcon width={40} height={40} />
+            <span className="pl-2">Mark as Completed</span>
+          </button>
+        </PopoverDescription>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// function MobileTodo({
+//   toDo,
+//   moveUp,
+//   moveDown,
+//   markAsCompleted,
+// }: {
+//   toDo: ToDos[0];
+//   moveUp: (toDo: ToDos[0]) => void;
+//   moveDown: (toDo: ToDos[0]) => void;
+//   markAsCompleted: (toDo: ToDos[0]) => void;
+// }) {
+//   const startOfToday = new Date();
+//   startOfToday.setHours(0, 0, 0, 0);
+//   const toDoDate = new Date(toDo.date);
+//   console.log("toDoDate", toDoDate);
+//   console.log("startOfToday", startOfToday);
+//   const isOverdue = new Date(toDo.date) <= startOfToday;
+//   return (
+//     <div
+//       className={clsx(
+//         "flex rounded-lg border-2 border-dark p-2",
+//         isOverdue ? "bg-red-300" : " bg-todo/70",
+//       )}
+//     >
+//       <div className="flex h-full flex-col items-center gap-2 rounded-sm">
+//         <button
+//           onClick={() => moveUp(toDo)}
+//           className={clsx(
+//             "flex w-full flex-col items-center rounded-md  p-1 px-5 py-1 ",
+//             isOverdue
+//               ? "bg-red-400 active:bg-red-600"
+//               : "bg-todo active:bg-todo/30",
+//           )}
+//         >
+//           <UpArrowIcon width={30} height={30} />
+//         </button>
+
+//         <button
+//           onClick={() => moveDown(toDo)}
+//           className={clsx(
+//             "flex w-full flex-col items-center rounded-md bg-altSecondary p-1",
+//             isOverdue
+//               ? "bg-red-400 active:bg-red-600"
+//               : "bg-todo active:bg-todo/30",
+//           )}
+//         >
+//           <DownArrowIcon width={30} height={30} />
+//         </button>
+//       </div>
+//       <div className="flex grow items-center justify-center">
+//         <Text className="text-xl font-semibold">{toDo.title}</Text>
+//       </div>
+
+//       <div className="grow-0">
+//         <ItemQuickViewDialog
+//           toDo={toDo}
+//           colour={toDo.category === "job" ? "todo" : "issue"}
+//         />
+//       </div>
+//       <div className="grow-0">
+//         <button
+//           onClick={() => markAsCompleted(toDo)}
+//           className="h-full w-20 rounded-sm bg-completed p-2 active:bg-green-400"
+//         >
+//           <div>✔</div>
+//           <div className="text-xs">Mark as Completed</div>
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
 
 export function ItemQuickViewDialog({
   toDo,
@@ -659,7 +717,7 @@ function ToDoFilter({
   filteredToDos: ToDos;
 }) {
   return (
-    <div className="p-1">
+    <div className="mx-auto max-w-md p-1">
       <p className="p-3 pl-2 text-center text-xl font-semibold">Filter Items</p>
       <div className="flex w-full justify-around p-1">
         <Selector onClick={() => setFilter("all")} selected={filter === "all"}>
@@ -709,7 +767,7 @@ function Selector({
     <button
       className={clsx(
         " rounded-lg border-2 border-dark p-2",
-        selected && "bg-brand",
+        selected && "bg-brandSecondary/70",
       )}
       onClick={onClick}
     >
