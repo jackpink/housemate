@@ -68,7 +68,7 @@ export default async function ToDoPage({
       date,
       warrantyEndDate,
     });
-    revalidatePath(`/properties/${params.propertyId}/items/${params.itemId}`);
+    revalidatePath(`/properties/${params.propertyId}/past/${params.itemId}`);
   };
 
   // @ts-ignore

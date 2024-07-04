@@ -19,7 +19,7 @@ export default function SideMenu({
   return (
     <aside className="hidden max-w-min xs:block">
       <Link
-        href={`/properties/${propertyId}/items/todo`}
+        href={`/properties/${propertyId}/todo`}
         className={clsx("block", selected === "todo" && "bg-altSecondary")}
       >
         <div className="h-full w-full  p-7">
