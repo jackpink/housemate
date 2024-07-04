@@ -70,7 +70,7 @@ export default async function ToDoPage({
           toDos={toDos}
           completedToDos={completedToDos}
           updateItem={updateItem}
-          deviceType={deviceType}
+          deviceType={"mobile"}
         />
       </PageWithSingleColumn>
     </div>

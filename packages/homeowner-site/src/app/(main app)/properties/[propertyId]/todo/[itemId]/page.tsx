@@ -107,7 +107,7 @@ export default async function ToDoPage({
               toDos={toDos}
               completedToDos={completedToDos}
               updateItem={updateItemPriority}
-              deviceType={deviceType}
+              deviceType={"mobile"}
             />
           </div>
           <div className="grow">
