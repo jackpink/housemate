@@ -479,10 +479,11 @@ function MobileTodo({
             <UpArrowIcon width={30} height={30} />
           </button>
           <Item item={toDo} rounded={false}>
-            <OptionsPopover
+            <ToDoOptionsPopover
               setIsMovingActive={() => {
                 setIsMoving(true);
               }}
+              isTask={toDo.category === "job"}
             />
           </Item>
           <button
@@ -501,25 +502,33 @@ function MobileTodo({
     );
   }
   return (
-    <Item item={toDo} rounded={false}>
-      <OptionsPopover
+    <Item item={toDo} rounded={true}>
+      <ToDoOptionsPopover
         setIsMovingActive={() => {
           setIsMoving(true);
         }}
+        isTask={toDo.category === "job"}
       />
     </Item>
   );
 }
 
-function OptionsPopover({
+function ToDoOptionsPopover({
   setIsMovingActive,
+  isTask,
 }: {
   setIsMovingActive: () => void;
+  isTask: boolean;
 }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="bg-black/20 px-1">
+        <button
+          className={clsx(
+            " flex flex-col items-center justify-center px-1",
+            isTask ? "bg-todo" : "bg-issue",
+          )}
+        >
           <OptionsIcon />
           Options
         </button>
@@ -527,12 +536,16 @@ function OptionsPopover({
       <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
         <PopoverDescription className="flex flex-col items-start gap-4 pt-5">
           <button onClick={() => {}} className="flex items-center">
-            <ViewIcon width={15} height={15} />{" "}
-            <span className="pl-7">Show</span>
+            <div className="pl-1">
+              <ViewIcon width={15} height={15} />
+            </div>
+            <span className="pl-6">Show</span>
           </button>
           <button onClick={setIsMovingActive} className="flex items-center">
-            <MoveIcon width={20} height={20} />{" "}
-            <span className="pl-7">Move</span>
+            <div className="pl-2">
+              <MoveIcon width={20} height={20} />
+            </div>
+            <span className="pl-5">Move</span>
           </button>
           <button onClick={() => {}} className="flex items-center">
             <CompletedIcon width={40} height={40} />
@@ -861,7 +874,39 @@ function CompletedToDo2({
   toDo: ToDos[0];
   markAsToDo: (toDo: ToDos[0]) => void;
 }) {
-  return <Item item={toDo} rounded={true} />;
+  return (
+    <Item item={toDo} rounded={true}>
+      <CompletedOptionsPopover />
+    </Item>
+  );
+}
+
+function CompletedOptionsPopover({}: {}) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button className="flex flex-col items-center justify-center bg-completed px-1">
+          <OptionsIcon />
+          Options
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
+        <PopoverDescription className="flex flex-col items-start gap-4 pt-5">
+          <button onClick={() => {}} className="flex items-center">
+            <div className="pl-1">
+              <ViewIcon width={15} height={15} />
+            </div>
+            <span className="pl-6">Show</span>
+          </button>
+
+          <button onClick={() => {}} className="flex items-center">
+            <ToDoIcon width={40} height={40} />
+            <span className="pl-2">Mark as To Do</span>
+          </button>
+        </PopoverDescription>
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 function CompletedToDo({
