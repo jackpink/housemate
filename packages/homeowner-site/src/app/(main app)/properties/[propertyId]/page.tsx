@@ -58,7 +58,7 @@ export default async function PropertyPage({
             </div>
           </Link>
           <Link
-            href={`/properties/${params.propertyId}/items/schedule`}
+            href={`/properties/${params.propertyId}/schedule`}
             className="block"
           >
             <div className="h-full w-full p-7">

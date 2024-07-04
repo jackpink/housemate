@@ -30,7 +30,7 @@ export default function SideMenu({
         </div>
       </Link>
       <Link
-        href={`/properties/${propertyId}/items/schedule`}
+        href={`/properties/${propertyId}/schedule`}
         className={clsx("block", selected === "schedule" && "bg-altSecondary")}
       >
         <div className="h-full w-full p-7">
