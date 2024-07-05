@@ -47,7 +47,7 @@ export default async function PropertyPage({
       <PageWithSingleColumn>
         <div className="grid grid-cols-2 gap-2  p-10">
           <Link
-            href={`/properties/${params.propertyId}/items/todo`}
+            href={`/properties/${params.propertyId}/todo`}
             className="block"
           >
             <div className="h-full w-full  p-7">
