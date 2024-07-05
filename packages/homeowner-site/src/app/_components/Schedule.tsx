@@ -25,26 +25,28 @@ export default function Schedule({
   console.log("currentMonth", currentMonth);
 
   return (
-    <div className="max-w-lg p-2">
+    <div className="p-2">
       <PastMonths
         currentMonth={currentMonth}
         numberOfMonths={pastMonths}
         currentYear={currentYear}
         items={scheduledItems}
       />
-      <CurrentMonth
-        month={currentMonth}
-        year={currentYear}
-        items={scheduledItems.filter((item) => {
-          return parseInt(item.date.split("-")[1]!) === currentMonth;
-        })}
-      />
-      <FutureMonths
-        currentMonth={currentMonth}
-        numberOfMonths={futureMonths}
-        currentYear={currentYear}
-        items={scheduledItems}
-      />
+      <div className="min-w-80 max-w-lg">
+        <CurrentMonth
+          month={currentMonth}
+          year={currentYear}
+          items={scheduledItems.filter((item) => {
+            return parseInt(item.date.split("-")[1]!) === currentMonth;
+          })}
+        />
+        <FutureMonths
+          currentMonth={currentMonth}
+          numberOfMonths={futureMonths}
+          currentYear={currentYear}
+          items={scheduledItems}
+        />
+      </div>
     </div>
   );
 }
@@ -117,7 +119,7 @@ function PastMonths({
   }
   console.log("Months", months);
   return (
-    <>
+    <div className="min-w-80 max-w-lg">
       <button
         onClick={addThreeMonthsToParams}
         className="mb-4 w-full rounded-md bg-brand p-2"
@@ -140,7 +142,7 @@ function PastMonths({
           />
         );
       })}
-    </>
+    </div>
   );
 }
 
