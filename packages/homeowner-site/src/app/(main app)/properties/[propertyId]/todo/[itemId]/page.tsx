@@ -13,7 +13,11 @@ import SideMenu from "~/app/_components/SideMenu";
 import ToDos, { UpdateItemPriorityServerAction } from "~/app/_components/ToDos";
 import { revalidatePath } from "next/cache";
 import Link from "next/link";
-import { ToDoListIcon } from "../../../../../../../../ui/Atoms/Icons";
+import {
+  DropDownIcon,
+  ToDoListIcon,
+  UpArrowIcon,
+} from "../../../../../../../../ui/Atoms/Icons";
 import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
 import Files from "~/app/_components/Files";
 import { Bucket } from "sst/node/bucket";
@@ -112,9 +116,12 @@ export default async function ToDoPage({
           </div>
           <div className="grow">
             <Link
-              href={`/properties/${params.propertyId}/past`}
+              href={`/properties/${params.propertyId}/todo`}
               className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black lg:hidden"
             >
+              <span className="-rotate-90">
+                <DropDownIcon width={20} height={20} />
+              </span>
               Back to To Dos
               <ToDoListIcon width={60} height={40} />
             </Link>

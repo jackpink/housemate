@@ -11,6 +11,8 @@ import { getDeviceType } from "~/app/actions";
 import { redirect } from "next/navigation";
 import PastItems from "~/app/_components/PastItems";
 import SideMenu from "~/app/_components/SideMenu";
+import Link from "next/link";
+import { DropDownIcon } from "../../../../../../../ui/Atoms/Icons";
 
 export default async function ToDoPage({
   params,
@@ -44,6 +46,15 @@ export default async function ToDoPage({
     <div className="flex">
       <SideMenu propertyId={params.propertyId} selected="past" />
       <PageWithSingleColumn>
+        <Link
+          href={`/properties/${params.propertyId}`}
+          className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black xs:hidden"
+        >
+          <span className="-rotate-90">
+            <DropDownIcon width={20} height={20} />
+          </span>
+          Back to Property Menu
+        </Link>
         <PastItems completedItems={completedItems} deviceType={deviceType} />
       </PageWithSingleColumn>
     </div>
