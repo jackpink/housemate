@@ -47,7 +47,12 @@ export default async function ToDoPage({
     <div className="flex">
       <SideMenu propertyId={params.propertyId} selected="schedule" />
       <PageWithSingleColumn>
-        <Schedule scheduledItems={scheduledItems} deviceType={deviceType} />
+        <Schedule
+          scheduledItems={scheduledItems}
+          deviceType={deviceType}
+          pastMonths={pastMonths}
+          futureMonths={futureMonths}
+        />
       </PageWithSingleColumn>
     </div>
   );

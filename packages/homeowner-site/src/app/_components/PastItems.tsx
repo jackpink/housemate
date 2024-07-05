@@ -521,7 +521,18 @@ function Items({ items }: { items: CompletedItems }) {
       <div className="grid gap-4 p-4">
         {reducedItems.map((item) => (
           <Item key={item.id} item={item}>
-            <ShowButton item={item} colour="todo" />
+            <ShowButton
+              item={item}
+              colour={
+                item.category === "product"
+                  ? "product"
+                  : item.category === "issue"
+                    ? "issue"
+                    : item.category === "job" && item.status === "completed"
+                      ? "completed"
+                      : "todo"
+              }
+            />
           </Item>
         ))}
         {itemsToShow < items.length && (
