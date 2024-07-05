@@ -6,6 +6,8 @@ import { DropDownIcon } from "../../../../ui/Atoms/Icons";
 import Link from "next/link";
 import clsx from "clsx";
 import { number } from "zod";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { use } from "react";
 
 export default function Schedule({
   scheduledItems,
@@ -87,6 +89,21 @@ function PastMonths({
   currentYear: number;
   items: ScheduledItems;
 }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const addThreeMonthsToParams = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    const pastMonths = params.get("pastMonths");
+    const newPastMonths = pastMonths
+      ? parseInt(pastMonths) + 3
+      : numberOfMonths + 3;
+    params.set("pastMonths", newPastMonths.toString());
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   const months: { month: number; year: number }[] = [];
   console.log("numberOfMonths", numberOfMonths);
   let iter = 0;
@@ -101,9 +118,18 @@ function PastMonths({
   console.log("Months", months);
   return (
     <>
+      <button
+        onClick={addThreeMonthsToParams}
+        className="mb-4 w-full rounded-md bg-brand p-2"
+      >
+        Load More
+      </button>
       {months.map(({ month, year }) => {
         const monthItems = items.filter((item) => {
-          return parseInt(item.date.split("-")[1]!) === month;
+          return (
+            parseInt(item.date.split("-")[1]!) === month &&
+            parseInt(item.date.split("-")[0]!) === year
+          );
         });
         return (
           <Month
@@ -129,6 +155,20 @@ function FutureMonths({
   currentYear: number;
   items: ScheduledItems;
 }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const addThreeMonthsToParams = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    const futureMonths = params.get("futureMonths");
+    const newFutureMonths = futureMonths
+      ? parseInt(futureMonths) + 3
+      : numberOfMonths + 3;
+    params.set("futureMonths", newFutureMonths.toString());
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
   const months: { month: number; year: number }[] = [];
   console.log("numberOfMonths", numberOfMonths);
 
@@ -149,7 +189,10 @@ function FutureMonths({
     <>
       {months.map(({ month, year }) => {
         const monthItems = items.filter((item) => {
-          return parseInt(item.date.split("-")[1]!) === month;
+          return (
+            parseInt(item.date.split("-")[1]!) === month &&
+            parseInt(item.date.split("-")[0]!) === year
+          );
         });
         return (
           <Month
@@ -160,6 +203,12 @@ function FutureMonths({
           />
         );
       })}
+      <button
+        onClick={addThreeMonthsToParams}
+        className="mt-4 w-full rounded-md bg-brand p-2"
+      >
+        Load More
+      </button>
     </>
   );
 }

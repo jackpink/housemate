@@ -10,8 +10,13 @@ import Schedule from "~/app/_components/Schedule";
 
 export default async function ToDoPage({
   params,
+  searchParams,
 }: {
   params: { propertyId: string };
+  searchParams: {
+    pastMonths?: number;
+    futureMonths?: number;
+  };
 }) {
   const session = await auth();
 
@@ -32,9 +37,9 @@ export default async function ToDoPage({
     return <div>Not Authenticated</div>;
   }
 
-  const pastMonths = 3;
+  const pastMonths = searchParams.pastMonths || 3;
 
-  const futureMonths = 9;
+  const futureMonths = searchParams.futureMonths || 9;
 
   const scheduledItems = await Item.getSchedule({
     propertyId: params.propertyId,
