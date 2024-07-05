@@ -4,7 +4,7 @@ import React, { useCallback } from "react";
 import { CompletedItems } from "../../../../core/homeowner/item";
 import { ItemQuickViewDialog } from "./ToDos";
 import clsx from "clsx";
-import { CancelIcon, PlusIcon } from "../../../../ui/Atoms/Icons";
+import { CancelIcon, PlusIcon, ViewIcon } from "../../../../ui/Atoms/Icons";
 import {
   Dialog,
   DialogClose,
@@ -13,7 +13,12 @@ import {
   DialogHeading,
   DialogTrigger,
 } from "../../../../ui/Atoms/Dialog";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import {
+  usePathname,
+  useSearchParams,
+  useRouter,
+  useParams,
+} from "next/navigation";
 import { useViewport } from "./ContextProviders";
 import Link from "next/link";
 
@@ -641,24 +646,29 @@ function ShowButton({
   item: CompletedItems[0];
   colour: string;
 }) {
+  const params = useParams();
+  const currentItemId = params.itemId?.toString() || "";
   return (
     <Link
       href={`/properties/${item.propertyId}/past/${item.id}`}
       className={clsx(
         "h-full w-20 rounded-sm py-3",
-        colour === "todo"
-          ? "bg-todo active:bg-todo/30"
-          : colour === "completed"
-            ? "bg-completed active:bg-completed/30"
-            : colour === "issue"
-              ? "bg-issue active:bg-issue/30"
-              : colour === "product"
-                ? "bg-product active:bg-product/30"
-                : "bg-todo active:bg-todo/30",
+        currentItemId === item.id
+          ? "bg-brandSecondary"
+          : colour === "todo"
+            ? "bg-todo active:bg-todo/30"
+            : colour === "completed"
+              ? "bg-completed active:bg-completed/30"
+              : colour === "issue"
+                ? "bg-issue active:bg-issue/30"
+                : colour === "product"
+                  ? "bg-product active:bg-product/30"
+                  : "bg-todo active:bg-todo/30",
       )}
     >
       <div className="flex justify-center pb-1"></div>
-      <div className="text-center text-xs font-bold">
+      <div className="flex flex-col items-center justify-center text-center text-xs font-bold">
+        <ViewIcon />
         Show
         {item.category === "job"
           ? " Job"

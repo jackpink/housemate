@@ -2,11 +2,16 @@
 
 import { type ScheduledItems } from "../../../../core/homeowner/item";
 import { Item } from "./PastItems";
-import { DropDownIcon } from "../../../../ui/Atoms/Icons";
+import { DropDownIcon, ViewIcon } from "../../../../ui/Atoms/Icons";
 import Link from "next/link";
 import clsx from "clsx";
 import { number } from "zod";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { use } from "react";
 
 export default function Schedule({
@@ -325,24 +330,29 @@ function ShowButton({
   item: ScheduledItems[0];
   colour: string;
 }) {
+  const params = useParams();
+  const currentItemId = params.itemId?.toString() || "";
   return (
     <Link
       href={`/properties/${item.propertyId}/schedule/${item.id}`}
       className={clsx(
         "h-full w-20 rounded-sm py-3",
-        colour === "todo"
-          ? "bg-todo active:bg-todo/30"
-          : colour === "completed"
-            ? "bg-completed active:bg-completed/30"
-            : colour === "issue"
-              ? "bg-issue active:bg-issue/30"
-              : colour === "product"
-                ? "bg-product active:bg-product/30"
-                : "bg-todo active:bg-todo/30",
+        currentItemId === item.id
+          ? "bg-brandSecondary"
+          : colour === "todo"
+            ? "bg-todo active:bg-todo/30"
+            : colour === "completed"
+              ? "bg-completed active:bg-completed/30"
+              : colour === "issue"
+                ? "bg-issue active:bg-issue/30"
+                : colour === "product"
+                  ? "bg-product active:bg-product/30"
+                  : "bg-todo active:bg-todo/30",
       )}
     >
       <div className="flex justify-center pb-1"></div>
-      <div className="text-center text-xs font-bold">
+      <div className="flex flex-col items-center justify-center text-center text-xs font-bold">
+        <ViewIcon />
         Show
         {item.category === "job"
           ? " Job"
