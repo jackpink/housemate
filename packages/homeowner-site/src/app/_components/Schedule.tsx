@@ -18,9 +18,9 @@ export default function Schedule({
   pastMonths: number;
   futureMonths: number;
 }) {
-  const currentMonth = new Date().getMonth();
+  const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
-  console.log("Scheduled Items", scheduledItems);
+  console.log("currentMonth", currentMonth);
 
   return (
     <div className="max-w-lg p-2">
@@ -34,7 +34,7 @@ export default function Schedule({
         month={currentMonth}
         year={currentYear}
         items={scheduledItems.filter((item) => {
-          return parseInt(item.date.split("-")[1]!) - 1 === currentMonth;
+          return parseInt(item.date.split("-")[1]!) === currentMonth;
         })}
       />
       <FutureMonths
@@ -48,18 +48,18 @@ export default function Schedule({
 }
 
 const monthMap = {
-  0: "January",
-  1: "February",
-  2: "March",
-  3: "April",
-  4: "May",
-  5: "June",
-  6: "July",
-  7: "August",
-  8: "September",
-  9: "October",
-  10: "November",
-  11: "December",
+  1: "January",
+  2: "February",
+  3: "March",
+  4: "April",
+  5: "May",
+  6: "June",
+  7: "July",
+  8: "August",
+  9: "September",
+  10: "October",
+  11: "November",
+  12: "December",
 };
 
 function MobileSchedule({
@@ -103,7 +103,7 @@ function PastMonths({
     <>
       {months.map(({ month, year }) => {
         const monthItems = items.filter((item) => {
-          return parseInt(item.date.split("-")[1]!) - 1 === month;
+          return parseInt(item.date.split("-")[1]!) === month;
         });
         return (
           <Month
@@ -132,10 +132,15 @@ function FutureMonths({
   const months: { month: number; year: number }[] = [];
   console.log("numberOfMonths", numberOfMonths);
 
-  for (let i = 1; i < numberOfMonths; i++) {
+  for (let i = 1; i <= numberOfMonths; i++) {
     console.log("i", i, currentMonth + i);
     const month = currentMonth + i;
     const year = currentYear;
+    console.log(
+      "month",
+      month,
+      month > 12 ? { month: month - 12, year: year + 1 } : { month, year },
+    );
     months[i - 1] =
       month > 12 ? { month: month - 12, year: year + 1 } : { month, year };
   }
@@ -144,7 +149,7 @@ function FutureMonths({
     <>
       {months.map(({ month, year }) => {
         const monthItems = items.filter((item) => {
-          return parseInt(item.date.split("-")[1]!) - 1 === month;
+          return parseInt(item.date.split("-")[1]!) === month;
         });
         return (
           <Month
@@ -271,7 +276,7 @@ function ShowButton({
 }) {
   return (
     <Link
-      href={`/properties/${item.propertyId}/past/${item.id}`}
+      href={`/properties/${item.propertyId}/schedule/${item.id}`}
       className={clsx(
         "h-full w-20 rounded-sm py-3",
         colour === "todo"
