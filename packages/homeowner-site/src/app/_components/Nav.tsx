@@ -25,7 +25,6 @@ export default function Nav({
   properties: Property[];
   currentPropertyId: string;
 }) {
-  console.log("currentPropertyId", currentPropertyId);
   const currentProperty = properties.find((p) => p.id === currentPropertyId);
   const currentAddress = currentProperty
     ? concatAddress(currentProperty).split(",")[0]

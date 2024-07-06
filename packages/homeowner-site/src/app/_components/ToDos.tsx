@@ -10,6 +10,8 @@ import {
   DownArrowIcon,
   MoveIcon,
   OptionsIcon,
+  OptionsLargeIcon,
+  TickIcon,
   ToDoIcon,
   UpArrowIcon,
   ViewIcon,
@@ -36,6 +38,7 @@ import {
   PopoverTrigger,
 } from "../../../../ui/Atoms/Popover";
 import { usePathname, useRouter } from "next/navigation";
+import { Reorder } from "framer-motion";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -70,10 +73,7 @@ export default function ToDos({
     const todaysDate = new Date();
     const toDoDate = new Date(toDo.date);
     const timeDiff = toDoDate.getTime() - todaysDate.getTime();
-    console.log(toDo.title);
-    console.log("timeDiff", timeDiff);
     const diffDays = Math.abs(timeDiff) / (1000 * 3600 * 24);
-    console.log("diffDays", diffDays);
     if (filter === "day") {
       return diffDays < 1;
     } else if (filter === "week") {
@@ -86,7 +86,6 @@ export default function ToDos({
       return true;
     }
   });
-  console.log("filteredToDos", filteredToDos);
   if (deviceType === "mobile") {
     return (
       <div className=" max-w-lg">
@@ -212,7 +211,6 @@ function DraggableToDos({
       );
       newToDos.find((toDo) => toDo.id === toDoId)!.toDoPriority = newPriority;
       newToDos.sort((a, b) => (b.toDoPriority || -1) - (a.toDoPriority || -1));
-      console.log("newToDos", newToDos);
       startTransition(async () => {
         setOptimisticValue(newToDos);
         await updateItem({
@@ -371,7 +369,6 @@ function MobileToDos({
   const [optimisticToDos, setOptimisticValue] = React.useOptimistic(
     toDos,
     (state, newToDos: ToDos) => {
-      console.log("newToDos in optimiistic", newToDos);
       return newToDos;
     },
   );
@@ -420,7 +417,6 @@ function MobileToDos({
 
   const markAsCompleted = useCallback(
     (clickedToDo: ToDos[0]) => {
-      console.log("mark as completed", clickedToDo);
       let newToDos = [...toDos];
       newToDos = newToDos.filter((toDo) => toDo.id !== clickedToDo.id);
       startTransition(async () => {
@@ -435,20 +431,27 @@ function MobileToDos({
     [toDos],
   );
 
-  console.log("mobile");
-
   return (
-    <div className="flex flex-col gap-5 p-4">
-      {optimisticToDos.map((toDo) => (
-        <MobileTodo
-          toDo={toDo}
-          key={toDo.id}
-          moveUp={moveUp}
-          moveDown={moveDown}
-          markAsCompleted={markAsCompleted}
-        />
-      ))}
-    </div>
+    <>
+      <Reorder.Group
+        className="flex flex-col gap-5 p-4"
+        values={optimisticToDos}
+        onReorder={() => {
+          console.log("reorder");
+        }}
+      >
+        {optimisticToDos.map((toDo) => (
+          <Reorder.Item value={toDo} key={toDo.id}>
+            <MobileTodo
+              toDo={toDo}
+              moveUp={moveUp}
+              moveDown={moveDown}
+              markAsCompleted={markAsCompleted}
+            />
+          </Reorder.Item>
+        ))}
+      </Reorder.Group>
+    </>
   );
 }
 
@@ -466,44 +469,38 @@ function MobileTodo({
   const [isMoving, setIsMoving] = React.useState(false);
   if (isMoving) {
     return (
-      <ClickAwayListener onClickAway={() => setIsMoving(false)}>
-        <div className={clsx("animate-pulse")}>
+      <div>
+        <button
+          onClick={() => moveUp(toDo)}
+          className={clsx(
+            " flex w-full animate-pulse flex-col items-center overflow-hidden rounded-t-full p-1 px-5 py-1 ",
+            toDo.category === "job" ? "bg-todo active:bg-todo/30" : "bg-issue",
+          )}
+        >
+          <UpArrowIcon width={30} height={30} />
+        </button>
+        <Item item={toDo} rounded={false}>
           <button
-            onClick={() => moveUp(toDo)}
             className={clsx(
-              " flex w-full flex-col items-center overflow-hidden rounded-t-full p-1 px-5 py-1 ",
-              toDo.category === "job"
-                ? "bg-todo active:bg-todo/30"
-                : "bg-issue",
+              " flex w-20 flex-col items-center justify-center px-1",
+              toDo.category === "job" ? "bg-todo" : "bg-issue",
             )}
+            onClick={() => setIsMoving(false)}
           >
-            <UpArrowIcon width={30} height={30} />
+            <TickIcon />
+            Save
           </button>
-          <Item item={toDo} rounded={false}>
-            <ToDoOptionsPopover
-              itemId={toDo.id}
-              setIsMovingActive={() => {
-                setIsMoving(true);
-              }}
-              isTask={toDo.category === "job"}
-              markAsCompleted={() => {
-                markAsCompleted(toDo);
-              }}
-            />
-          </Item>
-          <button
-            onClick={() => moveDown(toDo)}
-            className={clsx(
-              "flex w-full flex-col items-center rounded-b-full bg-altSecondary p-1",
-              toDo.category === "job"
-                ? "bg-todo active:bg-todo/30"
-                : "bg-issue",
-            )}
-          >
-            <DownArrowIcon width={30} height={30} />
-          </button>
-        </div>
-      </ClickAwayListener>
+        </Item>
+        <button
+          onClick={() => moveDown(toDo)}
+          className={clsx(
+            "flex w-full animate-pulse flex-col items-center rounded-b-full bg-altSecondary p-1",
+            toDo.category === "job" ? "bg-todo active:bg-todo/30" : "bg-issue",
+          )}
+        >
+          <DownArrowIcon width={30} height={30} />
+        </button>
+      </div>
     );
   }
   return (
@@ -540,11 +537,11 @@ function ToDoOptionsPopover({
       <PopoverTrigger asChild>
         <button
           className={clsx(
-            " flex flex-col items-center justify-center px-1",
+            " flex w-20 flex-col items-center justify-center px-1",
             isTask ? "bg-todo" : "bg-issue",
           )}
         >
-          <OptionsIcon />
+          <OptionsLargeIcon width={30} height={30} />
           Options
         </button>
       </PopoverTrigger>
@@ -861,7 +858,6 @@ function CompletedToDos({
 
   const markAsToDo = useCallback(
     (clickedToDo: ToDos[0]) => {
-      console.log("mark as completed", clickedToDo);
       let newToDos = [...toDos];
       newToDos = newToDos.filter((toDo) => toDo.id !== clickedToDo.id);
       startTransition(async () => {
@@ -907,8 +903,8 @@ function CompletedOptionsPopover({ markAsToDo }: { markAsToDo: () => void }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="flex flex-col items-center justify-center bg-completed px-1">
-          <OptionsIcon />
+        <button className="flex w-20 flex-col items-center justify-center bg-completed px-1">
+          <OptionsLargeIcon width={30} height={30} />
           Options
         </button>
       </PopoverTrigger>

@@ -13,6 +13,7 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { use } from "react";
+import React from "react";
 
 export default function Schedule({
   scheduledItems,
@@ -283,6 +284,7 @@ function Month({
   year: number;
   items: ScheduledItems;
 }) {
+  const [open, setOpen] = React.useState(false);
   items.sort((a, b) => {
     return parseInt(a.date.split("-")[2]!) - parseInt(b.date.split("-")[2]!);
   });
