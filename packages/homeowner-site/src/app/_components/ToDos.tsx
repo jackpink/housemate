@@ -38,7 +38,7 @@ import {
   PopoverTrigger,
 } from "../../../../ui/Atoms/Popover";
 import { usePathname, useRouter } from "next/navigation";
-import { Reorder } from "framer-motion";
+import { Reorder, useDragControls } from "framer-motion";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -439,17 +439,20 @@ function MobileToDos({
         onReorder={() => {
           console.log("reorder");
         }}
+        axis="y"
       >
-        {optimisticToDos.map((toDo) => (
-          <Reorder.Item value={toDo} key={toDo.id}>
-            <MobileTodo
-              toDo={toDo}
-              moveUp={moveUp}
-              moveDown={moveDown}
-              markAsCompleted={markAsCompleted}
-            />
-          </Reorder.Item>
-        ))}
+        {optimisticToDos.map((toDo) => {
+          return (
+            <Reorder.Item value={toDo} key={toDo.id} dragListener={false}>
+              <MobileTodo
+                toDo={toDo}
+                moveUp={moveUp}
+                moveDown={moveDown}
+                markAsCompleted={markAsCompleted}
+              />
+            </Reorder.Item>
+          );
+        })}
       </Reorder.Group>
     </>
   );
@@ -467,6 +470,7 @@ function MobileTodo({
   markAsCompleted: (toDo: ToDos[0]) => void;
 }) {
   const [isMoving, setIsMoving] = React.useState(false);
+
   if (isMoving) {
     return (
       <div>
