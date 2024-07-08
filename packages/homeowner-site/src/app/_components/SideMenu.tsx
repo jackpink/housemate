@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   LargeAddIcon,
   PastIcon,
+  RecurringIcon,
   ScheduleIcon,
   ToDoListIcon,
   TradeRequestIcon,
@@ -14,7 +15,7 @@ export default function SideMenu({
   selected,
 }: {
   propertyId: string;
-  selected: "todo" | "schedule" | "past" | "add";
+  selected: "todo" | "schedule" | "recurring" | "past" | "add";
 }) {
   return (
     <aside className="hidden max-w-min xs:block">
@@ -37,6 +38,18 @@ export default function SideMenu({
           <div className="flex w-full flex-col items-center justify-center">
             <ScheduleIcon width={45} height={45} />
             <Text className="text-xl font-bold">Schedule</Text>
+          </div>
+        </div>
+      </Link>
+
+      <Link
+        href={`/properties/${propertyId}/recurring`}
+        className={clsx("block", selected === "recurring" && "bg-altSecondary")}
+      >
+        <div className="h-full w-full p-7">
+          <div className="flex w-full flex-col items-center justify-center">
+            <RecurringIcon width={45} height={45} />
+            <Text className="text-xl font-bold">Recurring</Text>
           </div>
         </div>
       </Link>
