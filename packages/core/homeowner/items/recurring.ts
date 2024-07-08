@@ -12,6 +12,24 @@ import { db } from "../../db";
 import { eq, and, asc, desc, or, type InferSelectModel } from "drizzle-orm";
 import { Item } from "./item";
 
+export async function getAll({ propertyId }: { propertyId: string }) {
+  // console.log("now query");
+  const items = await db.query.item.findMany({
+    where: (item, { eq }) =>
+      and(eq(item.propertyId, propertyId), eq(item.recurring, true)),
+
+    with: {
+      filesRootFolder: {
+        with: { files: true },
+      },
+      pastDates: true,
+    },
+    orderBy: [desc(item.date)],
+  });
+  // console.log("items", items);
+  return items;
+}
+
 export async function update({
   id,
   recurring,
