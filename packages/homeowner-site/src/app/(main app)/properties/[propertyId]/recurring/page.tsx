@@ -60,7 +60,10 @@ export default async function RecurringPage({
           <span className="pl-2 pr-3">Back to Property Menu</span>
           <OptionsLargeIcon width={30} height={30} />
         </Link>
-        <Recurring recurringTasks={recurringItems} />
+        <Recurring
+          recurringTasks={recurringItems}
+          propertyId={params.propertyId}
+        />
       </PageWithSingleColumn>
     </div>
   );

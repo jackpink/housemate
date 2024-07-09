@@ -1,16 +1,18 @@
+import Link from "next/link";
 import { ToDos } from "../../../../core/homeowner/item";
+import { EditIconSmall } from "../../../../ui/Atoms/Icons";
 
 export default function Recurring({
   recurringTasks,
+  propertyId,
 }: {
   recurringTasks: ToDos;
+  propertyId: string;
 }) {
   return (
     <div>
-      <h1>Recurring</h1>
       <table>
         <tr>
-          <th>Recurring</th>
           <th>Task</th>
           <th>Every</th>
           <th>Last</th>
@@ -18,13 +20,18 @@ export default function Recurring({
         </tr>
         {recurringTasks.map((task) => (
           <tr>
+            <td className="p-2 capitalize">{task.title}</td>
+            <td className="p-2 capitalize">{task.recurringSchedule}</td>
+            <td className="p-2 capitalize">{task.pastDates[0]?.date}</td>
+            <td className="p-2 capitalize">{task.date}</td>
             <td>
-              <input type="checkbox" checked={task.recurring ?? false} />
+              <Link
+                href={`/properties/${propertyId}/recurring/${task.id}`}
+                className="flex items-center rounded-md border-2 border-black p-1"
+              >
+                <EditIconSmall width={15} height={15} /> Edit
+              </Link>
             </td>
-            <td>{task.title}</td>
-            <td>{task.recurringSchedule}</td>
-            <td>{task.pastDates[0]?.date}</td>
-            <td>{task.date}</td>
           </tr>
         ))}
       </table>
