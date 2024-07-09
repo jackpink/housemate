@@ -10,6 +10,7 @@ import {
   LargeAddIcon,
   PastIcon,
   PlusIcon,
+  RecurringIcon,
   ScheduleIcon,
   ToDoListIcon,
   TradeRequestIcon,
@@ -43,7 +44,6 @@ export default async function PropertyPage({
   return (
     <>
       <PageTitle>{address}</PageTitle>
-      <PropertiesBreadcrumbs propertyId={params.propertyId} address={address} />
       <PageWithSingleColumn>
         <div className="grid grid-cols-2 gap-2  p-10">
           <Link
@@ -69,6 +69,17 @@ export default async function PropertyPage({
             </div>
           </Link>
 
+          <Link
+            href={`/properties/${params.propertyId}/recurring`}
+            className="block"
+          >
+            <div className="h-full w-full p-7">
+              <div className="flex w-full flex-col items-center justify-center">
+                <RecurringIcon width={45} height={45} />
+                <Text className="text-xl font-bold">Recurring</Text>
+              </div>
+            </div>
+          </Link>
           <Link
             href={`/properties/${params.propertyId}/past`}
             className="block"

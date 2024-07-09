@@ -44,9 +44,9 @@ export default async function RecurringPage({
 
   return (
     <div className="flex">
-      <SideMenu propertyId={params.propertyId} selected="schedule" />
+      <SideMenu propertyId={params.propertyId} selected="recurring" />
       <PageWithSingleColumn>
-        <div className="flex items-center justify-center p-4">
+        <div className="flex items-center justify-center p-4 xs:hidden">
           <RecurringIcon width={30} height={30} />
           <h1 className="pl-2 text-2xl font-bold">Recurring</h1>
         </div>
