@@ -1785,22 +1785,7 @@ export function RecurringIcon({
           />
         </clipPath>
       </defs>
-      <rect
-        x="-37.5"
-        width="450"
-        fill="#ffffff"
-        y="-37.499999"
-        height="449.999989"
-        fill-opacity="1"
-      />
-      <rect
-        x="-37.5"
-        width="450"
-        fill="#ffffff"
-        y="-37.499999"
-        height="449.999989"
-        fill-opacity="1"
-      />
+
       <g clip-path="url(#86b4e87825)">
         <path
           fill="#000000"
