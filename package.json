@@ -10,7 +10,8 @@
     "remove": "sst remove",
     "console": "sst console",
     "typecheck": "tsc --noEmit",
-    "lint": "cd packages/trade-site && npm run lint"
+    "lint": "cd packages/trade-site && npm run lint",
+    "test": "sst bind vitest run"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",
@@ -19,7 +20,8 @@
     "prettier": "^3.1.0",
     "prettier-plugin-tailwindcss": "^0.5.7",
     "sst": "^2.41.4",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^2.0.2"
   },
   "workspaces": [
     "packages/*"
