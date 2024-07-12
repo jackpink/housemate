@@ -5,7 +5,8 @@ import { PageWithSingleColumn } from "../../../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../core/homeowner/property";
 import { concatAddress } from "~/utils/functions";
-import { Item } from "../../../../../../../core/homeowner/item";
+import { Item } from "../../../../../../../core/homeowner/items/item";
+import { Todos } from "../../../../../../../core/homeowner/items/todos";
 import React from "react";
 import { getDeviceType } from "~/app/actions";
 import { redirect } from "next/navigation";
@@ -63,11 +64,9 @@ export default async function ToDoPage({
     revalidatePath(`/properties/${params.propertyId}/todo`);
   };
 
-  const toDos = await Item.getToDos(session.user.id);
+  const toDos = await Todos.getAll(params.propertyId);
 
-  const completedToDos = await Item.getToDosCompletedThisWeek(
-    params.propertyId,
-  );
+  const completedToDos = await Todos.getAllCompleted(params.propertyId, 7);
 
   return (
     <div className="flex">

@@ -9,7 +9,6 @@ import {
   CompletedIcon,
   DownArrowIcon,
   MoveIcon,
-  OptionsIcon,
   OptionsLargeIcon,
   TickIcon,
   ToDoIcon,
@@ -27,7 +26,6 @@ import {
 } from "../../../../ui/Atoms/Dialog";
 import { ItemStatus } from "../../../../core/db/schema";
 import { CTAButton } from "../../../../ui/Atoms/Button";
-import ClickAwayListener from "../../../../ui/Atoms/ClickAwayListener";
 import { EditableComponentLabel } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { Item } from "./PastItems";
 import { CompletedStatusLabel, ToDoStatusLabel } from "./EditItem";
@@ -37,8 +35,8 @@ import {
   PopoverDescription,
   PopoverTrigger,
 } from "../../../../ui/Atoms/Popover";
-import { usePathname, useRouter } from "next/navigation";
-import { Reorder, useDragControls } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { AnimatePresence, Reorder, motion } from "framer-motion";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -432,29 +430,28 @@ function MobileToDos({
   );
 
   return (
-    <>
-      <Reorder.Group
-        className="flex flex-col gap-5 p-4"
-        values={optimisticToDos}
-        onReorder={() => {
-          console.log("reorder");
-        }}
-        axis="y"
-      >
-        {optimisticToDos.map((toDo) => {
-          return (
-            <Reorder.Item value={toDo} key={toDo.id} dragListener={false}>
-              <MobileTodo
-                toDo={toDo}
-                moveUp={moveUp}
-                moveDown={moveDown}
-                markAsCompleted={markAsCompleted}
-              />
-            </Reorder.Item>
-          );
-        })}
-      </Reorder.Group>
-    </>
+    <Reorder.Group
+      className="flex flex-col gap-5 p-4"
+      values={optimisticToDos}
+      onReorder={() => {
+        console.log("reorder");
+      }}
+      axis="y"
+      transition={{ duration: 1 }}
+    >
+      {optimisticToDos.map((toDo, index) => {
+        return (
+          <Reorder.Item value={toDo} key={toDo.id} dragListener={false}>
+            <MobileTodo
+              toDo={toDo}
+              moveUp={moveUp}
+              moveDown={moveDown}
+              markAsCompleted={markAsCompleted}
+            />
+          </Reorder.Item>
+        );
+      })}
+    </Reorder.Group>
   );
 }
 
@@ -535,14 +532,20 @@ function ToDoOptionsPopover({
   isTask: boolean;
 }) {
   const pathname = usePathname().split("todo")[0];
+  const selectedToDoId = usePathname().split("todo/")[1];
+
+  let isSelected = false;
+  if (selectedToDoId === itemId) {
+    isSelected = true;
+  }
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <button
           className={clsx(
-            " flex w-20 flex-col items-center justify-center px-1",
-            isTask ? "bg-todo" : "bg-issue",
+            " flex w-20 flex-col items-center justify-center px-1 active:bg-black/10",
+            isSelected ? "bg-brandSecondary" : isTask ? "bg-todo" : "bg-issue",
           )}
         >
           <OptionsLargeIcon width={30} height={30} />
@@ -798,7 +801,7 @@ function Selector({
   return (
     <button
       className={clsx(
-        " rounded-lg border-2 border-dark p-2",
+        " rounded-lg border-2 border-dark p-2 active:bg-brandSecondary",
         selected && "bg-brandSecondary/70",
       )}
       onClick={onClick}
@@ -817,23 +820,47 @@ function FilterMessage({
 }) {
   if (filteredToDos.length === 0) {
     return (
-      <p className="p-3 text-center text-xl font-semibold">
-        {filter === "all" && <p>There are no incomplete tasks</p>}
-        {filter === "overdue" && <p>There are no overdue tasks</p>}
-        {filter === "day" && <p>There are no incomplete tasks today</p>}
-        {filter === "week" && <p>There are no incomplete tasks this week</p>}
-        {filter === "month" && <p>There are no incomplete tasks this month</p>}
-      </p>
+      <AnimatePresence mode="sync">
+        <motion.div
+          initial={{ y: -40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -40, opacity: 0 }}
+          transition={{ duration: 1 }}
+          onAnimationStart={() => console.log("animation started")}
+        >
+          <div className="p-3 py-20 text-center text-xl font-semibold">
+            {filter === "all" && <p>There are no incomplete tasks</p>}
+            {filter === "overdue" && <p>There are no overdue tasks</p>}
+            {filter === "day" && <p>There are no incomplete tasks today</p>}
+            {filter === "week" && (
+              <p>There are no incomplete tasks this week</p>
+            )}
+            {filter === "month" && (
+              <p>There are no incomplete tasks this month</p>
+            )}
+          </div>
+        </motion.div>
+      </AnimatePresence>
     );
   }
   return (
-    <div className="p-3 pt-5 text-lg font-medium">
-      {filter === "all" && <p>Showing all tasks</p>}
-      {filter === "overdue" && <p>Showing overdue tasks</p>}
-      {filter === "day" && <p>Showing tasks due Today</p>}
-      {filter === "week" && <p>Showing tasks due This Week</p>}
-      {filter === "month" && <p>Showing tasks due This Month</p>}
-    </div>
+    <AnimatePresence mode="sync">
+      <motion.div
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -40, opacity: 0 }}
+        transition={{ duration: 1 }}
+        onAnimationStart={() => console.log("animation 2 started")}
+      >
+        <div className="p-3 pt-5 text-center text-xl font-semibold">
+          {filter === "all" && <p>All Tasks</p>}
+          {filter === "overdue" && <p>Overdue Tasks</p>}
+          {filter === "day" && <p>Tasks due Today</p>}
+          {filter === "week" && <p>Tasks due This Week</p>}
+          {filter === "month" && <p>Tasks due This Month</p>}
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
@@ -879,8 +906,12 @@ function CompletedToDos({
   return (
     <div className="flex flex-col gap-3 p-4">
       <CompletedTodoMessage completedToDos={toDos} />
-      {optimisticToDos.map((toDo) => (
-        <CompletedToDo2 key={toDo.id} toDo={toDo} markAsToDo={markAsToDo} />
+      {optimisticToDos.map((toDo, index) => (
+        <CompletedToDo2
+          key={toDo.id + index}
+          toDo={toDo}
+          markAsToDo={markAsToDo}
+        />
       ))}
     </div>
   );
@@ -907,7 +938,7 @@ function CompletedOptionsPopover({ markAsToDo }: { markAsToDo: () => void }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="flex w-20 flex-col items-center justify-center bg-completed px-1">
+        <button className="flex w-20 flex-col items-center justify-center bg-completed px-1 active:bg-black/10">
           <OptionsLargeIcon width={30} height={30} />
           Options
         </button>

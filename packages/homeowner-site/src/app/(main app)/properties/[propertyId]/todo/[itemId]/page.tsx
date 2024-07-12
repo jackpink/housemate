@@ -1,11 +1,7 @@
-import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
-import { PageTitle } from "../../../../../../../../ui/Atoms/Title";
-import { CapitaliseText } from "../../../../../../../../ui/Molecules/InPlaceEditableComponent";
-import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
 import { concatAddress } from "~/utils/functions";
-import { Item } from "../../../../../../../../core/homeowner/item";
+import { Item } from "../../../../../../../../core/homeowner/items/item";
 import React from "react";
 import { getDeviceType } from "~/app/actions";
 import { redirect } from "next/navigation";
@@ -21,6 +17,7 @@ import {
 import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
 import Files from "~/app/_components/Files";
 import { Bucket } from "sst/node/bucket";
+import { Todos } from "../../../../../../../../core/homeowner/items/todos";
 
 export default async function ToDoPage({
   params,
@@ -68,11 +65,9 @@ export default async function ToDoPage({
     revalidatePath(`/properties/${params.propertyId}/todo`);
   };
 
-  const toDos = await Item.getToDos(session.user.id);
+  const toDos = await Todos.getAll(params.propertyId);
 
-  const completedToDos = await Item.getToDosCompletedThisWeek(
-    params.propertyId,
-  );
+  const completedToDos = await Todos.getAllCompleted(params.propertyId, 7);
 
   const updateItem: UpdateItemServerAction = async ({
     title,
