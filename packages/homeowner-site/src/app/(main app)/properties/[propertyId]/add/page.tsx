@@ -1,10 +1,6 @@
-import { PageWithSingleColumn } from "../../../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../core/homeowner/property";
-import { concatAddress } from "~/utils/functions";
-import { Item } from "../../../../../../../core/homeowner/item";
 import React from "react";
-import { getDeviceType } from "~/app/actions";
 import { redirect } from "next/navigation";
 import SideMenu from "~/app/_components/SideMenu";
 import AddItem from "~/app/_components/AddItem";
@@ -22,13 +18,9 @@ export default async function ToDoPage({
 }) {
   const session = await auth();
 
-  const deviceType = await getDeviceType();
-
   const property = await Property.get(params.propertyId);
 
   if (!property) return <div>Property not found</div>;
-
-  const address = concatAddress(property);
 
   console.log("session", session);
 
@@ -40,8 +32,6 @@ export default async function ToDoPage({
   if (session?.user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
-
-  const completedItems = await Item.getCompleted(session.user.id);
 
   return (
     <div className="flex">

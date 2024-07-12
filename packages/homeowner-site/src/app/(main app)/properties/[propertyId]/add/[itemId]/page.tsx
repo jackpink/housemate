@@ -1,13 +1,10 @@
-import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
-import { concatAddress } from "~/utils/functions";
-import { Item } from "../../../../../../../../core/homeowner/item";
+import { Item } from "../../../../../../../../core/homeowner/items/item";
 import React from "react";
 import { getDeviceType } from "~/app/actions";
 import { redirect } from "next/navigation";
 import SideMenu from "~/app/_components/SideMenu";
-import AddItem from "~/app/_components/AddItem";
 import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
 import { revalidatePath } from "next/cache";
 import Files from "~/app/_components/Files";
