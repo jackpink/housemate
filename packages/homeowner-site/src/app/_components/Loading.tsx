@@ -1,3 +1,7 @@
+import { ToDoIcon } from "../../../../ui/Atoms/Icons";
+import { ParagraphText } from "../../../../ui/Atoms/Text";
+import { EditableComponentLabel } from "../../../../ui/Molecules/InPlaceEditableComponent";
+
 export function ToDosLoading() {
   return (
     <div className=" max-w-lg">
@@ -60,3 +64,73 @@ function ItemLoading() {
     </div>
   );
 }
+
+export function EditItemLoading() {
+  return (
+    <div className="flex flex-wrap gap-4 p-4 blur-sm">
+      <div className="min-w-80 max-w-lg grow">
+        <Title />
+        <Line />
+        <Description />
+        <Line />
+        <ToDoStatusLabel />
+        <Line />
+        <OneOffRecurring />
+        <Line />
+        <DateOfItem />
+        <Line />
+      </div>
+    </div>
+  );
+}
+
+function Line() {
+  return <div className="w-full border-2 border-altSecondary"></div>;
+}
+
+const Title = () => {
+  return <h1 className="p-2 text-xl font-bold ">Item Title</h1>;
+};
+
+const Description = function () {
+  return (
+    <div>
+      <EditableComponentLabel label="Description" />
+
+      <ParagraphText className="p-4 text-xl">
+        This is the paragraph text that is used in the description. lets see how
+        it looks on a loaing state skeleton hting you know
+      </ParagraphText>
+    </div>
+  );
+};
+
+const OneOffRecurring = function () {
+  const displayText = "Recurring";
+
+  return (
+    <div className="w-full">
+      <EditableComponentLabel label="One Off / Recurring" />
+      <div className="w-full rounded-full bg-altSecondary/70 p-6 text-center">
+        {displayText}
+      </div>
+    </div>
+  );
+};
+
+function ToDoStatusLabel() {
+  return (
+    <div className="flex w-full items-center justify-center rounded-full bg-todo p-6 text-center">
+      <ToDoIcon width={50} height={50} />
+      To Do
+    </div>
+  );
+}
+const DateOfItem = function () {
+  return (
+    <div className="w-full">
+      <EditableComponentLabel label="Date" />
+      <p className="w-full pt-2 text-lg">Thur Jul 12 2024</p>
+    </div>
+  );
+};
