@@ -62,22 +62,70 @@ export async function updateStatus({
   // if marking as completed + is not recurring, just mark as completed
   // if marking as todo, mark as todo
   // if marking as todo + is recurring, mark as todo
+  const currentDate = new Date().toISOString().split("T")[0]!;
   if (status === ItemStatus.COMPLETED) {
     const itemObj = await Item.get(id);
     console.log("we are marking status as completed");
+    const currentDate = new Date().toISOString().split("T")[0]!;
+
     if (itemObj.recurring) {
-      await createNewPastDateAndUpdateCurrentDate({
+      // marking as completed + is recurring
+      await createNewPastDate({
         itemId: id,
-        date: itemObj.date,
+        date: currentDate,
         propertyId: itemObj.propertyId,
+      });
+      const futureDate = getNewRecurringDate({
         recurringSchedule: itemObj.recurringSchedule as RecurringSchedule,
       });
+      await db.update(item).set({ date: futureDate }).where(eq(item.id, id));
     } else {
-      await db.update(item).set({ status }).where(eq(item.id, id));
+      // marking as completed + is not recurring
+      await db
+        .update(item)
+        .set({ status, date: currentDate })
+        .where(eq(item.id, id));
     }
   } else {
+    // marking as todo
     await db.update(item).set({ status }).where(eq(item.id, id));
   }
+}
+
+async function createNewPastDate({
+  itemId,
+  date,
+  propertyId,
+}: {
+  itemId: string;
+  date: string;
+  propertyId: string;
+}) {
+  await db.insert(itemPastDate).values({ itemId, date, propertyId });
+}
+
+function getNewRecurringDate({
+  recurringSchedule,
+}: {
+  recurringSchedule: RecurringSchedule;
+}) {
+  let newDate = new Date();
+  if (recurringSchedule === RecurringSchedule.WEEKLY) {
+    newDate.setDate(newDate.getDate() + 7);
+  } else if (recurringSchedule === RecurringSchedule.FORTNIGHTLY) {
+    newDate.setDate(newDate.getDate() + 14);
+  } else if (recurringSchedule === RecurringSchedule.MONTHLY) {
+    newDate.setMonth(newDate.getMonth() + 1);
+  } else if (recurringSchedule === RecurringSchedule.QUARTERLY) {
+    newDate.setMonth(newDate.getMonth() + 3);
+  } else if (recurringSchedule === RecurringSchedule.HALF_YEARLY) {
+    newDate.setMonth(newDate.getMonth() + 6);
+  } else if (recurringSchedule === RecurringSchedule.YEARLY) {
+    newDate.setFullYear(newDate.getFullYear() + 1);
+  } else {
+    throw new Error("Recurring schedule not found");
+  }
+  return newDate.toISOString().split("T")[0]!;
 }
 
 async function createNewPastDateAndUpdateCurrentDate({
