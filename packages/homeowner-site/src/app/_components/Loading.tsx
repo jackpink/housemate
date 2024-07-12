@@ -30,7 +30,9 @@ function ToDoFilter({}: {}) {
           Month
         </Selector>
       </div>
-      <div className="p-3 pt-5 text-lg font-medium">Loading</div>
+      <div className="p-3 pt-5 text-center text-lg font-semibold blur-sm">
+        Loading
+      </div>
     </div>
   );
 }

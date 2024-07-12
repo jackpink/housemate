@@ -86,7 +86,7 @@ export default function ToDos({
   });
   if (deviceType === "mobile") {
     return (
-      <div className=" max-w-lg">
+      <div className="min-w-96 max-w-lg">
         <ToDoFilter
           filter={filter}
           setFilter={setfilter}
@@ -430,28 +430,32 @@ function MobileToDos({
   );
 
   return (
-    <Reorder.Group
-      className="flex flex-col gap-5 p-4"
-      values={optimisticToDos}
-      onReorder={() => {
-        console.log("reorder");
-      }}
-      axis="y"
-      transition={{ duration: 1 }}
-    >
-      {optimisticToDos.map((toDo, index) => {
-        return (
-          <Reorder.Item value={toDo} key={toDo.id} dragListener={false}>
-            <MobileTodo
-              toDo={toDo}
-              moveUp={moveUp}
-              moveDown={moveDown}
-              markAsCompleted={markAsCompleted}
-            />
-          </Reorder.Item>
-        );
-      })}
-    </Reorder.Group>
+    <AnimatePresence>
+      <Reorder.Group
+        className="flex flex-col gap-5 p-4"
+        values={optimisticToDos}
+        onReorder={() => {
+          console.log("reorder");
+        }}
+        axis="y"
+        transition={{ duration: 1 }}
+      >
+        {optimisticToDos.map((toDo, index) => {
+          return (
+            <MotionComponent>
+              <Reorder.Item value={toDo} key={toDo.id} dragListener={false}>
+                <MobileTodo
+                  toDo={toDo}
+                  moveUp={moveUp}
+                  moveDown={moveDown}
+                  markAsCompleted={markAsCompleted}
+                />
+              </Reorder.Item>
+            </MotionComponent>
+          );
+        })}
+      </Reorder.Group>
+    </AnimatePresence>
   );
 }
 
@@ -821,46 +825,77 @@ function FilterMessage({
   if (filteredToDos.length === 0) {
     return (
       <AnimatePresence mode="sync">
-        <motion.div
-          initial={{ y: -40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -40, opacity: 0 }}
-          transition={{ duration: 1 }}
-          onAnimationStart={() => console.log("animation started")}
-        >
-          <div className="p-3 py-20 text-center text-xl font-semibold">
-            {filter === "all" && <p>There are no incomplete tasks</p>}
-            {filter === "overdue" && <p>There are no overdue tasks</p>}
-            {filter === "day" && <p>There are no incomplete tasks today</p>}
-            {filter === "week" && (
+        <div className="p-3 py-20 text-center text-xl font-semibold">
+          {filter === "all" && (
+            <MotionComponent>
+              <p>There are no incomplete tasks</p>
+            </MotionComponent>
+          )}
+          {filter === "overdue" && (
+            <MotionComponent>
+              <p>There are no overdue tasks</p>
+            </MotionComponent>
+          )}
+          {filter === "day" && (
+            <MotionComponent>
+              <p>There are no incomplete tasks today</p>
+            </MotionComponent>
+          )}
+          {filter === "week" && (
+            <MotionComponent>
               <p>There are no incomplete tasks this week</p>
-            )}
-            {filter === "month" && (
+            </MotionComponent>
+          )}
+          {filter === "month" && (
+            <MotionComponent>
               <p>There are no incomplete tasks this month</p>
-            )}
-          </div>
-        </motion.div>
+            </MotionComponent>
+          )}
+        </div>
       </AnimatePresence>
     );
   }
   return (
-    <AnimatePresence mode="sync">
-      <motion.div
-        initial={{ y: -40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: -40, opacity: 0 }}
-        transition={{ duration: 1 }}
-        onAnimationStart={() => console.log("animation 2 started")}
-      >
-        <div className="p-3 pt-5 text-center text-xl font-semibold">
-          {filter === "all" && <p>All Tasks</p>}
-          {filter === "overdue" && <p>Overdue Tasks</p>}
-          {filter === "day" && <p>Tasks due Today</p>}
-          {filter === "week" && <p>Tasks due This Week</p>}
-          {filter === "month" && <p>Tasks due This Month</p>}
-        </div>
-      </motion.div>
-    </AnimatePresence>
+    <div className="p-3 pt-5 text-center text-xl font-semibold">
+      {filter === "all" && (
+        <MotionComponent>
+          <p>All Tasks</p>
+        </MotionComponent>
+      )}
+      {filter === "overdue" && (
+        <MotionComponent>
+          <p>Overdue Tasks</p>
+        </MotionComponent>
+      )}
+      {filter === "day" && (
+        <MotionComponent>
+          <p>Tasks due Today</p>
+        </MotionComponent>
+      )}
+      {filter === "week" && (
+        <MotionComponent>
+          <p>Tasks due This Week</p>
+        </MotionComponent>
+      )}
+      {filter === "month" && (
+        <MotionComponent>
+          <p>Tasks due This Month</p>
+        </MotionComponent>
+      )}
+    </div>
+  );
+}
+
+function MotionComponent({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.div
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: -20, opacity: 0 }}
+      transition={{ duration: 1 }}
+    >
+      {children}
+    </motion.div>
   );
 }
 
