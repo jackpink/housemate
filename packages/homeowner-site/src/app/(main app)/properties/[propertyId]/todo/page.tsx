@@ -19,13 +19,21 @@ import {
   DropDownIcon,
   OptionsLargeIcon,
   ToDoIcon,
+  ToDoListIcon,
 } from "../../../../../../../ui/Atoms/Icons";
 import { ToDosLoading } from "~/app/_components/Loading";
+import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
+import Files from "~/app/_components/Files";
 
 export default async function ToDoPage({
   params,
+  searchParams,
 }: {
   params: { propertyId: string };
+  searchParams: {
+    filter?: string;
+    itemId?: string;
+  };
 }) {
   const session = await auth();
 
@@ -48,7 +56,7 @@ export default async function ToDoPage({
     return <div>Not Authenticated</div>;
   }
 
-  const updateItem: UpdateItemPriorityServerAction = async ({
+  const updateItemPriority: UpdateItemPriorityServerAction = async ({
     id,
     priority,
     status,
@@ -68,31 +76,89 @@ export default async function ToDoPage({
 
   const completedToDos = await Todos.getAllCompleted(params.propertyId, 7);
 
+  let EditItemComponent = () => <></>;
+
+  if (!!searchParams.itemId) {
+    const item = await Item.get(searchParams.itemId);
+
+    if (!item) return <div>Item not found</div>;
+
+    const updateItem: UpdateItemServerAction = async ({
+      title,
+      description,
+      status,
+      recurring,
+      recurringSchedule,
+      date,
+      warrantyEndDate,
+    }) => {
+      "use server";
+      console.log("updateItem", title, description, recurring);
+      await Item.update({
+        id: searchParams.itemId!,
+        title,
+        description,
+        status,
+        recurring,
+        recurringSchedule,
+        date,
+        warrantyEndDate,
+      });
+      revalidatePath(
+        `/properties/${params.propertyId}/past/${searchParams.itemId}`,
+      );
+    };
+
+    // @ts-ignore
+    const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";
+
+    EditItemComponent = () => (
+      <EditItem
+        item={item}
+        updateItem={updateItem}
+        propertyId={params.propertyId}
+        bucketName={bucketName}
+        Files={
+          <Files
+            rootFolder={item.filesRootFolder}
+            deviceType={deviceType}
+            propertyId={params.propertyId}
+          />
+        }
+        deviceType={deviceType}
+      />
+    );
+  }
+
   return (
-    <div className="flex">
+    <div className="flex w-full">
       <SideMenu propertyId={params.propertyId} selected="todo" />
-      <PageWithSingleColumn>
-        <div className="flex items-center justify-center p-4 xs:hidden">
-          <ToDoIcon width={30} height={30} />
-          <h1 className="pl-2 text-2xl font-bold">To Do List</h1>
+      <div className="flex-1">
+        <div className="flex justify-center ">
+          <div className="hidden max-w-[800px] grow lg:block">
+            <ToDos
+              toDos={toDos}
+              completedToDos={completedToDos}
+              updateItem={updateItemPriority}
+              deviceType={"mobile"}
+            />
+          </div>
+          <div className="grow">
+            <Link
+              href={`/properties/${params.propertyId}/todo`}
+              className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black lg:hidden"
+            >
+              <span className="-rotate-90">
+                <DropDownIcon width={20} height={20} />
+              </span>
+              Back to To Dos
+              <ToDoListIcon width={60} height={40} />
+            </Link>
+
+            <EditItemComponent />
+          </div>
         </div>
-        <Link
-          href={`/properties/${params.propertyId}`}
-          className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black xs:hidden"
-        >
-          <span className="-rotate-90">
-            <DropDownIcon width={20} height={20} />
-          </span>
-          <span className="pl-2 pr-3">Back to Property Menu</span>
-          <OptionsLargeIcon width={30} height={30} />
-        </Link>
-        <ToDos
-          toDos={toDos}
-          completedToDos={completedToDos}
-          updateItem={updateItem}
-          deviceType={"mobile"}
-        />
-      </PageWithSingleColumn>
+      </div>
     </div>
   );
 }
