@@ -1,16 +1,11 @@
-import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
-import { PageTitle } from "../../../../../../../ui/Atoms/Title";
-import { CapitaliseText } from "../../../../../../../ui/Molecules/InPlaceEditableComponent";
-import { PageWithSingleColumn } from "../../../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../core/homeowner/property";
 import { concatAddress } from "~/utils/functions";
 import { Item } from "../../../../../../../core/homeowner/items/item";
 import { Todos } from "../../../../../../../core/homeowner/items/todos";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { getDeviceType } from "~/app/actions";
 import { redirect } from "next/navigation";
-import PastItems from "~/app/_components/PastItems";
 import SideMenu from "~/app/_components/SideMenu";
 import ToDos, { UpdateItemPriorityServerAction } from "~/app/_components/ToDos";
 import { revalidatePath } from "next/cache";
@@ -24,6 +19,7 @@ import {
 import { ToDosLoading } from "~/app/_components/Loading";
 import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
 import Files from "~/app/_components/Files";
+import { Bucket } from "sst/node/bucket";
 
 export default async function ToDoPage({
   params,
@@ -78,24 +74,19 @@ export default async function ToDoPage({
 
   let EditItemComponent = () => <></>;
 
+  console.log("EditItemComponent", EditItemComponent);
+
   if (!!searchParams.itemId) {
     const item = await Item.get(searchParams.itemId);
 
-    if (!item) return <div>Item not found</div>;
-
-    const updateItem: UpdateItemServerAction = async ({
-      title,
-      description,
-      status,
-      recurring,
-      recurringSchedule,
-      date,
-      warrantyEndDate,
-    }) => {
-      "use server";
-      console.log("updateItem", title, description, recurring);
-      await Item.update({
-        id: searchParams.itemId!,
+    if (!item) {
+      EditItemComponent = () => (
+        <div className="flex h-svh flex-col items-center justify-center">
+          Item not found
+        </div>
+      );
+    } else {
+      const updateItem: UpdateItemServerAction = async ({
         title,
         description,
         status,
@@ -103,31 +94,45 @@ export default async function ToDoPage({
         recurringSchedule,
         date,
         warrantyEndDate,
-      });
-      revalidatePath(
-        `/properties/${params.propertyId}/past/${searchParams.itemId}`,
+      }) => {
+        "use server";
+        console.log("updateItem", title, description, recurring);
+        await Item.update({
+          id: searchParams.itemId!,
+          title,
+          description,
+          status,
+          recurring,
+          recurringSchedule,
+          date,
+          warrantyEndDate,
+        });
+        revalidatePath(
+          `/properties/${params.propertyId}/past/${searchParams.itemId}`,
+        );
+      };
+
+      const bucketName =
+        // @ts-ignore
+        (Bucket.ItemUploads.bucketName as string) || "not found";
+
+      EditItemComponent = () => (
+        <EditItem
+          item={item}
+          updateItem={updateItem}
+          propertyId={params.propertyId}
+          bucketName={bucketName}
+          Files={
+            <Files
+              rootFolder={item.filesRootFolder}
+              deviceType={deviceType}
+              propertyId={params.propertyId}
+            />
+          }
+          deviceType={deviceType}
+        />
       );
-    };
-
-    // @ts-ignore
-    const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";
-
-    EditItemComponent = () => (
-      <EditItem
-        item={item}
-        updateItem={updateItem}
-        propertyId={params.propertyId}
-        bucketName={bucketName}
-        Files={
-          <Files
-            rootFolder={item.filesRootFolder}
-            deviceType={deviceType}
-            propertyId={params.propertyId}
-          />
-        }
-        deviceType={deviceType}
-      />
-    );
+    }
   }
 
   return (
@@ -142,20 +147,6 @@ export default async function ToDoPage({
               updateItem={updateItemPriority}
               deviceType={"mobile"}
             />
-          </div>
-          <div className="grow">
-            <Link
-              href={`/properties/${params.propertyId}/todo`}
-              className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black lg:hidden"
-            >
-              <span className="-rotate-90">
-                <DropDownIcon width={20} height={20} />
-              </span>
-              Back to To Dos
-              <ToDoListIcon width={60} height={40} />
-            </Link>
-
-            <EditItemComponent />
           </div>
         </div>
       </div>

@@ -35,7 +35,7 @@ import {
   PopoverDescription,
   PopoverTrigger,
 } from "../../../../ui/Atoms/Popover";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, Reorder, motion } from "framer-motion";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
@@ -442,16 +442,16 @@ function MobileToDos({
       >
         {optimisticToDos.map((toDo, index) => {
           return (
-            <MotionComponent>
-              <Reorder.Item value={toDo} key={toDo.id} dragListener={false}>
+            <Reorder.Item value={toDo} key={toDo.id} dragListener={false}>
+              <MotionComponent>
                 <MobileTodo
                   toDo={toDo}
                   moveUp={moveUp}
                   moveDown={moveDown}
                   markAsCompleted={markAsCompleted}
                 />
-              </Reorder.Item>
-            </MotionComponent>
+              </MotionComponent>
+            </Reorder.Item>
           );
         })}
       </Reorder.Group>
@@ -535,8 +535,9 @@ function ToDoOptionsPopover({
   markAsCompleted: () => void;
   isTask: boolean;
 }) {
-  const pathname = usePathname().split("todo")[0];
-  const selectedToDoId = usePathname().split("todo/")[1];
+  const pathname = usePathname();
+  const propertyPathname = pathname.split("todo")[0];
+  const selectedToDoId = pathname.split("todo/")[1];
 
   let isSelected = false;
   if (selectedToDoId === itemId) {
@@ -559,7 +560,7 @@ function ToDoOptionsPopover({
       <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
         <PopoverDescription className="flex flex-col items-start gap-4 pt-5">
           <Link
-            href={`${pathname}/todo/${itemId}`}
+            href={`${propertyPathname}todo/${itemId}`}
             className="flex items-center"
           >
             <div className="pl-1">
@@ -663,6 +664,7 @@ export function ItemQuickViewDialog({
   colour: "todo" | "completed" | "issue" | "product";
 }) {
   const date = new Date(toDo.date).toDateString();
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -889,9 +891,9 @@ function FilterMessage({
 function MotionComponent({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: -20, opacity: 0 }}
+      initial={{ filter: "blur(5px)", opacity: 0 }}
+      animate={{ filter: "blur(0px)", opacity: 1 }}
+      exit={{ filter: "blur(5px)", opacity: 0 }}
       transition={{ duration: 1 }}
     >
       {children}
@@ -964,12 +966,28 @@ function CompletedToDo2({
         markAsToDo={() => {
           markAsToDo(toDo);
         }}
+        itemId={toDo.id}
       />
     </Item>
   );
 }
 
-function CompletedOptionsPopover({ markAsToDo }: { markAsToDo: () => void }) {
+function CompletedOptionsPopover({
+  markAsToDo,
+  itemId,
+}: {
+  markAsToDo: () => void;
+  itemId: string;
+}) {
+  const pathname = usePathname();
+  const propertyPathname = pathname.split("todo")[0];
+  const selectedToDoId = pathname.split("todo/")[1];
+
+  let isSelected = false;
+  if (selectedToDoId === itemId) {
+    isSelected = true;
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -980,12 +998,15 @@ function CompletedOptionsPopover({ markAsToDo }: { markAsToDo: () => void }) {
       </PopoverTrigger>
       <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
         <PopoverDescription className="flex flex-col items-start gap-4 pt-5">
-          <button onClick={() => {}} className="flex items-center">
+          <Link
+            href={`${propertyPathname}/todo/${itemId}`}
+            className="flex items-center"
+          >
             <div className="pl-1">
               <ViewIcon width={15} height={15} />
             </div>
             <span className="pl-6">Show</span>
-          </button>
+          </Link>
 
           <button onClick={markAsToDo} className="flex items-center">
             <ToDoIcon width={40} height={40} />
