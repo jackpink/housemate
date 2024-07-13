@@ -40,7 +40,7 @@ export async function getSchedule({
   const startDate = new Date(
     currentDate.setMonth(currentDate.getMonth() - pastMonths),
   );
-  console.log("start and end date", startDate, endDate);
+  // console.log("start and end date", startDate, endDate);
 
   const filteredItems = items.filter((item) => {
     const itemDate = new Date(item.date);

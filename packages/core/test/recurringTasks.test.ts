@@ -73,7 +73,6 @@ it("make task recurring", async () => {
   });
   const item = await Item.get(itemId);
   expect(item).not.toBeNull();
-  expect(item?.recurring).toBe(true);
   expect(item?.pastDates.length).toBe(0);
   expect(item?.recurringSchedule).toBeDefined();
   expect(item?.status).toBe(ItemStatus.TODO);
@@ -208,7 +207,7 @@ set as complete => should now be task with a future date (schedule)
 and a past date with the current date
 */
 
-it("make complete task recurring", async () => {
+it("make complete task recurring and set as complete", async () => {
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",

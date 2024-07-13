@@ -1,20 +1,12 @@
 export * as Todos from "./todos";
-import {
-  ItemCategory,
-  ItemStatus,
-  RecurringSchedule,
-  item,
-  itemFile,
-  itemFilesFolder,
-  itemPastDate,
-} from "../../db/schema";
+import { ItemCategory, ItemStatus, item } from "../../db/schema";
 import { db } from "../../db";
 import { eq, and, asc, desc, or, type InferSelectModel } from "drizzle-orm";
 import { Item } from "./item";
 
-export async function getAll(propertyId: string) {
-  // console.log("First recalibrate");
-  await recalibratePriority(propertyId);
+export async function getAll({ propertyId }: { propertyId: string }) {
+  console.log("First recalibrate");
+  await recalibratePriority({ propertyId });
   // console.log("now query");
   const items = await db.query.item.findMany({
     where: (item, { eq }) =>
@@ -55,7 +47,7 @@ export async function getAllCompleted(propertyId: string, range: number = 7) {
     const timeDiff = Math.abs(toDoDate.getTime() - todaysDate.getTime());
     const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
     if (diffDays < range && item.status === ItemStatus.COMPLETED) {
-      console.log("item is completed and within 7 days", item);
+      // console.log("item is completed and within 7 days", item);
       return true;
     }
     return false;
@@ -76,19 +68,21 @@ export async function getAllCompleted(propertyId: string, range: number = 7) {
   return allItems;
 }
 
-async function recalibratePriority(homeownerId: string) {
+async function recalibratePriority({ propertyId }: { propertyId: string }) {
+  console.log("recalibrating...");
   const items = await db.query.item.findMany({
     where: (item, { eq }) =>
-      and(eq(item.homeownerId, homeownerId), eq(item.status, ItemStatus.TODO)),
-    orderBy: [asc(item.toDoPriority)],
+      and(eq(item.propertyId, propertyId), eq(item.status, ItemStatus.TODO)),
+    orderBy: [asc(item.toDoPriority), desc(item.date)],
   });
+  console.log();
   for (let index = 0; index < items.length; index++) {
-    // console.log(
-    //   "index priority and item title",
-    //   index,
-    //   items[index]?.toDoPriority,
-    //   items[index]!.title,
-    // );
+    console.log(
+      "index priority and item title",
+      index,
+      items[index]?.toDoPriority,
+      items[index]!.title,
+    );
     await db
       .update(item)
       .set({ toDoPriority: index * 2 })
@@ -119,19 +113,19 @@ export async function getItemPastDatesInDateRange({
     where: (itemPastDate, { eq, and }) =>
       eq(itemPastDate.propertyId, propertyId),
   });
-  console.log("itemPastDates", itemPastDates);
+  // console.log("itemPastDates", itemPastDates);
   const filteredItemPastDates = itemPastDates.filter((itemPastDate) => {
-    console.log(
-      "start and end date",
-      startDate,
-      endDate,
-      itemPastDate.date,
-      itemPastDate.date >= startDate,
-      itemPastDate.date <= endDate,
-    );
+    // console.log(
+    //   "start and end date",
+    //   startDate,
+    //   endDate,
+    //   itemPastDate.date,
+    //   itemPastDate.date >= startDate,
+    //   itemPastDate.date <= endDate,
+    // );
     return itemPastDate.date >= startDate && itemPastDate.date <= endDate;
   });
-  console.log("filteredItemPastDates", filteredItemPastDates);
+  // console.log("filteredItemPastDates", filteredItemPastDates);
   let items = [];
   for (const itemPastDateObj of filteredItemPastDates) {
     const item = await db.query.item.findFirst({

@@ -39,7 +39,7 @@ export async function update({
 }) {
   // TODO
   const itemObj = await Item.get(id);
-  if (recurring && itemObj.status === ItemStatus.COMPLETED) {
+  if (recurring && !!itemObj && itemObj.status === ItemStatus.COMPLETED) {
     createNewPastDateAndUpdateCurrentDate({
       itemId: id,
       date: itemObj.date,
@@ -47,7 +47,7 @@ export async function update({
       recurringSchedule: itemObj.recurringSchedule as RecurringSchedule,
     });
   }
-  console.log("updating recurring", recurring, id);
+  // console.log("updating recurring", recurring, id);
   await db.update(item).set({ recurring }).where(eq(item.id, id));
 }
 
@@ -65,10 +65,10 @@ export async function updateStatus({
   const currentDate = new Date().toISOString().split("T")[0]!;
   if (status === ItemStatus.COMPLETED) {
     const itemObj = await Item.get(id);
-    console.log("we are marking status as completed");
+    // console.log("we are marking status as completed");
     const currentDate = new Date().toISOString().split("T")[0]!;
 
-    if (itemObj.recurring) {
+    if (!!itemObj && itemObj.recurring) {
       // marking as completed + is recurring
       await createNewPastDate({
         itemId: id,
@@ -139,7 +139,7 @@ async function createNewPastDateAndUpdateCurrentDate({
   propertyId: string;
   recurringSchedule: RecurringSchedule;
 }) {
-  console.log("creating new past date");
+  // console.log("creating new past date");
   await db.insert(itemPastDate).values({ itemId, date, propertyId });
 
   let newDate = new Date(date);
@@ -161,7 +161,7 @@ async function createNewPastDateAndUpdateCurrentDate({
   }
   const dateString = `${newDate.getFullYear()}-${newDate.getMonth() < 9 ? "0" : ""}${newDate.getMonth() + 1}-${newDate.getDate() < 10 ? "0" : ""}${newDate.getDate()}`;
 
-  console.log("changing new date to", dateString, itemId);
+  // console.log("changing new date to", dateString, itemId);
   await db
     .update(item)
     .set({ date: dateString, status: ItemStatus.TODO })

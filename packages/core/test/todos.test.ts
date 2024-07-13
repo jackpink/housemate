@@ -39,9 +39,7 @@ it("add a task", async () => {
   });
   const item = await Item.get(itemId);
   expect(item).not.toBeNull();
-  expect(item?.recurring).toBe(true);
-  expect(item?.pastDates.length).toBe(0);
-  expect(item?.recurringSchedule).toBeDefined();
+  expect(item?.toDoPriority).toBeNull();
   expect(item?.status).toBe(ItemStatus.TODO);
 });
 
@@ -50,7 +48,7 @@ Add 5 Tasks and get initial priority,
 order should be by dates
 */
 
-it("add a task", async () => {
+it("add 6 tasks and get initial priority", async () => {
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
@@ -137,7 +135,7 @@ it("add a task", async () => {
     date: "2021-12-15",
   });
 
-  const toDos = await Todos.getAll(propertyId);
+  const toDos = await Todos.getAll({ propertyId });
   expect(toDos).toBeDefined();
 
   expect(toDos).not.toBeNull();
@@ -149,6 +147,9 @@ it("add a task", async () => {
   expect(toDos[3]?.id).toBe(itemId6);
   expect(toDos[4]?.id).toBe(itemId3);
   expect(toDos[5]?.id).toBe(itemId4);
+  // If I now add a new task with a date of 2021-12-13,
+  // what will happen to my order? does it get preserved?
+  // where should it go?
 });
 
 /*
