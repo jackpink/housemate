@@ -73,10 +73,10 @@ it("make task recurring", async () => {
   });
   const item = await Item.get(itemId);
   expect(item).not.toBeNull();
-  expect(item.recurring).toBe(true);
-  expect(item.pastDates.length).toBe(0);
-  expect(item.recurringSchedule).toBeDefined();
-  expect(item.status).toBe(ItemStatus.TODO);
+  expect(item?.recurring).toBe(true);
+  expect(item?.pastDates.length).toBe(0);
+  expect(item?.recurringSchedule).toBeDefined();
+  expect(item?.status).toBe(ItemStatus.TODO);
 });
 
 it("set task as complete", async () => {
@@ -117,12 +117,12 @@ it("set task as complete", async () => {
   //should now be complete with current date
   const item = await Item.get(itemId);
   expect(item).not.toBeNull();
-  expect(item.recurring).toBe(false);
-  expect(item.pastDates.length).toBe(0);
-  expect(item.recurringSchedule).toBeDefined();
-  expect(item.status).toBe(ItemStatus.COMPLETED);
+  expect(item?.recurring).toBe(false);
+  expect(item?.pastDates.length).toBe(0);
+  expect(item?.recurringSchedule).toBeDefined();
+  expect(item?.status).toBe(ItemStatus.COMPLETED);
   const currentDate = new Date().toISOString().split("T")[0]!;
-  expect(item.date).toBe(currentDate);
+  expect(item?.date).toBe(currentDate);
 });
 
 /*3 "make complete task recurring"
@@ -170,14 +170,14 @@ it("make complete task recurring", async () => {
   //should now be a task with a future date
   //and should have a past date with the completed date
   expect(item).not.toBeNull();
-  expect(item.recurring).toBe(true);
-  expect(item.pastDates.length).toBe(1);
+  expect(item?.recurring).toBe(true);
+  expect(item?.pastDates.length).toBe(1);
   const currentDate = new Date().toISOString().split("T")[0]!;
-  expect(item.pastDates[0]?.date).toBe(currentDate);
-  expect(item.recurringSchedule).toBeDefined();
-  expect(item.status).toBe(ItemStatus.TODO);
+  expect(item?.pastDates[0]?.date).toBe(currentDate);
+  expect(item?.recurringSchedule).toBeDefined();
+  expect(item?.status).toBe(ItemStatus.TODO);
   const futureDateObj = new Date();
-  switch (item.recurringSchedule) {
+  switch (item?.recurringSchedule) {
     case "weekly":
       futureDateObj.setDate(futureDateObj.getDate() + 7);
       break;
@@ -198,7 +198,7 @@ it("make complete task recurring", async () => {
       break;
   }
   const futureDate = futureDateObj.toISOString().split("T")[0]!;
-  expect(item.date).toBe(futureDate);
+  expect(item?.date).toBe(futureDate);
 });
 /*
 4 "make task recurring and set as complete"
@@ -250,13 +250,13 @@ it("make complete task recurring", async () => {
   //should now be a task with a future date
   //and should have a past date with the completed date
   expect(item).not.toBeNull();
-  expect(item.pastDates.length).toBe(1);
+  expect(item?.pastDates.length).toBe(1);
   const currentDate = new Date().toISOString().split("T")[0]!;
-  expect(item.pastDates[0]?.date).toBe(currentDate);
+  expect(item?.pastDates[0]?.date).toBe(currentDate);
 
-  expect(item.status).toBe(ItemStatus.TODO);
+  expect(item?.status).toBe(ItemStatus.TODO);
   const futureDateObj = new Date();
-  switch (item.recurringSchedule) {
+  switch (item?.recurringSchedule) {
     case "weekly":
       futureDateObj.setDate(futureDateObj.getDate() + 7);
       break;
@@ -277,7 +277,7 @@ it("make complete task recurring", async () => {
       break;
   }
   const futureDate = futureDateObj.toISOString().split("T")[0]!;
-  expect(item.date).toBe(futureDate);
+  expect(item?.date).toBe(futureDate);
 });
 
 /*

@@ -75,7 +75,7 @@ export async function get(id: string) {
       pastDates: true,
     },
   });
-  if (!result) throw new Error("Item not found");
+  if (!result) return null;
   return result;
 }
 
