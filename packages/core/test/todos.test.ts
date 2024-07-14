@@ -175,7 +175,7 @@ it("add 6 tasks and get initial priority, then add a 7th", async () => {
   });
   // create 6 tasks
   const itemId1 = await Item.create({
-    title: "Clean Gutters",
+    title: "Clean Gutters 1",
     category: ItemCategory.JOB,
     status: ItemStatus.TODO,
     homeownerId: userId,
@@ -183,35 +183,35 @@ it("add 6 tasks and get initial priority, then add a 7th", async () => {
   });
 
   const itemId2 = await Item.create({
-    title: "Clean Gutters",
+    title: "Clean Gutters 2",
     category: ItemCategory.JOB,
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
   });
   const itemId3 = await Item.create({
-    title: "Clean Gutters",
+    title: "Clean Gutters 3",
     category: ItemCategory.JOB,
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
   });
   const itemId4 = await Item.create({
-    title: "Clean Gutters",
+    title: "Clean Gutters 4",
     category: ItemCategory.JOB,
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
   });
   const itemId5 = await Item.create({
-    title: "Clean Gutters",
+    title: "Clean Gutters 5",
     category: ItemCategory.JOB,
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
   });
   const itemId6 = await Item.create({
-    title: "Clean Gutters",
+    title: "Clean Gutters 6",
     category: ItemCategory.JOB,
     status: ItemStatus.TODO,
     homeownerId: userId,
@@ -240,21 +240,34 @@ it("add 6 tasks and get initial priority, then add a 7th", async () => {
     date: "2021-12-05",
   });
 
+  await Item.update({
+    id: itemId6,
+    date: "2021-12-15",
+  });
+
+  const todos1 = await Todos.getAll({ propertyId });
+
   // If I now add a new task with a date of 2021-12-13,
 
   const itemId7 = await Item.create({
-    title: "Clean Gutters",
+    title: "Clean Gutters 7",
     category: ItemCategory.JOB,
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
   });
+
   await Item.update({
     id: itemId7,
     date: "2021-12-13",
   });
 
+  const item7 = await Item.get(itemId7);
+
+  //console.log(item7);
+
   const toDos = await Todos.getAll({ propertyId });
+  console.log(toDos);
   expect(toDos).toBeDefined();
 
   expect(toDos).not.toBeNull();
