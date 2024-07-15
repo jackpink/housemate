@@ -65,9 +65,12 @@ export default async function ToDoPage({
     revalidatePath(`/properties/${params.propertyId}/todo`);
   };
 
-  const toDos = await Todos.getAll(params.propertyId);
+  const toDos = await Todos.getAll({ propertyId: params.propertyId });
 
-  const completedToDos = await Todos.getAllCompleted(params.propertyId, 7);
+  const completedToDos = await Todos.getAllCompleted({
+    propertyId: params.propertyId,
+    range: 7,
+  });
 
   const updateItem: UpdateItemServerAction = async ({
     title,

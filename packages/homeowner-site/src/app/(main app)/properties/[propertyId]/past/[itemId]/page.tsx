@@ -5,7 +5,7 @@ import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayou
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
 import { concatAddress } from "~/utils/functions";
-import { Item } from "../../../../../../../../core/homeowner/item";
+import { Item } from "../../../../../../../../core/homeowner/items/item";
 import React from "react";
 import { getDeviceType } from "~/app/actions";
 import { redirect } from "next/navigation";
@@ -17,6 +17,7 @@ import Files from "~/app/_components/Files";
 import { Bucket } from "sst/node/bucket";
 import { PastIcon } from "../../../../../../../../ui/Atoms/Icons";
 import Link from "next/link";
+import { Todos } from "../../../../../../../../core/homeowner/items/todos";
 
 export default async function ToDoPage({
   params,
@@ -74,7 +75,9 @@ export default async function ToDoPage({
   // @ts-ignore
   const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";
 
-  const completedItems = await Item.getCompleted(session.user.id);
+  const completedItems = await Todos.getAllCompleted({
+    propertyId: session.user.id,
+  });
 
   return (
     <div className="flex w-full">

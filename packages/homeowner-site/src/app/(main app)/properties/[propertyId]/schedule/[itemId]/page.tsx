@@ -1,6 +1,7 @@
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
-import { Item } from "../../../../../../../../core/homeowner/item";
+import { Item } from "../../../../../../../../core/homeowner/items/item";
+import { Schedule as ScheduleClass } from "../../../../../../../../core/homeowner/items/schedule";
 import React from "react";
 import { getDeviceType } from "~/app/actions";
 import { redirect } from "next/navigation";
@@ -52,7 +53,7 @@ export default async function ToDoPage({
 
   const futureMonths = searchParams.futureMonths || 9;
 
-  const scheduledItems = await Item.getSchedule({
+  const scheduledItems = await ScheduleClass.get({
     propertyId: params.propertyId,
     currentDate: new Date(),
     pastMonths: pastMonths,
