@@ -32,8 +32,6 @@ export default async function ToDoPage({
 
   if (!property) return <div>Property not found</div>;
 
-  const address = concatAddress(property);
-
   console.log("session", session);
 
   if (!session || !session.user) {
@@ -109,7 +107,6 @@ export default async function ToDoPage({
               toDos={toDos}
               completedToDos={completedToDos}
               updateItem={updateItemPriority}
-              deviceType={"mobile"}
             />
           </div>
           <div className="grow">
@@ -123,20 +120,22 @@ export default async function ToDoPage({
               Back to To Dos
               <ToDoListIcon width={60} height={40} />
             </Link>
-            <EditItem
-              item={item}
-              updateItem={updateItem}
-              propertyId={params.propertyId}
-              bucketName={bucketName}
-              Files={
-                <Files
-                  rootFolder={item.filesRootFolder}
-                  deviceType={deviceType}
-                  propertyId={params.propertyId}
-                />
-              }
-              deviceType={deviceType}
-            />
+            <div className="flex flex-col items-center justify-center p-1 sm:p-2 md:p-16">
+              <EditItem
+                item={item}
+                updateItem={updateItem}
+                propertyId={params.propertyId}
+                bucketName={bucketName}
+                Files={
+                  <Files
+                    rootFolder={item.filesRootFolder}
+                    deviceType={deviceType}
+                    propertyId={params.propertyId}
+                  />
+                }
+                deviceType={deviceType}
+              />
+            </div>
           </div>
         </div>
       </div>

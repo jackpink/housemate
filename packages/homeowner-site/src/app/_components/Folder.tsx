@@ -73,7 +73,7 @@ export default function Folder({
 
   return (
     <details
-      className="group cursor-pointer border-b border-slate-300 pt-2 "
+      className="group cursor-pointer rounded-md border-b border-slate-300 bg-white  "
       open
     >
       <summary className="flex items-center justify-between rounded-md bg-slate-300 p-2 capitalize transition-all duration-500 ease-out group-open:mb-10">
@@ -105,7 +105,7 @@ export default function Folder({
         )}
       </summary>
 
-      <div className="grid gap-4 py-2 pl-4 transition-all duration-300 ease-in-out">
+      <div className="grid gap-4 bg-white pb-8 pl-4 pt-2 transition-all duration-300 ease-in-out">
         {children}
       </div>
     </details>

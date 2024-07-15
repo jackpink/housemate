@@ -79,43 +79,56 @@ export default function EditItem({
   const date = new Date(item.date);
 
   return (
-    <div className="flex flex-wrap gap-4 p-4">
-      <div className="min-w-80 max-w-lg grow">
-        <EditableComponent
-          value={item.title}
-          EditModeComponent={EditableTitle}
-          StandardComponent={Title}
-          updateValue={async (value: string) => updateItem({ title: value })}
-          editable
-        />
-        <Line />
-        <InPlaceEditableComponent
-          title="Description"
-          value={item.description}
-          EditModeComponent={EditableDescription}
-          StandardComponent={Description}
-          updateValue={async (value: string) =>
-            updateItem({ description: value })
-          }
-          editable
-        />
-        <Line />
-        <ItemDetails
-          item={item}
-          updateItem={updateItem}
-          date={date}
-          deviceType={deviceType}
-        />
-      </div>
-      <div className="min-w-80 max-w-lg grow">
-        <PhotosAndDocuments
-          itemId={item.id}
-          bucketName={bucketName}
-          propertyId={propertyId}
-          Files={Files}
-          folderId={item.filesRootFolderId!}
-          deviceType={deviceType}
-        />
+    <div className="rounded-xl bg-todo/70">
+      <h1 className="w-full rounded-t-xl bg-todo p-4 text-center font-bold">
+        {item.category === "job" && item.status === "todo"
+          ? "Task"
+          : item.category === "job" && item.status === "completed"
+            ? "Completed Task"
+            : item.category === "issue" && item.status === "todo"
+              ? "Issue"
+              : item.category === "issue" && item.status === "completed"
+                ? "Completed Issue"
+                : "Product"}
+      </h1>
+      <div className="flex flex-wrap justify-center gap-4 p-4">
+        <div className="min-w-80 max-w-lg grow ">
+          <EditableComponent
+            value={item.title}
+            EditModeComponent={EditableTitle}
+            StandardComponent={Title}
+            updateValue={async (value: string) => updateItem({ title: value })}
+            editable
+          />
+          <Line />
+          <InPlaceEditableComponent
+            title="Description"
+            value={item.description}
+            EditModeComponent={EditableDescription}
+            StandardComponent={Description}
+            updateValue={async (value: string) =>
+              updateItem({ description: value })
+            }
+            editable
+          />
+          <Line />
+          <ItemDetails
+            item={item}
+            updateItem={updateItem}
+            date={date}
+            deviceType={deviceType}
+          />
+        </div>
+        <div className="min-w-80 max-w-lg grow ">
+          <PhotosAndDocuments
+            itemId={item.id}
+            bucketName={bucketName}
+            propertyId={propertyId}
+            Files={Files}
+            folderId={item.filesRootFolderId!}
+            deviceType={deviceType}
+          />
+        </div>
       </div>
     </div>
   );
