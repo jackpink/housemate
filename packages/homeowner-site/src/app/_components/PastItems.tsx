@@ -2,7 +2,6 @@
 
 import React, { useCallback } from "react";
 import { CompletedItems } from "../../../../core/homeowner/item";
-import { ItemQuickViewDialog } from "./ToDos";
 import clsx from "clsx";
 import { CancelIcon, PlusIcon, ViewIcon } from "../../../../ui/Atoms/Icons";
 import {
@@ -24,10 +23,8 @@ import Link from "next/link";
 
 export default function PastItems({
   completedItems,
-  deviceType,
 }: {
   completedItems: CompletedItems;
-  deviceType: "mobile" | "desktop";
 }) {
   const { width, height } = useViewport();
   const [filteredItems, setFilteredItems] = React.useState(completedItems);
