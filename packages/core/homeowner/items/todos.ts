@@ -3,7 +3,6 @@ import { ItemCategory, ItemStatus, item } from "../../db/schema";
 import { db } from "../../db";
 import { eq, and, asc, desc, or, type InferSelectModel } from "drizzle-orm";
 import { Item } from "./item";
-import { get } from "http";
 
 export async function getAll({ propertyId }: { propertyId: string }) {
   console.log("First recalibrate");
@@ -25,7 +24,13 @@ export async function getAll({ propertyId }: { propertyId: string }) {
   return items;
 }
 
-export async function getAllCompleted(propertyId: string, range: number = 7) {
+export async function getAllCompleted({
+  propertyId,
+  range = 7,
+}: {
+  propertyId: string;
+  range?: number;
+}) {
   const items = await db.query.item.findMany({
     where: (item, {}) =>
       and(
@@ -66,7 +71,29 @@ export async function getAllCompleted(propertyId: string, range: number = 7) {
 
   const allItems = [...filteredItems, ...pastDates];
 
+  allItems.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB.getTime() - dateA.getTime();
+  });
+
   return allItems;
+}
+
+export async function moveUp({ itemId }: { itemId: string }) {
+  const item = await Item.get(itemId);
+  await Item.update({
+    id: itemId,
+    priority: item!.toDoPriority! + 3,
+  });
+}
+
+export async function moveDown({ itemId }: { itemId: string }) {
+  const item = await Item.get(itemId);
+  await Item.update({
+    id: itemId,
+    priority: item!.toDoPriority! - 3,
+  });
 }
 
 async function recalibratePriority({ propertyId }: { propertyId: string }) {

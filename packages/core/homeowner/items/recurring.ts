@@ -78,7 +78,10 @@ export async function updateStatus({
       const futureDate = getNewRecurringDate({
         recurringSchedule: itemObj.recurringSchedule as RecurringSchedule,
       });
-      await db.update(item).set({ date: futureDate }).where(eq(item.id, id));
+      await db
+        .update(item)
+        .set({ date: futureDate, toDoPriority: -1 })
+        .where(eq(item.id, id));
     } else {
       // marking as completed + is not recurring
       await db

@@ -134,25 +134,40 @@ export async function update({
   description?: string;
   recurring?: boolean;
   recurringSchedule?: string;
-  date?: string;
+  date?: Date;
   priority?: number;
   status?: ItemStatus;
   warrantyEndDate?: string;
 }) {
   if (recurring !== undefined) {
-    console.log("updating recurring", recurring);
     await Recurring.update({ id, recurring });
   }
   if (!!status) {
-    console.log("updating status", status);
     await Recurring.updateStatus({ id, status });
   }
+  if (!!date) {
+    const dateString = date
+      ? `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : ""}${date.getDate()}`
+      : undefined;
+    console.log("date string", dateString);
+    await db
+      .update(item)
+      .set({
+        title,
+        description,
+        recurringSchedule,
+        date: dateString,
+        toDoPriority: priority,
+        warrantyEndDate,
+      })
+      .where(eq(item.id, id));
+  }
+
   if (
     !!priority ||
     !!title ||
     !!description ||
     !!recurringSchedule ||
-    !!date ||
     !!warrantyEndDate
   ) {
     await db
@@ -161,7 +176,6 @@ export async function update({
         title,
         description,
         recurringSchedule,
-        date,
         toDoPriority: priority,
         warrantyEndDate,
       })
@@ -207,7 +221,6 @@ export async function addFolder({
   parentId: string;
   name: string;
 }) {
-  console.log("addFolder", parentId, name);
   const result = await db
     .insert(itemFilesFolder)
     .values({ parentId, name })

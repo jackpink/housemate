@@ -106,7 +106,7 @@ it("set task as complete", async () => {
   // give it future date
   await Item.update({
     id: itemId,
-    date: "2030-01-01",
+    date: new Date("2030-01-01"),
   });
   // set as complete
   await Item.update({
