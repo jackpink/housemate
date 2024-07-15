@@ -16,3 +16,7 @@ export const concatAddress = (addressObject: IAddress) => {
   }
   return address;
 };
+
+export function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

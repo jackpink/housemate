@@ -34,9 +34,11 @@ import {
   PopoverContent,
   PopoverDescription,
   PopoverTrigger,
+  usePopoverContext,
 } from "../../../../ui/Atoms/Popover";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, Reorder, motion } from "framer-motion";
+import { sleep } from "~/utils/functions";
 
 type Filter = "overdue" | "day" | "week" | "month" | "all";
 
@@ -417,6 +419,7 @@ function MobileToDos({
     (clickedToDo: ToDos[0]) => {
       let newToDos = [...toDos];
       newToDos = newToDos.filter((toDo) => toDo.id !== clickedToDo.id);
+
       startTransition(async () => {
         setOptimisticValue(newToDos);
         await updateItem({
@@ -472,19 +475,20 @@ function MobileTodo({
 }) {
   const [isMoving, setIsMoving] = React.useState(false);
 
-  if (isMoving) {
-    return (
-      <div>
-        <button
-          onClick={() => moveUp(toDo)}
-          className={clsx(
-            " flex w-full animate-pulse flex-col items-center overflow-hidden rounded-t-full p-1 px-5 py-1 ",
-            toDo.category === "job" ? "bg-todo active:bg-todo/30" : "bg-issue",
-          )}
-        >
-          <UpArrowIcon width={30} height={30} />
-        </button>
-        <Item item={toDo} rounded={false}>
+  return (
+    <div>
+      <button
+        onClick={() => moveUp(toDo)}
+        className={clsx(
+          " flex w-full animate-pulse flex-col items-center overflow-hidden rounded-t-full p-1 px-5 py-1 transition-all duration-1000 ease-in-out ",
+          toDo.category === "job" ? "bg-todo active:bg-todo/30" : "bg-issue",
+          !isMoving ? "collapse h-0" : "visible h-10",
+        )}
+      >
+        <UpArrowIcon width={30} height={30} />
+      </button>
+      <Item item={toDo} rounded={isMoving ? false : true}>
+        {isMoving ? (
           <button
             className={clsx(
               " flex w-20 flex-col items-center justify-center px-1",
@@ -495,32 +499,30 @@ function MobileTodo({
             <TickIcon />
             Save
           </button>
-        </Item>
-        <button
-          onClick={() => moveDown(toDo)}
-          className={clsx(
-            "flex w-full animate-pulse flex-col items-center rounded-b-full bg-altSecondary p-1",
-            toDo.category === "job" ? "bg-todo active:bg-todo/30" : "bg-issue",
-          )}
-        >
-          <DownArrowIcon width={30} height={30} />
-        </button>
-      </div>
-    );
-  }
-  return (
-    <Item item={toDo} rounded={true}>
-      <ToDoOptionsPopover
-        itemId={toDo.id}
-        setIsMovingActive={() => {
-          setIsMoving(true);
-        }}
-        isTask={toDo.category === "job"}
-        markAsCompleted={() => {
-          markAsCompleted(toDo);
-        }}
-      />
-    </Item>
+        ) : (
+          <ToDoOptionsPopover
+            itemId={toDo.id}
+            setIsMovingActive={() => {
+              setIsMoving(true);
+            }}
+            isTask={toDo.category === "job"}
+            markAsCompleted={() => {
+              markAsCompleted(toDo);
+            }}
+          />
+        )}
+      </Item>
+      <button
+        onClick={() => moveDown(toDo)}
+        className={clsx(
+          "flex w-full animate-pulse flex-col items-center rounded-b-full bg-altSecondary p-1 transition-all duration-1000 ease-in-out",
+          toDo.category === "job" ? "bg-todo active:bg-todo/30" : "bg-issue",
+          !isMoving ? "collapse h-0" : "visible h-10",
+        )}
+      >
+        <DownArrowIcon width={30} height={30} />
+      </button>
+    </div>
   );
 }
 
@@ -574,13 +576,29 @@ function ToDoOptionsPopover({
             </div>
             <span className="pl-5">Move</span>
           </button>
-          <button onClick={markAsCompleted} className="flex items-center">
-            <CompletedIcon width={40} height={40} />
-            <span className="pl-2">Mark as Completed</span>
-          </button>
+          <MarkAsCompleted markAsCompleted={markAsCompleted} />
         </PopoverDescription>
       </PopoverContent>
     </Popover>
+  );
+}
+
+function MarkAsCompleted({ markAsCompleted }: { markAsCompleted: () => void }) {
+  const { setOpen } = usePopoverContext();
+
+  const markAsCompletedAnimated = async () => {
+    setOpen(false);
+    await sleep(3000);
+    markAsCompleted();
+  };
+  return (
+    <button
+      onClick={markAsCompletedAnimated}
+      className={clsx("flex items-center transition duration-700 ease-in-out")}
+    >
+      <CompletedIcon width={40} height={40} />
+      <span className="pl-2">Mark as Completed</span>
+    </button>
   );
 }
 
