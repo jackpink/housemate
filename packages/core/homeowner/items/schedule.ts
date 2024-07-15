@@ -1,4 +1,4 @@
-export * as Recurring from "./recurring";
+export * as Schedule from "./schedule";
 import {
   ItemCategory,
   ItemStatus,
@@ -13,7 +13,7 @@ import { eq, and, asc, desc, or, type InferSelectModel } from "drizzle-orm";
 import { Item } from "./item";
 import { Todos } from "./todos";
 
-export async function getSchedule({
+export async function get({
   propertyId,
   currentDate,
   pastMonths,
@@ -60,7 +60,7 @@ export async function getSchedule({
   return allItems;
 }
 
-export type ScheduledItems = Awaited<ReturnType<typeof getSchedule>>;
+export type ScheduledItems = Awaited<ReturnType<typeof get>>;
 
 function dateOrdering(a: ScheduledItems[number], b: ScheduledItems[number]) {
   const dateA = new Date(a.date);

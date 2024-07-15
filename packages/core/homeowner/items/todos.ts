@@ -98,6 +98,7 @@ export async function moveDown({ itemId }: { itemId: string }) {
 
 async function recalibratePriority({ propertyId }: { propertyId: string }) {
   console.log("recalibrating...");
+
   const items = await getInPriorityAndDateOrder({ propertyId });
   await updatePriorityOfOrderedList({ items });
 }
@@ -121,12 +122,6 @@ async function updatePriorityOfOrderedList({
   items: Awaited<ReturnType<typeof getInPriorityAndDateOrder>>;
 }) {
   for (let index = 0; index < items.length; index++) {
-    console.log(
-      "index priority and item title",
-      index,
-      items[index]?.toDoPriority,
-      items[index]!.title,
-    );
     await db
       .update(item)
       .set({ toDoPriority: index * 2 })
