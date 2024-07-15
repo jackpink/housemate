@@ -8,7 +8,6 @@ import {
   AnySQLiteColumn,
   foreignKey,
 } from "drizzle-orm/sqlite-core";
-import { type AdapterAccount } from "next-auth/adapters";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -33,49 +32,13 @@ export const homeownerUsers = sqliteTable("homeowner_user", {
   taskOverdueReminder: integer("task_overdue_reminder").notNull().default(7),
 });
 
-export const homeownerAccounts = sqliteTable(
-  "homeowner_account",
-  {
-    userId: text("userId")
-      .notNull()
-      .references(() => homeownerUsers.id, { onDelete: "cascade" }),
-    type: text("type").$type<AdapterAccount["type"]>().notNull(),
-    provider: text("provider").notNull(),
-    providerAccountId: text("providerAccountId").notNull(),
-    refresh_token: text("refresh_token"),
-    access_token: text("access_token"),
-    expires_at: integer("expires_at"),
-    token_type: text("token_type"),
-    scope: text("scope"),
-    id_token: text("id_token"),
-    session_state: text("session_state"),
-  },
-  (account) => ({
-    compoundKey: primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
-  }),
-);
-
-export const homeownerSessions = sqliteTable("homeowner_session", {
-  sessionToken: text("sessionToken").primaryKey(),
-  userId: text("userId")
+export const sessionTable = sqliteTable("session", {
+  id: text("id").notNull().primaryKey(),
+  userId: text("user_id")
     .notNull()
-    .references(() => homeownerUsers.id, { onDelete: "cascade" }),
-  expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
+    .references(() => homeownerUsers.id),
+  expiresAt: integer("expires_at").notNull(),
 });
-
-export const homeownerVerificationTokens = sqliteTable(
-  "homeowner_verification_token",
-  {
-    identifier: text("identifier").notNull(),
-    token: text("token").notNull(),
-    expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
-  },
-  (vt) => ({
-    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  }),
-);
 
 export const property = sqliteTable("property", {
   id: text("id")
