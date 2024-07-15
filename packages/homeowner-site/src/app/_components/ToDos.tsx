@@ -475,6 +475,13 @@ function MobileTodo({
   const [isMoving, setIsMoving] = React.useState(false);
   const [isComplete, setIsComplete] = React.useState(false);
 
+  const selectedToDoId = usePathname().split("todo/")[1];
+
+  let isSelected = false;
+  if (selectedToDoId === toDo.id) {
+    isSelected = true;
+  }
+
   return (
     <div className="">
       <button
@@ -490,7 +497,7 @@ function MobileTodo({
       <Item
         item={toDo}
         rounded={isMoving ? false : true}
-        colour={isComplete ? "completed" : undefined}
+        colour={isSelected ? "selected" : isComplete ? "completed" : undefined}
         collapsed={isComplete ? true : false}
       >
         {isMoving ? (
@@ -553,7 +560,6 @@ function ToDoOptionsPopover({
   if (selectedToDoId === itemId) {
     isSelected = true;
   }
-
   return (
     <Popover>
       <PopoverTrigger asChild>

@@ -599,6 +599,7 @@ export function Item({
         colour === "completed" && "bg-completed/50",
         colour === "todo" && "bg-todo/70",
         colour === "issue" && "bg-issue/50",
+        colour === "selected" && "bg-brandSecondary/50",
         rounded && "rounded-xl",
         collapsed ? "max-h-20 blur-sm" : "max-h-40",
       )}
