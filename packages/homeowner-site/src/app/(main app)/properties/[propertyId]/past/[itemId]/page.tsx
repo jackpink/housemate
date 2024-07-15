@@ -1,10 +1,5 @@
-import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
-import { PageTitle } from "../../../../../../../../ui/Atoms/Title";
-import { CapitaliseText } from "../../../../../../../../ui/Molecules/InPlaceEditableComponent";
-import { PageWithSingleColumn } from "../../../../../../../../ui/Atoms/PageLayout";
 import { auth } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
-import { concatAddress } from "~/utils/functions";
 import { Item } from "../../../../../../../../core/homeowner/items/item";
 import React from "react";
 import { getDeviceType } from "~/app/actions";
@@ -35,10 +30,6 @@ export default async function ToDoPage({
   const item = await Item.get(params.itemId);
 
   if (!item) return <div>Item not found</div>;
-
-  const address = concatAddress(property);
-
-  console.log("session", session);
 
   if (!session || !session.user) {
     // redirect to login
@@ -85,10 +76,7 @@ export default async function ToDoPage({
       <div className="flex-1">
         <div className="flex justify-center ">
           <div className="hidden max-w-[800px] grow lg:block">
-            <PastItems
-              completedItems={completedItems}
-              deviceType={deviceType}
-            />
+            <PastItems completedItems={completedItems} />
           </div>
           <div className="grow">
             <Link
