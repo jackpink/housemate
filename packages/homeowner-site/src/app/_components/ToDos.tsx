@@ -226,7 +226,7 @@ function MobileTodo({
 
   const selectedToDoId = usePathname().split("todo/")[1];
 
-  if (selectedToDoId === toDo.id) {
+  if (isSelected === false && selectedToDoId === toDo.id) {
     setIsSelected(true);
   }
 
@@ -271,6 +271,7 @@ function MobileTodo({
             }}
             setIsComplete={setIsComplete}
             setIsSelected={setIsSelected}
+            isSelected={isSelected}
           />
         )}
       </Item>
@@ -295,6 +296,8 @@ function ToDoOptionsPopover({
   isTask,
   setIsComplete,
   setIsSelected,
+
+  isSelected,
 }: {
   itemId: string;
   setIsMovingActive: () => void;
@@ -302,15 +305,10 @@ function ToDoOptionsPopover({
   isTask: boolean;
   setIsComplete: React.Dispatch<React.SetStateAction<boolean>>;
   setIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
+  isSelected: boolean;
 }) {
-  const pathname = usePathname();
-  const propertyPathname = pathname.split("todo")[0];
-  const selectedToDoId = pathname.split("todo/")[1];
+  const propertyPathname = usePathname().split("todo")[0];
 
-  let isSelected = false;
-  if (selectedToDoId === itemId) {
-    isSelected = true;
-  }
   return (
     <Popover>
       <PopoverTrigger asChild>
