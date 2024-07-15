@@ -57,7 +57,7 @@ export type UpdateItemServerAction = ({
   status?: ItemStatus;
   recurring?: boolean;
   recurringSchedule?: string;
-  date?: string;
+  date?: Date;
   warrantyEndDate?: string;
 }) => Promise<void>;
 
@@ -145,7 +145,7 @@ function ItemDetails({
           updateValue={async (value: string) => {
             console.log("value before add", value);
 
-            updateItem({ date: value });
+            updateItem({ date: new Date(value) });
           }}
           editable
         />
@@ -175,7 +175,7 @@ function ItemDetails({
         updateValue={async (value: string) => {
           console.log("value before add", value);
 
-          updateItem({ date: value });
+          updateItem({ date: new Date(value) });
         }}
         editable
       />
@@ -237,7 +237,7 @@ function JobOneOffRecurring({
           EditModeComponent={EditableDateOfItemUpcoming}
           StandardComponent={DateOfItemUpcoming}
           updateValue={async (value: string) => {
-            updateItem({ date: value });
+            updateItem({ date: new Date(value) });
           }}
           editable
         />
@@ -263,7 +263,7 @@ function JobOneOffRecurring({
         EditModeComponent={EditableDateOfItem}
         StandardComponent={DateOfItem}
         updateValue={async (value: string) => {
-          updateItem({ date: value });
+          updateItem({ date: new Date(value) });
         }}
         editable
       />

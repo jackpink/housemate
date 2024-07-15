@@ -70,7 +70,10 @@ export default async function ToDoPage({
 
   const toDos = await Todos.getAll({ propertyId: params.propertyId });
 
-  const completedToDos = await Todos.getAllCompleted(params.propertyId, 7);
+  const completedToDos = await Todos.getAllCompleted({
+    propertyId: params.propertyId,
+    range: 7,
+  });
 
   let EditItemComponent = () => <></>;
 
