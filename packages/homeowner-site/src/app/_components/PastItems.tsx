@@ -557,10 +557,22 @@ export function Item({
   item,
   children,
   rounded = true,
+  colour = item.category === "product"
+    ? "product"
+    : item.category === "issue" && item.status === "completed"
+      ? "completed"
+      : item.category === "issue" && item.status === "todo"
+        ? "issue"
+        : item.category === "job" && item.status === "completed"
+          ? "completed"
+          : "todo",
+  collapsed = false,
 }: {
   item: CompletedItems[0];
   children?: React.ReactNode;
   rounded?: boolean;
+  colour?: string;
+  collapsed?: boolean;
 }) {
   const dateString = new Date(item.date).toDateString();
   const category =
@@ -568,17 +580,12 @@ export function Item({
       ? "Completed Job"
       : item.category === "job" && item.status === "todo"
         ? "Task"
-        : item.category === "issue"
-          ? "Issue"
-          : "Product";
-  const colour =
-    item.category === "product"
-      ? "product"
-      : item.category === "issue"
-        ? "issue"
-        : item.category === "job" && item.status === "completed"
-          ? "completed"
-          : "todo";
+        : item.category === "issue" && item.status === "completed"
+          ? "Completed Issue"
+          : item.category === "issue" && item.status === "todo"
+            ? "Issue"
+            : "Product";
+
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
   const isOverdue =
@@ -587,12 +594,13 @@ export function Item({
   return (
     <div
       className={clsx(
-        "flex p-3",
+        "flex p-3 transition-all duration-[1000ms] ease-linear",
         colour === "product" && "bg-product/50",
         colour === "completed" && "bg-completed/50",
         colour === "todo" && "bg-todo/70",
         colour === "issue" && "bg-issue/50",
         rounded && "rounded-xl",
+        collapsed ? "max-h-20 blur-sm" : "max-h-40",
       )}
     >
       <div className="grow">

@@ -47,7 +47,7 @@ export type UpdateItemPriorityServerAction = ({
   id,
 }: {
   id: string;
-  priority: number;
+  priority?: number;
   status?: ItemStatus;
 }) => Promise<void>;
 
@@ -425,7 +425,6 @@ function MobileToDos({
         await updateItem({
           id: clickedToDo.id,
           status: "completed" as ItemStatus,
-          priority: clickedToDo.toDoPriority!,
         });
       });
     },
@@ -474,9 +473,10 @@ function MobileTodo({
   markAsCompleted: (toDo: ToDos[0]) => void;
 }) {
   const [isMoving, setIsMoving] = React.useState(false);
+  const [isComplete, setIsComplete] = React.useState(false);
 
   return (
-    <div>
+    <div className="">
       <button
         onClick={() => moveUp(toDo)}
         className={clsx(
@@ -487,7 +487,12 @@ function MobileTodo({
       >
         <UpArrowIcon width={30} height={30} />
       </button>
-      <Item item={toDo} rounded={isMoving ? false : true}>
+      <Item
+        item={toDo}
+        rounded={isMoving ? false : true}
+        colour={isComplete ? "completed" : undefined}
+        collapsed={isComplete ? true : false}
+      >
         {isMoving ? (
           <button
             className={clsx(
@@ -509,6 +514,7 @@ function MobileTodo({
             markAsCompleted={() => {
               markAsCompleted(toDo);
             }}
+            setIsComplete={setIsComplete}
           />
         )}
       </Item>
@@ -531,11 +537,13 @@ function ToDoOptionsPopover({
   setIsMovingActive,
   markAsCompleted,
   isTask,
+  setIsComplete,
 }: {
   itemId: string;
   setIsMovingActive: () => void;
   markAsCompleted: () => void;
   isTask: boolean;
+  setIsComplete: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const pathname = usePathname();
   const propertyPathname = pathname.split("todo")[0];
@@ -576,19 +584,29 @@ function ToDoOptionsPopover({
             </div>
             <span className="pl-5">Move</span>
           </button>
-          <MarkAsCompleted markAsCompleted={markAsCompleted} />
+          <MarkAsCompleted
+            markAsCompleted={markAsCompleted}
+            setIsComplete={setIsComplete}
+          />
         </PopoverDescription>
       </PopoverContent>
     </Popover>
   );
 }
 
-function MarkAsCompleted({ markAsCompleted }: { markAsCompleted: () => void }) {
+function MarkAsCompleted({
+  markAsCompleted,
+  setIsComplete,
+}: {
+  markAsCompleted: () => void;
+  setIsComplete: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const { setOpen } = usePopoverContext();
 
   const markAsCompletedAnimated = async () => {
     setOpen(false);
-    await sleep(3000);
+    setIsComplete(true);
+    await sleep(1200);
     markAsCompleted();
   };
   return (
@@ -943,15 +961,15 @@ function CompletedToDos({
   );
 
   const markAsToDo = useCallback(
-    (clickedToDo: ToDos[0]) => {
+    async (clickedToDo: ToDos[0]) => {
       let newToDos = [...toDos];
       newToDos = newToDos.filter((toDo) => toDo.id !== clickedToDo.id);
+      await sleep(1200);
       startTransition(async () => {
         setOptimisticValue(newToDos);
         await updateItem({
           id: clickedToDo.id,
           status: "todo" as ItemStatus,
-          priority: clickedToDo.toDoPriority!,
         });
       });
     },
@@ -959,16 +977,34 @@ function CompletedToDos({
   );
 
   return (
-    <div className="flex flex-col gap-3 p-4">
-      <CompletedTodoMessage completedToDos={toDos} />
-      {optimisticToDos.map((toDo, index) => (
-        <CompletedToDo2
-          key={toDo.id + index}
-          toDo={toDo}
-          markAsToDo={markAsToDo}
-        />
-      ))}
-    </div>
+    <AnimatePresence>
+      <Reorder.Group
+        className="flex flex-col gap-5 p-4"
+        values={optimisticToDos}
+        onReorder={() => {
+          console.log("reorder");
+        }}
+        axis="y"
+        transition={{ duration: 1 }}
+      >
+        <CompletedTodoMessage completedToDos={toDos} />
+        {optimisticToDos.map((toDo, index) => (
+          <Reorder.Item
+            value={toDo}
+            key={`${toDo.id}-${index}`}
+            dragListener={false}
+          >
+            <MotionComponent>
+              <CompletedToDo2
+                key={toDo.id + index}
+                toDo={toDo}
+                markAsToDo={markAsToDo}
+              />
+            </MotionComponent>
+          </Reorder.Item>
+        ))}
+      </Reorder.Group>
+    </AnimatePresence>
   );
 }
 function CompletedToDo2({
@@ -978,13 +1014,15 @@ function CompletedToDo2({
   toDo: ToDos[0];
   markAsToDo: (toDo: ToDos[0]) => void;
 }) {
+  const [isComplete, setIsComplete] = React.useState(false);
   return (
-    <Item item={toDo} rounded={true}>
+    <Item item={toDo} rounded={true} collapsed={isComplete ? true : false}>
       <CompletedOptionsPopover
         markAsToDo={() => {
           markAsToDo(toDo);
         }}
         itemId={toDo.id}
+        setIsComplete={setIsComplete}
       />
     </Item>
   );
@@ -993,9 +1031,11 @@ function CompletedToDo2({
 function CompletedOptionsPopover({
   markAsToDo,
   itemId,
+  setIsComplete,
 }: {
   markAsToDo: () => void;
   itemId: string;
+  setIsComplete: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const pathname = usePathname();
   const propertyPathname = pathname.split("todo")[0];
@@ -1025,14 +1065,33 @@ function CompletedOptionsPopover({
             </div>
             <span className="pl-6">Show</span>
           </Link>
-
-          <button onClick={markAsToDo} className="flex items-center">
-            <ToDoIcon width={40} height={40} />
-            <span className="pl-2">Mark as To Do</span>
-          </button>
+          <MarkAsToDo markAsToDo={markAsToDo} setIsComplete={setIsComplete} />
         </PopoverDescription>
       </PopoverContent>
     </Popover>
+  );
+}
+
+function MarkAsToDo({
+  markAsToDo,
+  setIsComplete,
+}: {
+  markAsToDo: () => void;
+  setIsComplete: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const { setOpen } = usePopoverContext();
+
+  const markAsToDoAnimated = async () => {
+    setOpen(false);
+    setIsComplete(true);
+
+    markAsToDo();
+  };
+  return (
+    <button onClick={markAsToDoAnimated} className="flex items-center">
+      <ToDoIcon width={40} height={40} />
+      <span className="pl-2">Mark as To Do</span>
+    </button>
   );
 }
 
