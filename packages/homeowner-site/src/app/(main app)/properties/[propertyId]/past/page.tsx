@@ -1,5 +1,5 @@
 import { PageWithSingleColumn } from "../../../../../../../ui/Atoms/PageLayout";
-import { auth } from "~/auth";
+import { validateRequest } from "~/auth";
 import { Property } from "../../../../../../../core/homeowner/property";
 import { Item } from "../../../../../../../core/homeowner/item";
 import React from "react";
@@ -18,24 +18,22 @@ export default async function ToDoPage({
 }: {
   params: { propertyId: string };
 }) {
-  const session = await auth();
-
   const property = await Property.get(params.propertyId);
 
   if (!property) return <div>Property not found</div>;
 
-  console.log("session", session);
+  const { user } = await validateRequest();
 
-  if (!session || !session.user) {
+  if (!user || !user.id) {
     // redirect to login
     redirect("/sign-in");
   }
 
-  if (session?.user?.id !== property.homeownerId) {
+  if (user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
 
-  const completedItems = await Item.getCompleted(session.user.id);
+  const completedItems = await Item.getCompleted(user.id);
 
   return (
     <div className="flex">

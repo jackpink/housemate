@@ -1,44 +1,30 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { hash } from "@node-rs/argon2";
 import { User } from "../../../core/homeowner/user";
-import { Item } from "../../../core/homeowner/item";
-import { signIn, signOut } from "~/auth";
+import { Item } from "../../../core/homeowner/items/item";
+import { lucia, signIn, signOut } from "~/auth";
 import { redirect } from "next/navigation";
 import { IAddress, Property } from "../../../core/homeowner/property";
 import { revalidatePath } from "next/cache";
-import { AuthError } from "next-auth";
 import { ItemCategory, ItemStatus, property } from "../../../core/db/schema";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export async function signInAction(email: string, password: string) {
   // console.log("Try to sign in ", email, password);
   // try {
-  await signIn("credentials", {
+  await signIn({
     email: email,
     password: password,
-    redirect: false,
   })
     .then(() => {
       console.log("Sign in finally");
       redirect("/properties");
     })
     .catch((error) => {
-      // console.log("Sign in success");
-      // } catch (error) {
-      console.log("Sign in error");
-      if (error instanceof AuthError) {
-        switch (error.type) {
-          case "CredentialsSignin":
-            console.log("Invalid email or password");
-            throw new Error("Invalid email or password");
-          default:
-            throw new Error("An authentication error occurred");
-        }
-      } else {
-        console.log("Error", error.message);
-        throw error;
-      }
+      console.log("Sign in error", error);
+      throw error;
     });
 
   //   }
@@ -73,19 +59,33 @@ export async function signUp({
   }
 
   // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  User.create({ firstName, lastName, email, password: hashedPassword })
-    .then((userId) => {
-      console.log("User created", userId);
-    })
-    .catch((error) => {
-      console.error("Error signing up", error);
-      throw error;
-    })
-    .finally(() => {
-      //redirect(redirectPath);
+  const hashedPassword = await hash(password, {
+    // recommended minimum parameters
+    memoryCost: 19456,
+    timeCost: 2,
+    outputLen: 32,
+    parallelism: 1,
+  });
+  let userId;
+  try {
+    userId = await User.create({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
     });
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+
+  const session = await lucia.createSession(userId, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes,
+  );
 
   redirect("/sign-in");
 

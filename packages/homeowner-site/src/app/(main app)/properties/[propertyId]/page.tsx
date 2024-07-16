@@ -1,7 +1,7 @@
 import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
 import { PageTitle } from "../../../../../../ui/Atoms/Title";
 import { PageWithSingleColumn } from "../../../../../../ui/Atoms/PageLayout";
-import { auth } from "~/auth";
+import { validateRequest } from "~/auth";
 import { Property } from "../../../../../../core/homeowner/property";
 import { Text } from "../../../../../../ui/Atoms/Text";
 import Link from "next/link";
@@ -23,7 +23,6 @@ export default async function PropertyPage({
 }: {
   params: { propertyId: string };
 }) {
-  const session = await auth();
   console.log("PropertyId", params.propertyId);
 
   const property = await Property.get(params.propertyId);
@@ -32,12 +31,14 @@ export default async function PropertyPage({
 
   const address = concatAddress(property);
 
-  if (!session || !session.user) {
+  const { user } = await validateRequest();
+
+  if (!user || !user.id) {
     // redirect to login
     redirect("/sign-in");
   }
 
-  if (session?.user?.id !== property.homeownerId) {
+  if (user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
 

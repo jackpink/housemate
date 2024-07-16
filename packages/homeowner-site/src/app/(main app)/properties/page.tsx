@@ -1,7 +1,7 @@
 import { PropertiesBreadcrumbs } from "~/app/_components/Breadcrumbs";
 import { PageTitle } from "../../../../../ui/Atoms/Title";
 import { PageWithSingleColumn } from "../../../../../ui/Atoms/PageLayout";
-import { auth } from "~/auth";
+import { validateRequest } from "~/auth";
 import { Property } from "../../../../../core/homeowner/property";
 import Properties from "~/app/_components/Properties";
 import { redirect } from "next/navigation";
@@ -12,15 +12,14 @@ async function getProperties({ userId }: { userId: string }) {
 }
 
 export default async function PropertiesPage() {
-  const session = await auth();
-  console.log("Session", session);
+  const { user } = await validateRequest();
 
-  if (!session || !session.user || !session.user.id) {
+  if (!user || !user.id) {
     // redirect to login
     redirect("/sign-in");
   }
 
-  const properties = await getProperties({ userId: session.user.id });
+  const properties = await getProperties({ userId: user.id });
   return (
     <>
       <PageTitle>Properties</PageTitle>

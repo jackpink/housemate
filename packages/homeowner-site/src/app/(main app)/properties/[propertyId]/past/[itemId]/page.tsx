@@ -1,4 +1,4 @@
-import { auth } from "~/auth";
+import { validateRequest } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
 import { Item } from "../../../../../../../../core/homeowner/items/item";
 import React from "react";
@@ -19,8 +19,6 @@ export default async function ToDoPage({
 }: {
   params: { propertyId: string; itemId: string };
 }) {
-  const session = await auth();
-
   const deviceType = await getDeviceType();
 
   const property = await Property.get(params.propertyId);
@@ -31,12 +29,14 @@ export default async function ToDoPage({
 
   if (!item) return <div>Item not found</div>;
 
-  if (!session || !session.user) {
+  const { user } = await validateRequest();
+
+  if (!user || !user.id) {
     // redirect to login
     redirect("/sign-in");
   }
 
-  if (session?.user?.id !== property.homeownerId) {
+  if (user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
   const updateItem: UpdateItemServerAction = async ({
@@ -67,7 +67,7 @@ export default async function ToDoPage({
   const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";
 
   const completedItems = await Todos.getAllCompleted({
-    propertyId: session.user.id,
+    propertyId: user.id,
   });
 
   return (

@@ -1,4 +1,4 @@
-import { auth } from "~/auth";
+import { validateRequest } from "~/auth";
 import { Property } from "../../../../../../../core/homeowner/property";
 import React from "react";
 import { redirect } from "next/navigation";
@@ -16,20 +16,18 @@ export default async function ToDoPage({
 }: {
   params: { propertyId: string };
 }) {
-  const session = await auth();
-
   const property = await Property.get(params.propertyId);
 
   if (!property) return <div>Property not found</div>;
 
-  console.log("session", session);
+  const { user } = await validateRequest();
 
-  if (!session || !session.user) {
+  if (!user || !user.id) {
     // redirect to login
     redirect("/sign-in");
   }
 
-  if (session?.user?.id !== property.homeownerId) {
+  if (user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
 
@@ -51,7 +49,7 @@ export default async function ToDoPage({
           <span className="pl-2 pr-3">Back to Property Menu</span>
           <OptionsLargeIcon width={30} height={30} />
         </Link>
-        <AddItem homeownerId={session.user.id} propertyId={params.propertyId} />
+        <AddItem homeownerId={user.id} propertyId={params.propertyId} />
       </div>
     </div>
   );
