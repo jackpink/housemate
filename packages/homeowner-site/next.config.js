@@ -6,6 +6,9 @@ await import("../core/env.mjs");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  experimental: {
+    serverComponentsExternalPackages: ["@node-rs/argon2"],
+  },
   images: {
     remotePatterns: [
       {
