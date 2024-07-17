@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Session, User as LuciaUser } from "lucia";
 
 const defaultViewport = { width: 1000, height: 1000 };
 
@@ -40,4 +41,31 @@ export const useViewport = () => {
      another Hook, remember, Hooks are composable! */
   const { width, height } = React.useContext(viewportContext);
   return { width, height };
+};
+
+const defaultUser: LuciaUser | null = null;
+
+const sessionContext = React.createContext<LuciaUser | null>(defaultUser);
+
+export const SessionProvider = ({
+  children,
+  session,
+}: {
+  children: React.ReactNode;
+  session:
+    | { user: LuciaUser; session: Session }
+    | { user: null; session: null };
+}) => {
+  return (
+    <sessionContext.Provider value={session.user}>
+      {children}
+    </sessionContext.Provider>
+  );
+};
+
+export const useSession = () => {
+  /* We can use the "useContext" Hook to acccess a context from within
+     another Hook, remember, Hooks are composable! */
+  const user = React.useContext(sessionContext);
+  return user;
 };

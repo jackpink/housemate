@@ -1,8 +1,5 @@
 import { PropertiesPageWithSideMenu } from "~/app/_components/Layout";
-import {
-  Property,
-  concatAddress,
-} from "../../../../../../core/homeowner/property";
+import { Property } from "../../../../../core/homeowner/property";
 import { redirect } from "next/navigation";
 import Nav from "~/app/_components/Nav";
 import { validateRequest } from "~/auth";
@@ -26,7 +23,7 @@ export default async function MainAppLayout({
   }
   console.log("params", params);
 
-  const properties = await getAddresses({ userId: user.id });
+  const properties = await getAddresses({ userId: user.id! });
   return (
     <>
       <Nav properties={properties} currentPropertyId={params.propertyId} />

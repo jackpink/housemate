@@ -1,6 +1,5 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import NavWrapper from "../../../../ui/Molecules/Nav";
 import { signOutAction } from "../actions";
 import { CTAButton } from "../../../../ui/Atoms/Button";
@@ -17,6 +16,8 @@ import clsx from "clsx";
 import { LargeSearchIcon, MoveIcon } from "../../../../ui/Atoms/Icons";
 import { type Property } from "../../../../core/homeowner/property";
 import { concatAddress } from "~/utils/functions";
+import { use } from "react";
+import { useSession } from "./ContextProviders";
 
 export default function Nav({
   properties,
@@ -29,8 +30,9 @@ export default function Nav({
   const currentAddress = currentProperty
     ? concatAddress(currentProperty).split(",")[0]
     : "";
-  const session = useSession();
-  if (session?.data?.user) {
+
+  const user = useSession();
+  if (user) {
     return (
       <NavWrapper>
         <div className="flex gap-4">
@@ -44,7 +46,7 @@ export default function Nav({
             <LargeSearchIcon />
             Search
           </button>
-          <UserButton user={session.data.user} />
+          <UserButton user={user} />
         </div>
       </NavWrapper>
     );
