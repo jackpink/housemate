@@ -1,5 +1,5 @@
 import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
-import { db } from "db";
+import { db } from "./index";
 import { homeownerUsers, sessionTable } from "./schema";
 
 export const adapter = new DrizzleSQLiteAdapter(

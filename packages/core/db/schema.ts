@@ -20,20 +20,31 @@ export const homeownerUsers = sqliteTable("homeowner_user", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+
   firstName: text("first_name").notNull().default(""),
   lastName: text("last_name").notNull().default(""),
   name: text("name"),
-  email: text("email").notNull(),
-  emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
+  email: text("email").notNull().unique(),
+  emailVerified: integer("email_verified", { mode: "boolean" })
+    .notNull()
+    .default(false),
   image: text("image"),
-  password: text("password"),
+  password: text("password").notNull(),
   warrantyAlert: integer("warranty_alert").notNull().default(30),
   taskReminder: integer("task_reminder").notNull().default(7),
   taskOverdueReminder: integer("task_overdue_reminder").notNull().default(7),
 });
 
+export const emailVerificationCode = sqliteTable("email_verification_code", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  code: text("code").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => homeownerUsers.id),
+  expiresAt: integer("expires_at").notNull(),
+});
 export const sessionTable = sqliteTable("session", {
-  id: text("id").notNull().primaryKey(),
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   userId: text("user_id")
     .notNull()
     .references(() => homeownerUsers.id),
