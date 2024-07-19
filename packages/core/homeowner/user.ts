@@ -84,3 +84,29 @@ export async function getAll() {
   const users = await db.select().from(schema.homeownerUsers);
   return users;
 }
+
+export async function createEmailVerificationCode({
+  userId,
+  code,
+  expirationDate,
+}: {
+  userId: string;
+  code: string;
+  expirationDate: Date;
+}) {
+  await removeEmailVerificationCodes(userId);
+  console.log("Try to create email verification code", userId);
+  db.insert(schema.emailVerificationCode).values({
+    userId,
+    code: code,
+    expiresAt: expirationDate,
+  });
+  return code;
+}
+
+async function removeEmailVerificationCodes(userId: string) {
+  console.log("Try to remove email verification code", userId);
+  db.delete(schema.emailVerificationCode)
+    .where(eq(schema.emailVerificationCode.userId, userId))
+    .returning();
+}
