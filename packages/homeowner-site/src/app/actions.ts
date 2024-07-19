@@ -66,7 +66,7 @@ export async function signUp({
     outputLen: 32,
     parallelism: 1,
   });
-  let userId;
+  let userId: string;
   try {
     userId = await User.create({
       firstName,
@@ -79,7 +79,10 @@ export async function signUp({
     throw e;
   }
 
-  const session = await lucia.createSession(userId, {});
+  const session = await lucia.createSession(userId, {
+    email: email,
+    emailVerified: false,
+  });
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
     sessionCookie.name,
@@ -87,7 +90,7 @@ export async function signUp({
     sessionCookie.attributes,
   );
 
-  redirect("/sign-in");
+  redirect("/sign-up/verify");
 
   // TODO: Send verification token email
   return {

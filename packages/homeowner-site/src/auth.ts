@@ -5,6 +5,8 @@ import { verify } from "@node-rs/argon2";
 import { cookies } from "next/headers";
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { TimeSpan, createDate } from "oslo";
+import { generateRandomString, alphabet } from "oslo/crypto";
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
@@ -15,7 +17,8 @@ export const lucia = new Lucia(adapter, {
   },
   getUserAttributes: (attributes) => {
     return {
-      username: attributes.username,
+      email: attributes.email,
+      emailVerified: attributes.email_verified,
     };
   },
 });
@@ -28,7 +31,8 @@ declare module "lucia" {
 }
 
 interface DatabaseUserAttributes {
-  username: string;
+  email: string;
+  email_verified: boolean;
 }
 
 export async function signIn({
@@ -71,6 +75,20 @@ export async function signIn({
     sessionCookie.value,
     sessionCookie.attributes,
   );
+}
+
+export async function generateEmailVerificationCode({
+  userId,
+}: {
+  userId: string;
+}): Promise<string> {
+  let code = generateRandomString(8, alphabet("0-9"));
+  code = await User.createEmailVerificationCode({
+    userId,
+    code,
+    expirationDate: createDate(new TimeSpan(15, "m")),
+  });
+  return code;
 }
 
 export const validateRequest = cache(
