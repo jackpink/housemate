@@ -78,14 +78,11 @@ export async function updateStatus({
       const futureDate = getNewRecurringDate({
         recurringSchedule: itemObj.recurringSchedule as RecurringSchedule,
       });
-      console.log("about to update todo priority", id);
       await db
         .update(item)
         .set({ date: futureDate, toDoPriority: -1 })
         .where(eq(item.id, id));
 
-      const itemObj2 = await Item.get(id);
-      console.log("itemObj2", itemObj2);
     } else {
       // marking as completed + is not recurring
       await db
