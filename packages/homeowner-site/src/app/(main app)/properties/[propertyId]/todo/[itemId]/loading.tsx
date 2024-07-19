@@ -1,23 +1,10 @@
-import { auth } from "~/auth";
-import { Property } from "../../../../../../../../core/homeowner/property";
-import { concatAddress } from "~/utils/functions";
-import { Item } from "../../../../../../../../core/homeowner/items/item";
 import React from "react";
-import { getDeviceType } from "~/app/actions";
-import { redirect } from "next/navigation";
 import SideMenu from "~/app/_components/SideMenu";
-import ToDos, { UpdateItemPriorityServerAction } from "~/app/_components/ToDos";
-import { revalidatePath } from "next/cache";
-import Link from "next/link";
 import {
   DropDownIcon,
   ToDoListIcon,
-  UpArrowIcon,
+ 
 } from "../../../../../../../../ui/Atoms/Icons";
-import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
-import Files from "~/app/_components/Files";
-import { Bucket } from "sst/node/bucket";
-import { Todos } from "../../../../../../../../core/homeowner/items/todos";
 import { EditItemLoading, ToDosLoading } from "~/app/_components/Loading";
 
 export default async function ToDoPage() {

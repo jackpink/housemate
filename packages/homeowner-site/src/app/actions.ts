@@ -4,12 +4,13 @@ import bcrypt from "bcryptjs";
 import { hash } from "@node-rs/argon2";
 import { User } from "../../../core/homeowner/user";
 import { Item } from "../../../core/homeowner/items/item";
-import { lucia, signIn, signOut } from "~/auth";
+import { generateEmailVerificationCode, lucia, signIn, signOut } from "~/auth";
 import { redirect } from "next/navigation";
 import { IAddress, Property } from "../../../core/homeowner/property";
 import { revalidatePath } from "next/cache";
 import { ItemCategory, ItemStatus, property } from "../../../core/db/schema";
 import { cookies, headers } from "next/headers";
+import { send } from "process";
 
 export async function signInAction(email: string, password: string) {
   // console.log("Try to sign in ", email, password);
@@ -89,6 +90,12 @@ export async function signUp({
     sessionCookie.value,
     sessionCookie.attributes,
   );
+
+  //generate verification token
+  const verificationCode  = await generateEmailVerificationCode({ userId });
+  
+  //send email
+  await sendEmailVerificationCode({ email, verificationCode });
 
   redirect("/sign-up/verify");
 
