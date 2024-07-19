@@ -60,7 +60,7 @@ export function ImageFromBucket({
   width?: number;
   height?: number;
 }) {
-  const url =  getImageFromBucket({ key, bucketName });
+  const url =  getImageFromBucket({ key, bucketName })
 
   if (!url) {
     return (

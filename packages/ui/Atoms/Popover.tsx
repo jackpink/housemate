@@ -177,7 +177,7 @@ export const PopoverContent = React.forwardRef<
           aria-labelledby={context.labelId}
           aria-describedby={context.descriptionId}
           {...context.getFloatingProps(props)}
-          className="rounded-lg bg-white p-4 shadow-lg"
+          className="rounded-lg p-4 shadow-lg"
           {...props}
         >
           {props.children}
