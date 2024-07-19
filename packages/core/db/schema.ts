@@ -8,6 +8,7 @@ import {
   AnySQLiteColumn,
   foreignKey,
 } from "drizzle-orm/sqlite-core";
+import email from "next-auth/providers/email";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -41,10 +42,10 @@ export const emailVerificationCode = sqliteTable("email_verification_code", {
   userId: text("user_id")
     .notNull()
     .references(() => homeownerUsers.id),
-  expiresAt: integer("expires_at").notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
 });
 export const sessionTable = sqliteTable("session", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  id: text("id").notNull().primaryKey(),
   userId: text("user_id")
     .notNull()
     .references(() => homeownerUsers.id),
