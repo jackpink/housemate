@@ -10,10 +10,11 @@ import {
   fromErrorToFormState,
   signUpSchema,
 } from "../../../../core/homeowner/forms";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { signUp } from "../actions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { PageTitle } from "../../../../ui/Atoms/Title";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -106,3 +107,47 @@ const createUser = async (
     fieldErrors: {},
   };
 };
+
+export function EmailCodeVerificationComponent() {
+  const [code, setCode] = useState(Array<string>(6).fill(""));
+
+  const verificationCodeRefs = useRef(
+    Array.from({ length: 6 }, (a) => React.createRef<HTMLInputElement>()),
+  );
+
+  const handleOTPChange = (value: string, index: number) => {
+    setCode((prev) => {
+      const newCode = [...prev];
+      newCode[index] = value;
+      return newCode;
+    });
+    if (value && index < 5) {
+      const ref = verificationCodeRefs.current[index + 1];
+      if (!!ref && ref.current) ref.current?.focus();
+    }
+  };
+
+  return (
+    <>
+      <PageTitle>Enter Code Emailed to You</PageTitle>
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-altSecondary p-6">
+        <div className="flex items-center justify-center gap-4">
+          {code.map((_, index) => (
+            <input
+              type="text"
+              key={index}
+              maxLength={1}
+              className="h-10 w-10 text-center"
+              onChange={(e) => handleOTPChange(e.target.value, index)}
+              ref={verificationCodeRefs.current[index]}
+              autoFocus={index === 0}
+            />
+          ))}
+        </div>
+        <CTAButton onClick={() => console.log("verify", code)} rounded>
+          Verify
+        </CTAButton>
+      </div>
+    </>
+  );
+}
