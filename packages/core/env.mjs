@@ -18,6 +18,7 @@ export const env = createEnv({
     AUTH_SECRET: z.string(),
     AUTH_TRUST_HOST: z.string(),
     AUTH_URL: z.string(),
+    RESEND_API_KEY: z.string(),
     // CLERK_SECRET_KEY: z.string(),
     // UPSTASH_REDIS_REST_URL: z.string(),
     // UPSTASH_REDIS_REST_TOKEN: z.string(),
@@ -54,6 +55,7 @@ export const env = createEnv({
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
     AUTH_URL: process.env.AUTH_URL,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
     // NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
     //   process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     // CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
