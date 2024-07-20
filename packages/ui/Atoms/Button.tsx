@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { ReactNode } from "react";
 import { Text } from "./Text";
+import { LoadingIcon } from "./Icons";
 
 type ButtonProps = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -28,15 +29,15 @@ export const CTAButton: React.FC<ButtonProps> = ({
       value={value ? value : "value"}
       onClick={onClick}
       className={clsx(
-        "rounded border border-dark p-2 text-xl font-extrabold text-dark hover:bg-brand/70",
+        "border-dark text-dark hover:bg-brand/70 flex items-center justify-center rounded border p-2 text-xl font-extrabold",
         className,
         disabled && "cursor-not-allowed opacity-50",
-        loading && "animate-pulse cursor-wait",
+        loading && "bg-brand/50 cursor-wait",
         rounded && "rounded-full border-0 p-6",
         secondary ? "bg-altSecondary" : "bg-brand",
       )}
     >
-      {children}
+      {loading ? <LoadingIcon /> : <>{children}</>}
     </button>
   );
 };
@@ -51,7 +52,7 @@ export const LargeButton: React.FC<
   return (
     <button
       onClick={onClick}
-      className="flex max-w-xs flex-col gap-4 rounded-xl bg-brand p-4  hover:bg-brand/70"
+      className="bg-brand hover:bg-brand/70 flex max-w-xs flex-col gap-4 rounded-xl  p-4"
     >
       {children}
     </button>
@@ -62,12 +63,12 @@ export const LargeButtonTitle: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   return (
-    <Text className="font-sans text-2xl font-bold text-dark">{children} →</Text>
+    <Text className="text-dark font-sans text-2xl font-bold">{children} →</Text>
   );
 };
 
 export const LargeButtonContent: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  return <Text className="font-sans text-lg text-dark">{children}</Text>;
+  return <Text className="text-dark font-sans text-lg">{children}</Text>;
 };
