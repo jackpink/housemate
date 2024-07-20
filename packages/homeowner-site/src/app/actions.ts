@@ -83,6 +83,8 @@ export async function signUp({
   const session = await lucia.createSession(userId, {
     email: email,
     emailVerified: false,
+    firstName: firstName,
+    lastName: lastName,
   });
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
@@ -92,8 +94,8 @@ export async function signUp({
   );
 
   //generate verification token
-  const verificationCode  = await generateEmailVerificationCode({ userId });
-  
+  const verificationCode = await generateEmailVerificationCode({ userId });
+
   //send email
   await sendEmailVerificationCode({ email, verificationCode });
 

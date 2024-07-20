@@ -4,7 +4,8 @@ import NavWrapper from "../../../../ui/Molecules/Nav";
 import { signOutAction } from "../actions";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import Link from "next/link";
-import { type User } from "next-auth";
+import { User } from "lucia";
+
 import {
   Popover,
   PopoverContent,
@@ -118,10 +119,8 @@ function PropertyButton({
 }
 
 function UserButton({ user }: { user: User }) {
-  const initials = user.name
-    ?.split(" ")
-    .map((name) => name[0]?.toUpperCase())
-    .join("");
+  const initials = `${user.firstName.split("")[0]?.toUpperCase()}
+    ${user.lastName.split("")[0]?.toUpperCase()}`;
 
   return (
     <Popover>
@@ -138,7 +137,7 @@ function UserButton({ user }: { user: User }) {
         <PopoverHeading>
           Logged in as
           <br />
-          <span className="font-semibold">{user.name}</span>
+          <span className="font-semibold">{user.firstName}</span>
         </PopoverHeading>
         <PopoverDescription className="flex flex-col items-center gap-4 pt-5">
           <Link href={"/manage-account"}>

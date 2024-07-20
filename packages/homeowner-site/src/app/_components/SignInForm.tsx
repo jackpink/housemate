@@ -45,9 +45,6 @@ export function SignInForm() {
       </button>
       <CTAButton rounded>Sign In</CTAButton>
       <ErrorMessage error={state.error} errorMessage={state.message} />
-      <Link href="/sign-up" className="mt-2 block text-center">
-        Don't have an account? Sign up
-      </Link>
     </form>
   );
 }

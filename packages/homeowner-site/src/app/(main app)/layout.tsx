@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  SessionProvider,
-  ViewportProvider,
-} from "../_components/ContextProviders";
+import { ViewportProvider } from "../_components/ContextProviders";
 import { validateRequest } from "~/auth";
 
 export default async function MainAppLayout({
@@ -11,11 +8,6 @@ export default async function MainAppLayout({
   children: React.ReactNode;
 }) {
   // get properties for user
-  const session = await validateRequest();
 
-  return (
-    <ViewportProvider>
-      <SessionProvider session={session}>{children}</SessionProvider>
-    </ViewportProvider>
-  );
+  return <ViewportProvider>{children}</ViewportProvider>;
 }
