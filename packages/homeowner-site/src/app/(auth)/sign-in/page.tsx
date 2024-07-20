@@ -14,13 +14,15 @@ export default async function SignInPage() {
     redirect("/properties");
   }
   return (
-    <div className="">
-      <Link href="/" className="flex items-center justify-center">
-        <div className="-rotate-90">
-          <DropDownIcon />
-        </div>
-        <p>Home</p>
-      </Link>
+    <div>
+      <div>
+        <Link href="/" className="flex w-max items-center justify-center p-4">
+          <div className="-rotate-90">
+            <DropDownIcon />
+          </div>
+          <p className="pl-2 text-xl">Home</p>
+        </Link>
+      </div>
       <div className="flex h-dvh w-full flex-col items-center justify-center">
         <Logo
           width="200"

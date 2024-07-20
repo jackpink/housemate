@@ -17,6 +17,7 @@ import { ErrorMessage } from "../../../../ui/Atoms/Text";
 export function SignInForm() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [state, formAction] = useFormState(AttemptSignIn, emptyFormState);
+
   return (
     <form action={formAction}>
       <TextInputWithError
@@ -43,7 +44,9 @@ export function SignInForm() {
         />
         <label htmlFor="showPassword">Show Password</label>
       </button>
-      <CTAButton rounded>Sign In</CTAButton>
+      <CTAButton rounded className="w-full">
+        Sign In
+      </CTAButton>
       <ErrorMessage error={state.error} errorMessage={state.message} />
     </form>
   );

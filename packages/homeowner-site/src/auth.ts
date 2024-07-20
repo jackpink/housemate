@@ -57,9 +57,7 @@ export async function signIn({
     // Since protecting against this is non-trivial,
     // it is crucial your implementation is protected against brute-force attacks with login throttling etc.
     // If usernames are public, you may outright tell the user that the username is invalid.
-    return {
-      error: "Incorrect username or password",
-    };
+    throw new Error("Incorrect username or password");
   }
 
   const validPassword = await verify(existingUser.password, password, {
