@@ -50,6 +50,10 @@ export const sessionTable = sqliteTable("session", {
     .notNull()
     .references(() => homeownerUsers.id),
   expiresAt: integer("expires_at").notNull(),
+  email: text("email"),
+  emailVerified: integer("email_verified"),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
 });
 
 export const property = sqliteTable("property", {
