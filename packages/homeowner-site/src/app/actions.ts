@@ -11,6 +11,7 @@ import { revalidatePath } from "next/cache";
 import { ItemCategory, ItemStatus, property } from "../../../core/db/schema";
 import { cookies, headers } from "next/headers";
 import { send } from "process";
+import { sendVerificationEmail } from "~/utils/emails";
 
 export async function signInAction(email: string, password: string) {
   // console.log("Try to sign in ", email, password);
@@ -97,7 +98,7 @@ export async function signUp({
   const verificationCode = await generateEmailVerificationCode({ userId });
 
   //send email
-  await sendEmailVerificationCode({ email, verificationCode });
+  await sendVerificationEmail({ email, code: verificationCode });
 
   redirect("/sign-up/verify");
 

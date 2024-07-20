@@ -119,6 +119,7 @@ function PropertyButton({
 }
 
 function UserButton({ user }: { user: User }) {
+  console.log("User", user);
   const initials = `${user.firstName.split("")[0]?.toUpperCase()}
     ${user.lastName.split("")[0]?.toUpperCase()}`;
 

@@ -49,17 +49,13 @@ const sessionContext = React.createContext<LuciaUser | null>(defaultUser);
 
 export const SessionProvider = ({
   children,
-  session,
+  user,
 }: {
   children: React.ReactNode;
-  session:
-    | { user: LuciaUser; session: Session }
-    | { user: null; session: null };
+  user: LuciaUser | null;
 }) => {
   return (
-    <sessionContext.Provider value={session.user}>
-      {children}
-    </sessionContext.Provider>
+    <sessionContext.Provider value={user}>{children}</sessionContext.Provider>
   );
 };
 

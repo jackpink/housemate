@@ -21,7 +21,7 @@ export default function SignUpForm() {
   const [state, formAction] = useFormState(createUser, emptyFormState);
 
   return (
-    <>
+    <div>
       <form action={formAction} className="flex w-96 flex-col items-center">
         <TextInputWithError
           label="First Name"
@@ -68,14 +68,13 @@ export default function SignUpForm() {
           errorMessage={state.fieldErrors["confirmPassword"]?.[0]}
         />
 
-        <CTAButton rounded>Create Account</CTAButton>
+        <CTAButton rounded className="w-full" error={state.error}>
+          Create Account
+        </CTAButton>
       </form>
 
       <ErrorMessage error={state.error} errorMessage={state.message} />
-      <Link href="/sign-in" className="mt-2 block text-center">
-        Already have an account? Sign in
-      </Link>
-    </>
+    </div>
   );
 }
 
@@ -94,12 +93,13 @@ const createUser = async (
       confirmPassword: formData.get("confirmPassword"),
     });
 
-    console.log("new user", result.firstName);
+    console.log("new user");
+    await signUp(result);
+    result.firstName;
   } catch (error) {
     console.error("Error signing up", error);
     return fromErrorToFormState(error);
   }
-  await signUp(result);
 
   return {
     error: false,

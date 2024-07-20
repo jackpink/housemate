@@ -20,11 +20,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await validateRequest();
+  const { user } = await validateRequest();
+  console.log("user layout", user);
   return (
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>
-        <SessionProvider session={session}>{children}</SessionProvider>
+        <SessionProvider user={user}>{children}</SessionProvider>
       </body>
     </html>
   );

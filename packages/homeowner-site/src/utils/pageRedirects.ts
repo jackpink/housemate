@@ -5,6 +5,8 @@ export async function getUserOrRedirect() {
   // if there is no user session, redirect to sign i
   const { user } = await validateRequest();
 
+  console.log("user redirect", user);
+
   if (!user || !user.id) {
     // redirect to login
     redirect("/sign-in");
