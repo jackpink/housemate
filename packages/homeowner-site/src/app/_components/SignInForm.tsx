@@ -44,7 +44,7 @@ export function SignInForm() {
         />
         <label htmlFor="showPassword">Show Password</label>
       </button>
-      <CTAButton rounded className="w-full">
+      <CTAButton rounded className="w-full" error={state.error}>
         Sign In
       </CTAButton>
       <ErrorMessage error={state.error} errorMessage={state.message} />

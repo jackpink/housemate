@@ -1,7 +1,11 @@
+"use client";
+
 import clsx from "clsx";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
+import { useFormStatus } from "react-dom";
 import { Text } from "./Text";
 import { LoadingIcon } from "./Icons";
+import React from "react";
 
 type ButtonProps = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -12,6 +16,7 @@ type ButtonProps = {
   loading?: boolean;
   rounded?: boolean;
   secondary?: boolean;
+  error?: boolean;
 };
 
 export const CTAButton: React.FC<ButtonProps> = ({
@@ -23,7 +28,21 @@ export const CTAButton: React.FC<ButtonProps> = ({
   loading,
   rounded,
   secondary,
+  error = false,
 }) => {
+  const [buttonError, setButtonError] = React.useState(error);
+  console.log("error", error);
+  const { pending } = useFormStatus();
+
+  useEffect(() => {
+    console.log("error", error);
+    if (error) {
+      setButtonError(true);
+      setTimeout(() => {
+        setButtonError(false);
+      }, 3000);
+    }
+  }, [error]);
   return (
     <button
       value={value ? value : "value"}
@@ -32,12 +51,13 @@ export const CTAButton: React.FC<ButtonProps> = ({
         "border-dark text-dark hover:bg-brand/70 flex items-center justify-center rounded border p-2 text-xl font-extrabold",
         className,
         disabled && "cursor-not-allowed opacity-50",
-        loading && "bg-brand/50 cursor-wait",
+        loading || (pending && "bg-brand/50 cursor-wait"),
         rounded && "rounded-full border-0 p-6",
         secondary ? "bg-altSecondary" : "bg-brand",
+        buttonError ? "border-4 border-red-500" : "border-0",
       )}
     >
-      {loading ? <LoadingIcon /> : <>{children}</>}
+      {loading || pending ? <LoadingIcon /> : <>{children}</>}
     </button>
   );
 };
