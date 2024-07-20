@@ -86,7 +86,7 @@ export function TextInput({
         onChange={onChange ? (e) => onChange(e) : undefined}
         disabled={disabled}
         className={clsx(
-          " w-full rounded-full border-2 p-6",
+          " focus:border-brandSecondary w-full rounded-full border-2 p-6 focus:outline-none",
           error ? "border-red-500" : "border-slate-300",
         )}
         inputMode={inputMode}
