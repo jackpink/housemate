@@ -2,7 +2,7 @@ import { PropertiesPageWithSideMenu } from "~/app/_components/Layout";
 import { Property } from "../../../../../core/homeowner/property";
 import { redirect } from "next/navigation";
 import Nav from "~/app/_components/Nav";
-import { validateRequest } from "~/auth";
+import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 
 async function getAddresses({ userId }: { userId: string }) {
   console.log("Getting properties for user", userId);
@@ -15,15 +15,11 @@ export default async function MainAppLayout({
   children: React.ReactNode;
   params: { propertyId: string };
 }) {
-  const { user } = await validateRequest();
+  const user = await getVerifiedUserOrRedirect();
 
-  if (!user || !user.id) {
-    // redirect to login
-    redirect("/sign-in");
-  }
   console.log("params", params);
 
-  const properties = await getAddresses({ userId: user.id! });
+  const properties = await getAddresses({ userId: user.id });
   return (
     <>
       <Nav properties={properties} currentPropertyId={params.propertyId} />

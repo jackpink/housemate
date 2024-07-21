@@ -1,11 +1,9 @@
 import { redirect } from "next/navigation";
-import { validateRequest } from "~/auth";
+import { getSession } from "~/auth";
 
 export async function getUserOrRedirect() {
   // if there is no user session, redirect to sign i
-  const { user } = await validateRequest();
-
-  console.log("user redirect", user);
+  const { user } = await getSession();
 
   if (!user || !user.id) {
     // redirect to login
@@ -16,7 +14,7 @@ export async function getUserOrRedirect() {
 
 export async function getVerifiedUserOrRedirect() {
   // if there is no user session, redirect to sign i
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!user || !user.id) {
     // redirect to login

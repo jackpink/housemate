@@ -10,6 +10,8 @@ import { DropDownIcon } from "../../../../../../ui/Atoms/Icons";
 import { User } from "../../../../../../core/homeowner/user";
 import { createAndSendVerificationEmailCode } from "~/app/actions";
 import { redirect } from "next/navigation";
+import { verify } from "crypto";
+import { verifyEmailVerificationCode } from "~/auth";
 
 export default async function VerifyEmailPage() {
   // if there is no user session, redirect to sign in
@@ -22,11 +24,13 @@ export default async function VerifyEmailPage() {
 
   const verifyCode = async (code: string) => {
     "use server";
-    const result = await User.verifyEmailVerificationCode({
+    const result = await verifyEmailVerificationCode({
       userId: user.id,
       code,
     });
-    if (result) redirect("/properties");
+    if (result) {
+      redirect("/properties");
+    }
   };
 
   if (!hasActiveCode) {

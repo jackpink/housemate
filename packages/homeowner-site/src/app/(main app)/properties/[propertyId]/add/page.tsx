@@ -1,7 +1,5 @@
-import { validateRequest } from "~/auth";
 import { Property } from "../../../../../../../core/homeowner/property";
 import React from "react";
-import { redirect } from "next/navigation";
 import SideMenu from "~/app/_components/SideMenu";
 import AddItem from "~/app/_components/AddItem";
 import Link from "next/link";
@@ -10,6 +8,7 @@ import {
   LargeAddIcon,
   OptionsLargeIcon,
 } from "../../../../../../../ui/Atoms/Icons";
+import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 
 export default async function ToDoPage({
   params,
@@ -20,12 +19,7 @@ export default async function ToDoPage({
 
   if (!property) return <div>Property not found</div>;
 
-  const { user } = await validateRequest();
-
-  if (!user || !user.id) {
-    // redirect to login
-    redirect("/sign-in");
-  }
+  const user = await getVerifiedUserOrRedirect();
 
   if (user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;

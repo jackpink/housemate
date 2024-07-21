@@ -1,9 +1,7 @@
 import { PageWithSingleColumn } from "../../../../../../../ui/Atoms/PageLayout";
-import { validateRequest } from "~/auth";
 import { Property } from "../../../../../../../core/homeowner/property";
 import { Recurring as RecurringObj } from "../../../../../../../core/homeowner/items/recurring";
 import React from "react";
-import { redirect } from "next/navigation";
 import SideMenu from "~/app/_components/SideMenu";
 import {
   DropDownIcon,
@@ -14,6 +12,7 @@ import {
 } from "../../../../../../../ui/Atoms/Icons";
 import Link from "next/link";
 import Recurring from "~/app/_components/Recurring";
+import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 
 export default async function RecurringPage({
   params,
@@ -24,14 +23,9 @@ export default async function RecurringPage({
 
   if (!property) return <div>Property not found</div>;
 
-  const { user } = await validateRequest();
+  const user = await getVerifiedUserOrRedirect();
 
-  if (!user || !user.id) {
-    // redirect to login
-    redirect("/sign-in");
-  }
-
-  if (user?.id !== property.homeownerId) {
+  if (user.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
 

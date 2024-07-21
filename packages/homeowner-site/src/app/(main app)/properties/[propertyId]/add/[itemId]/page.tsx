@@ -1,9 +1,7 @@
-import { validateRequest } from "~/auth";
 import { Property } from "../../../../../../../../core/homeowner/property";
 import { Item } from "../../../../../../../../core/homeowner/items/item";
 import React from "react";
 import { getDeviceType } from "~/app/actions";
-import { redirect } from "next/navigation";
 import SideMenu from "~/app/_components/SideMenu";
 import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
 import { revalidatePath } from "next/cache";
@@ -11,6 +9,7 @@ import Files from "~/app/_components/Files";
 import { Bucket } from "sst/node/bucket";
 import Link from "next/link";
 import { DropDownIcon } from "../../../../../../../../ui/Atoms/Icons";
+import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 
 export default async function ToDoPage({
   params,
@@ -26,13 +25,7 @@ export default async function ToDoPage({
   const item = await Item.get(params.itemId);
 
   if (!item) return <div>Item not found</div>;
-
-  const { user } = await validateRequest();
-
-  if (!user || !user.id) {
-    // redirect to login
-    redirect("/sign-in");
-  }
+  const user = await getVerifiedUserOrRedirect();
 
   if (user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;

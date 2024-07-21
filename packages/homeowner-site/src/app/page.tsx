@@ -12,7 +12,7 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col items-center justify-center">
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <Logo width="300px" height="300px" colour="#c470e7" />
+          <Logo width="300px" height="300px" fillColour="#c470e7" />
           <div className="flex flex-col items-center justify-center gap-4 text-center ">
             <Text>Welcome to Prop Doc the property maintenance app. </Text>
             <Text>Management all of the work done on your home.</Text>

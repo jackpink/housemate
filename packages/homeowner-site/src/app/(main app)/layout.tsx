@@ -1,6 +1,5 @@
 import React from "react";
 import { ViewportProvider } from "../_components/ContextProviders";
-import { validateRequest } from "~/auth";
 
 export default async function MainAppLayout({
   children,

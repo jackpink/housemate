@@ -17,7 +17,7 @@ import EditItem, { UpdateItemServerAction } from "~/app/_components/EditItem";
 import Files from "~/app/_components/Files";
 import { Bucket } from "sst/node/bucket";
 import { Todos } from "../../../../../../../../core/homeowner/items/todos";
-import { validateRequest } from "~/auth";
+import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 
 export default async function ToDoPage({
   params,
@@ -30,14 +30,9 @@ export default async function ToDoPage({
 
   if (!property) return <div>Property not found</div>;
 
-  const { user } = await validateRequest();
+  const user = await getVerifiedUserOrRedirect();
 
-  if (!user || !user.id) {
-    // redirect to login
-    redirect("/sign-in");
-  }
-
-  if (user?.id !== property.homeownerId) {
+  if (user.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
 

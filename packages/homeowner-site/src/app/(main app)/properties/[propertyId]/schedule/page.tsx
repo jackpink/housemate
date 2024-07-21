@@ -1,5 +1,4 @@
 import { PageWithSingleColumn } from "../../../../../../../ui/Atoms/PageLayout";
-import { validateRequest } from "~/auth";
 import { Property } from "../../../../../../../core/homeowner/property";
 import { Item } from "../../../../../../../core/homeowner/item";
 import React from "react";
@@ -13,6 +12,7 @@ import {
   ScheduleIcon,
 } from "../../../../../../../ui/Atoms/Icons";
 import Link from "next/link";
+import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 
 export default async function ToDoPage({
   params,
@@ -30,14 +30,9 @@ export default async function ToDoPage({
 
   if (!property) return <div>Property not found</div>;
 
-  const { user } = await validateRequest();
+  const user = await getVerifiedUserOrRedirect();
 
-  if (!user || !user.id) {
-    // redirect to login
-    redirect("/sign-in");
-  }
-
-  if (user?.id !== property.homeownerId) {
+  if (user.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
 

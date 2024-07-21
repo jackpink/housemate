@@ -4,7 +4,13 @@ import bcrypt from "bcryptjs";
 import { hash } from "@node-rs/argon2";
 import { User } from "../../../core/homeowner/user";
 import { Item } from "../../../core/homeowner/items/item";
-import { generateEmailVerificationCode, lucia, signIn, signOut } from "~/auth";
+import {
+  generateEmailVerificationCode,
+  lucia,
+  signIn,
+  signOut,
+  signUp,
+} from "~/auth";
 import { redirect } from "next/navigation";
 import { IAddress, Property } from "../../../core/homeowner/property";
 import { revalidatePath } from "next/cache";
@@ -36,13 +42,14 @@ export async function signInAction(email: string, password: string) {
 export async function signOutAction() {
   try {
     await signOut();
+    redirect("/sign-in");
   } catch (error) {
     console.log("Sign out error", error);
     throw error;
   }
 }
 
-export async function signUp({
+export async function signUpAction({
   firstName,
   lastName,
   email,
@@ -53,59 +60,18 @@ export async function signUp({
   email: string;
   password: string;
 }) {
-  // Check if user exists
-  const existingUser = await User.getByEmail(email);
-
-  if (existingUser) {
-    throw new Error("User already exists");
-  }
-
-  // Hash the password
-  const hashedPassword = await hash(password, {
-    // recommended minimum parameters
-    memoryCost: 19456,
-    timeCost: 2,
-    outputLen: 32,
-    parallelism: 1,
-  });
-  let userId: string;
   try {
-    userId = await User.create({
+    await signUp({
       firstName,
       lastName,
       email,
-      password: hashedPassword,
+      password,
     });
-  } catch (e) {
-    console.log(e);
-    throw e;
+    redirect("/sign-up/verify");
+  } catch (error) {
+    console.log("Sign up error", error);
+    throw error;
   }
-
-  const session = await lucia.createSession(userId, {
-    email: email,
-    emailVerified: false,
-    firstName: firstName,
-    lastName: lastName,
-  });
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes,
-  );
-
-  //generate verification token
-  const verificationCode = await generateEmailVerificationCode({ userId });
-
-  //send email
-  await sendVerificationEmail({ email, code: verificationCode });
-
-  redirect("/sign-up/verify");
-
-  // TODO: Send verification token email
-  return {
-    success: "User created",
-  };
 }
 
 export async function createAndSendVerificationEmailCode({

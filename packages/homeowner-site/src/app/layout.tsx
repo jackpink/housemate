@@ -2,7 +2,7 @@ import "~/styles/globals.css";
 
 import { Inter } from "next/font/google";
 import { SessionProvider } from "./_components/ContextProviders";
-import { validateRequest } from "~/auth";
+import { getSession } from "~/auth";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,7 +20,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = await validateRequest();
+  const { user } = await getSession();
   return (
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>
