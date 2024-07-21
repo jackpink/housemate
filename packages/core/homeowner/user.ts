@@ -1,6 +1,6 @@
 export * as User from "./user";
 import { db, schema } from "../db";
-import { eq } from "drizzle-orm";
+import { eq, gt, and } from "drizzle-orm";
 
 export async function create({
   firstName,
@@ -96,17 +96,51 @@ export async function createEmailVerificationCode({
 }) {
   await removeEmailVerificationCodes(userId);
   console.log("Try to create email verification code", userId);
-  db.insert(schema.emailVerificationCode).values({
-    userId,
-    code: code,
-    expiresAt: expirationDate,
-  });
-  return code;
+  const [result] = await db
+    .insert(schema.emailVerificationCode)
+    .values({
+      userId,
+      code: code,
+      expiresAt: expirationDate,
+    })
+    .returning({ code: schema.emailVerificationCode.code });
+  if (!result) throw new Error("Failed to create email verification code");
+  return result.code;
 }
 
 async function removeEmailVerificationCodes(userId: string) {
   console.log("Try to remove email verification code", userId);
-  db.delete(schema.emailVerificationCode)
+  await db
+    .delete(schema.emailVerificationCode)
     .where(eq(schema.emailVerificationCode.userId, userId))
-    .returning();
+    .returning({ deletedId: schema.emailVerificationCode.id });
+}
+
+export async function verifyEmailVerificationCode({
+  userId,
+  code,
+}: {
+  userId: string;
+  code: string;
+}) {
+  console.log("Try to verify email verification code", userId, code);
+}
+
+export async function hasActiveVerificationCode({
+  userId,
+}: {
+  userId: string;
+}) {
+  console.log("Try to check if active verification code", userId);
+  const activeCodes = await db
+    .select()
+    .from(schema.emailVerificationCode)
+    .where(
+      and(
+        eq(schema.emailVerificationCode.userId, userId),
+        gt(schema.emailVerificationCode.expiresAt, new Date()),
+      ),
+    );
+  if (activeCodes.length > 0) return true;
+  return false;
 }
