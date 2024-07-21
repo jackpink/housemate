@@ -124,34 +124,39 @@ export async function verifyEmailVerificationCode({
   code: string;
 }) {
   console.log("Try to verify email verification code", userId);
-  const result = await db.transaction(async (tx) => {
-    const [userCode] = await tx
-      .select()
-      .from(schema.emailVerificationCode)
-      .where(and(eq(schema.emailVerificationCode.userId, userId)));
-    if (!userCode || userCode.code !== code) {
-      tx.rollback();
-      return false;
-    }
-    // isWithinExpirationDate
-    if (userCode.expiresAt < new Date()) {
-      // code has expired
-      tx.rollback();
-      return false;
-    }
-    // delete and return true
-    await tx
-      .delete(schema.emailVerificationCode)
-      .where(eq(schema.emailVerificationCode.id, userCode.id));
+  try {
+    const result = await db.transaction(async (tx) => {
+      const [userCode] = await tx
+        .select()
+        .from(schema.emailVerificationCode)
+        .where(and(eq(schema.emailVerificationCode.userId, userId)));
+      if (!userCode || userCode.code !== code) {
+        tx.rollback();
+        return false;
+      }
+      // isWithinExpirationDate
+      if (userCode.expiresAt < new Date()) {
+        // code has expired
+        tx.rollback();
+        return false;
+      }
+      // delete and return true
+      await tx
+        .delete(schema.emailVerificationCode)
+        .where(eq(schema.emailVerificationCode.id, userCode.id));
 
-    await tx
-      .update(schema.homeownerUsers)
-      .set({ emailVerified: true })
-      .where(eq(schema.homeownerUsers.id, userId));
+      await tx
+        .update(schema.homeownerUsers)
+        .set({ emailVerified: true })
+        .where(eq(schema.homeownerUsers.id, userId));
 
-    return true;
-  });
-  return result;
+      return true;
+    });
+    return result;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 }
 
 export async function hasActiveVerificationCode({

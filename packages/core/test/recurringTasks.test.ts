@@ -44,10 +44,12 @@ import { ItemCategory, ItemStatus } from "../db/schema";
 import { Property } from "../homeowner/property";
 
 it("make task recurring", async () => {
+  let name = (Math.random() + 1).toString(36).substring(7);
+  let domain = (Math.random() + 1).toString(36).substring(7);
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
-    email: "john@doe.com",
+    email: `${name}@${domain}.com`,
     password: "password",
   });
   const propertyId = await Property.create({
@@ -131,10 +133,12 @@ set as recurring => should now be a task with a future date
 and should have a past date with the original date */
 
 it("make complete task recurring", async () => {
+  let name = (Math.random() + 1).toString(36).substring(7);
+  let domain = (Math.random() + 1).toString(36).substring(7);
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
-    email: "john@doe.com",
+    email: `${name}@${domain}.com`,
     password: "password",
   });
   const propertyId = await Property.create({
@@ -208,10 +212,12 @@ and a past date with the current date
 */
 
 it("make complete task recurring and set as complete", async () => {
+  let name = (Math.random() + 1).toString(36).substring(7);
+  let domain = (Math.random() + 1).toString(36).substring(7);
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
-    email: "john@doe.com",
+    email: `${name}@${domain}.com`,
     password: "password",
   });
   const propertyId = await Property.create({

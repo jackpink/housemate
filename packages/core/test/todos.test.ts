@@ -10,10 +10,12 @@ Add a task
 */
 
 it("add a task", async () => {
+  let name = (Math.random() + 1).toString(36).substring(7);
+  let domain = (Math.random() + 1).toString(36).substring(7);
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
-    email: "john@doe.com",
+    email: `${name}@${domain}.com`,
     password: "password",
   });
   const propertyId = await Property.create({
@@ -49,10 +51,12 @@ order should be by dates
 */
 
 it("add 6 tasks and get initial priority", async () => {
+  let name = (Math.random() + 1).toString(36).substring(7);
+  let domain = (Math.random() + 1).toString(36).substring(7);
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
-    email: "john@doe.com",
+    email: `${name}@${domain}.com`,
     password: "password",
   });
   const propertyId = await Property.create({
@@ -158,10 +162,12 @@ order should be the same with 7th lowest priority
 */
 
 it("add 6 tasks and get initial priority, then add a 7th", async () => {
+  let name = (Math.random() + 1).toString(36).substring(7);
+  let domain = (Math.random() + 1).toString(36).substring(7);
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
-    email: "john@doe.com",
+    email: `${name}@${domain}.com`,
     password: "password",
   });
   const propertyId = await Property.create({
@@ -294,10 +300,12 @@ move down twice, check
 */
 
 it("add 6 tasks and get initial priority, then move", async () => {
+  let name = (Math.random() + 1).toString(36).substring(7);
+  let domain = (Math.random() + 1).toString(36).substring(7);
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
-    email: "john@doe.com",
+    email: `${name}@${domain}.com`,
     password: "password",
   });
   const propertyId = await Property.create({
@@ -450,10 +458,12 @@ check that it is removed from the list and first of completed list
 */
 
 it("add 6 tasks and get initial priority, then set a middle as complete", async () => {
+  let name = (Math.random() + 1).toString(36).substring(7);
+  let domain = (Math.random() + 1).toString(36).substring(7);
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
-    email: "john@doe.com",
+    email: `${name}@${domain}.com`,
     password: "password",
   });
   const propertyId = await Property.create({
@@ -572,10 +582,12 @@ check that it is last on list and first of completed list
 */
 
 it("add 6 tasks and get initial priority, then set a middle as recurring, then complete", async () => {
+  let name = (Math.random() + 1).toString(36).substring(7);
+  let domain = (Math.random() + 1).toString(36).substring(7);
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
-    email: "john@doe.com",
+    email: `${name}@${domain}.com`,
     password: "password",
   });
   const propertyId = await Property.create({
@@ -702,10 +714,12 @@ check that it is last on list and first of completed list
 */
 
 it("add 6 tasks and set as completed in last week, then set new as recurring, then complete", async () => {
+  let name = (Math.random() + 1).toString(36).substring(7);
+  let domain = (Math.random() + 1).toString(36).substring(7);
   const userId = await User.create({
     firstName: "John",
     lastName: "Doe",
-    email: "john@doe.com",
+    email: `${name}@${domain}.com`,
     password: "password",
   });
   const propertyId = await Property.create({
