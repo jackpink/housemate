@@ -18,9 +18,9 @@ export const lucia = new Lucia(adapter, {
   getUserAttributes: (attributes) => {
     return {
       email: attributes.email,
-      emailVerified: attributes.email_verified,
-      firstName: attributes.first_name,
-      lastName: attributes.last_name,
+      emailVerified: attributes.emailVerified,
+      firstName: attributes.firstName,
+      lastName: attributes.lastName,
     };
   },
 });
@@ -34,9 +34,9 @@ declare module "lucia" {
 
 interface DatabaseUserAttributes {
   email: string;
-  email_verified: boolean;
-  first_name: string;
-  last_name: string;
+  emailVerified: boolean;
+  firstName: string;
+  lastName: string;
 }
 
 export async function signIn({
@@ -70,12 +70,7 @@ export async function signIn({
     throw new Error("Incorrect username or password");
   }
 
-  const session = await lucia.createSession(existingUser.id, {
-    email: existingUser.email,
-    emailVerified: existingUser.emailVerified,
-    firstName: existingUser.firstName,
-    lastName: existingUser.lastName,
-  });
+  const session = await lucia.createSession(existingUser.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
     sessionCookie.name,
