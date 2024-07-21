@@ -10,11 +10,13 @@ import {
   fromErrorToFormState,
   signUpSchema,
 } from "../../../../core/homeowner/forms";
-import React, { useEffect, useRef, useState } from "react";
-import { signUp } from "../actions";
+import React, { useEffect, useRef, useState, useTransition } from "react";
+import { createAndSendVerificationEmailCode, signUp } from "../actions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PageTitle } from "../../../../ui/Atoms/Title";
+import { EmailSentIcon, LoadingIcon } from "../../../../ui/Atoms/Icons";
+import clsx from "clsx";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -151,3 +153,52 @@ export function EmailCodeVerificationComponent() {
     </>
   );
 }
+
+export const ResendVerificationEmailButton = ({
+  children,
+  userId,
+  email,
+}: {
+  children: React.ReactNode;
+  userId: string;
+  email: string;
+}) => {
+  const [pending, startTransition] = useTransition();
+  const [isSent, setIsSent] = useState(false);
+  const onClickResendVerificationEmail = async () => {
+    startTransition(async () => {
+      await createAndSendVerificationEmailCode({
+        userId: userId,
+        email: email,
+      });
+    });
+    setIsSent(true);
+  };
+
+  useEffect(() => {
+    if (isSent) {
+      console.log("running issent timer");
+      setTimeout(() => setIsSent(false), 10000);
+    }
+  }, [isSent]);
+
+  return (
+    <button
+      onClick={onClickResendVerificationEmail}
+      className={clsx("pt-4 text-xl font-bold font-bold text-brandSecondary", {
+        "cursor-not-allowed": isSent,
+      })}
+    >
+      {pending ? (
+        <LoadingIcon width={252} height={30} colour="#c470e7" />
+      ) : isSent ? (
+        <p className="flex items-center justify-center">
+          <EmailSentIcon tickColour="green" width={60} height={60} />
+          Email sent. Please Check your Email
+        </p>
+      ) : (
+        children
+      )}
+    </button>
+  );
+};

@@ -84,7 +84,8 @@ export async function generateEmailVerificationCode({
 }: {
   userId: string;
 }): Promise<string> {
-  let code = generateRandomString(8, alphabet("0-9"));
+  let code = generateRandomString(6, alphabet("0-9"));
+  console.log("Generated code", code);
   code = await User.createEmailVerificationCode({
     userId,
     code,
@@ -106,7 +107,6 @@ export const validateRequest = cache(
     }
 
     const result = await lucia.validateSession(sessionId);
-    console.log("validateRequest", result);
     // next.js throws when you attempt to set cookie when rendering page
     try {
       if (result.session && result.session.fresh) {

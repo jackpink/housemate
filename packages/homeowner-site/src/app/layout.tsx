@@ -21,7 +21,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const { user } = await validateRequest();
-  console.log("user layout", user);
   return (
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>

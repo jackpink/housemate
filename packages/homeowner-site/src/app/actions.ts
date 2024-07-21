@@ -108,6 +108,20 @@ export async function signUp({
   };
 }
 
+export async function createAndSendVerificationEmailCode({
+  userId,
+  email,
+}: {
+  userId: string;
+  email: string;
+}) {
+  const verificationCode = await generateEmailVerificationCode({ userId });
+
+  await sendVerificationEmail({ email, code: verificationCode });
+
+  revalidatePath("/sign-up/verify");
+}
+
 export async function createProperty({
   apartment,
   streetNumber,
