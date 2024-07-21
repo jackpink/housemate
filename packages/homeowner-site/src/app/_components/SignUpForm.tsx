@@ -130,14 +130,14 @@ export function EmailCodeVerificationComponent() {
   return (
     <>
       <PageTitle>Enter Code Emailed to You</PageTitle>
-      <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-altSecondary p-6">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-6">
         <div className="flex items-center justify-center gap-4">
           {code.map((_, index) => (
             <input
               type="text"
               key={index}
               maxLength={1}
-              className="h-10 w-10 text-center"
+              className="h-10 w-10 rounded-sm border-2 border-slate-500 text-center outline-4 outline-brandSecondary"
               onChange={(e) => handleOTPChange(e.target.value, index)}
               ref={verificationCodeRefs.current[index]}
               autoFocus={index === 0}
