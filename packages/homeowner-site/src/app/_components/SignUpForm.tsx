@@ -110,7 +110,11 @@ const createUser = async (
   };
 };
 
-export function EmailCodeVerificationComponent() {
+export function EmailCodeVerificationComponent({
+  verifyCode,
+}: {
+  verifyCode: (code: string) => void;
+}) {
   const [code, setCode] = useState(Array<string>(6).fill(""));
 
   const verificationCodeRefs = useRef(
@@ -146,7 +150,7 @@ export function EmailCodeVerificationComponent() {
             />
           ))}
         </div>
-        <CTAButton onClick={() => console.log("verify", code)} rounded>
+        <CTAButton onClick={() => verifyCode(code.join(""))} rounded>
           Verify
         </CTAButton>
       </div>

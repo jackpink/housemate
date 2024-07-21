@@ -94,6 +94,10 @@ export async function generateEmailVerificationCode({
   return code;
 }
 
+// async function verifyVerificationCode(user: User, code: string): Promise<boolean> {
+
+// }
+
 export const validateRequest = cache(
   async (): Promise<
     { user: LuciaUser; session: Session } | { user: null; session: null }

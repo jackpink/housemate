@@ -9,6 +9,7 @@ import Link from "next/link";
 import { DropDownIcon } from "../../../../../../ui/Atoms/Icons";
 import { User } from "../../../../../../core/homeowner/user";
 import { createAndSendVerificationEmailCode } from "~/app/actions";
+import { redirect } from "next/navigation";
 
 export default async function VerifyEmailPage() {
   // if there is no user session, redirect to sign in
@@ -18,6 +19,16 @@ export default async function VerifyEmailPage() {
   const hasActiveCode = await User.hasActiveVerificationCode({
     userId: user.id,
   });
+
+  const verifyCode = async (code: string) => {
+    "use server";
+    const result = await User.verifyEmailVerificationCode({
+      userId: user.id,
+      code,
+    });
+    if (result) redirect("/properties");
+  };
+
   if (!hasActiveCode) {
     return (
       <div>
@@ -86,7 +97,7 @@ export default async function VerifyEmailPage() {
         </ResendVerificationEmailButton>
 
         <div className=" w-full ">
-          <EmailCodeVerificationComponent />
+          <EmailCodeVerificationComponent verifyCode={verifyCode} />
         </div>
       </div>
     </div>
