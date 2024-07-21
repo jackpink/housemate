@@ -579,7 +579,7 @@ export const HorizontalLogo: React.FC<HorizontalLogoProps> = ({
       <path
         fill={fillColour}
         d="m 40.957031,23.214844 c 0,1.617188 -1.3125,2.925781 -2.929687,2.925781 H 16.800781 c -1.617187,0 -2.925781,-1.308593 -2.925781,-2.925781 v -6.222656 c 0,-1.617188 1.308594,-2.925782 2.925781,-2.925782 h 21.226563 c 1.617187,0 2.929687,1.308594 2.929687,2.925782 z m 0,0"
-        fillOpacity={fillColour}
+        fillOpacity={fillOpacity}
         fillRule="nonzero"
         id="path12"
       />
@@ -598,7 +598,7 @@ export const HorizontalLogo: React.FC<HorizontalLogoProps> = ({
         <path
           fill={fillColour}
           d="m 47.308594,51.632812 h -9.394532 v 12.074219 h 9.394532 c 1.617187,0 2.925781,-1.308593 2.925781,-2.925781 v -6.222656 c 0,-1.617188 -1.308594,-2.925782 -2.925781,-2.925782 z m 0,0"
-          fillOpacity={fillColour}
+          fillOpacity={fillOpacity}
           fillRule="nonzero"
           id="path14"
         />
@@ -624,7 +624,7 @@ export const HorizontalLogo: React.FC<HorizontalLogoProps> = ({
         <path
           fill={fillColour}
           d="M 93.136719,51.632812 H 82.441406 c -1.617187,0 -2.925781,1.308594 -2.925781,2.925782 v 6.222656 c 0,1.617188 1.308594,2.925781 2.925781,2.925781 h 10.695313 z m 0,0"
-          fillOpacity={fillColour}
+          fillOpacity={fillOpacity}
           fillRule="nonzero"
           id="path16"
         />
@@ -650,7 +650,7 @@ export const HorizontalLogo: React.FC<HorizontalLogoProps> = ({
         <path
           fill={fillColour}
           d="m 64.996094,73.957031 c 0,1.617188 -1.308594,2.925781 -2.925782,2.925781 H 40.84375 c -1.617188,0 -2.929688,-1.308593 -2.929688,-2.925781 v -6.222656 c 0,-1.617187 1.3125,-2.929687 2.929688,-2.929687 h 21.226562 c 1.617188,0 2.925782,1.3125 2.925782,2.929687 z m 0,0"
-          fillOpacity={fillColour}
+          fillOpacity={fillOpacity}
           fillRule="nonzero"
           id="path18"
         />
@@ -676,7 +676,7 @@ export const HorizontalLogo: React.FC<HorizontalLogoProps> = ({
         <path
           fill={fillColour}
           d="m 93.054688,73.957031 c 0,1.617188 -1.308594,2.925781 -2.925782,2.925781 H 68.902344 c -1.617188,0 -2.929688,-1.308593 -2.929688,-2.925781 v -6.222656 c 0,-1.617187 1.3125,-2.929687 2.929688,-2.929687 h 21.226562 c 1.617188,0 2.925782,1.3125 2.925782,2.929687 z m 0,0"
-          fillOpacity={fillColour}
+          fillOpacity={fillOpacity}
           fillRule="nonzero"
           id="path20"
         />
@@ -702,7 +702,7 @@ export const HorizontalLogo: React.FC<HorizontalLogoProps> = ({
         <path
           fill={fillColour}
           d="m 64.996094,47.132812 c 0,1.617188 -1.308594,2.929688 -2.925782,2.929688 H 40.84375 c -1.617188,0 -2.929688,-1.3125 -2.929688,-2.929688 v -6.222656 c 0,-1.617187 1.3125,-2.925781 2.929688,-2.925781 h 21.226562 c 1.617188,0 2.925782,1.308594 2.925782,2.925781 z m 0,0"
-          fillOpacity={fillColour}
+          fillOpacity={fillOpacity}
           fillRule="nonzero"
           id="path22"
         />
@@ -728,7 +728,7 @@ export const HorizontalLogo: React.FC<HorizontalLogoProps> = ({
         <path
           fill={fillColour}
           d="m 93.054688,47.132812 c 0,1.617188 -1.308594,2.929688 -2.925782,2.929688 H 68.902344 c -1.617188,0 -2.929688,-1.3125 -2.929688,-2.929688 v -6.222656 c 0,-1.617187 1.3125,-2.925781 2.929688,-2.925781 h 21.226562 c 1.617188,0 2.925782,1.308594 2.925782,2.925781 z m 0,0"
-          fillOpacity={fillColour}
+          fillOpacity={fillOpacity}
           fillRule="nonzero"
           id="path24"
         />
@@ -743,7 +743,7 @@ export const HorizontalLogo: React.FC<HorizontalLogoProps> = ({
       <path
         fill={fillColour}
         d="m 15.324219,19.425782 v -1.378907 c 0,-1.429687 1.160156,-2.589843 2.589843,-2.589843 h 2.816407"
-        fillOpacity={fillColour}
+        fillOpacity={fillOpacity}
         fillRule="nonzero"
         id="path26"
       />

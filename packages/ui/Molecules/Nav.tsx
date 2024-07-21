@@ -89,7 +89,13 @@ const NavWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
       <div className="bg-brand/60 border-dark relative flex w-full flex-wrap items-center justify-between border-2 py-2">
         <div className="flex grow flex-col items-center">
           <Link href="/" className="mr-3 flex-none overflow-hidden md:w-auto">
-            <HorizontalLogo height={30} fillColour="#7df2cd" />
+            <HorizontalLogo
+              height={30}
+              fillColour="#7df2cd"
+              fillOpacity="1"
+              outlineColour="black"
+              textColour="black"
+            />
           </Link>
         </div>
 
