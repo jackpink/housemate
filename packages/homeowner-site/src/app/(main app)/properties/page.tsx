@@ -18,7 +18,10 @@ export default async function PropertiesPage() {
   return (
     <>
       <PageTitle>Properties</PageTitle>
-      <PropertiesBreadcrumbs />
+      <h2 className="text-center text-lg font-semibold">
+        Here are your properties that you are managing. Select a property to
+        view.
+      </h2>
       <PageWithSingleColumn>
         <Properties properties={properties} />
       </PageWithSingleColumn>

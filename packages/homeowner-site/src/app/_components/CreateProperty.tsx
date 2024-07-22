@@ -6,11 +6,9 @@ import { CTAButton } from "../../../../ui/Atoms/Button";
 import { SearchIcon } from "../../../../ui/Atoms/Icons";
 import { ErrorMessage, Text } from "../../../../ui/Atoms/Text";
 import { useRouter } from "next/navigation";
-
-import { revalidatePath } from "next/cache";
-import { useSession } from "next-auth/react";
 import { createProperty, getValidAddress } from "../actions";
 import { concatAddress } from "~/utils/functions";
+import { useSession } from "./ContextProviders";
 
 type ValidAddress = Awaited<ReturnType<typeof getValidAddress>>;
 
@@ -88,9 +86,9 @@ type AddressResultsProps = {
 };
 
 const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
-  const session = useSession();
+  const user = useSession();
 
-  if (!validAddress) {
+  if (!validAddress || !user) {
     return null;
   }
   const address = concatAddress(validAddress);
@@ -106,7 +104,7 @@ const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
     <AddressFound
       address={address}
       validAddress={validAddress}
-      userId={session.data?.user?.id!}
+      userId={user.id}
     />
   );
 };

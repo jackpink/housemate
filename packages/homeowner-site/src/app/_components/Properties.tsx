@@ -17,11 +17,17 @@ type Property = InferSelectModel<typeof property>;
 export default function Properties({ properties }: { properties: Properties }) {
   return (
     <div className="p-10">
-      {properties.map((property) => (
-        <div className="my-5" key={property.id}>
-          <Property {...property} />
-        </div>
-      ))}
+      {properties.length === 0 ? (
+        <p className="pb-10 text-center italic">
+          No properties for this account. Create one below.
+        </p>
+      ) : (
+        properties.map((property) => (
+          <div className="my-5" key={property.id}>
+            <Property {...property} />
+          </div>
+        ))
+      )}
 
       <Link href="/properties/create" className="block">
         <CTAButton rounded className="w-full">
