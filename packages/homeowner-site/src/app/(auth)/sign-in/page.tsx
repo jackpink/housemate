@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { SignInForm } from "~/app/_components/SignInForm";
-import { validateRequest } from "~/auth";
 import { DropDownIcon } from "../../../../../ui/Atoms/Icons";
 import Link from "next/link";
 import Logo from "../../../../../ui/Atoms/Logo";
+import { getSession } from "~/auth";
 
 export default async function SignInPage() {
   // if there is a user session, redirect to properties
-  const { user } = await validateRequest();
+  const { user } = await getSession();
 
   if (!!user && !!user.id) {
     // redirect to login

@@ -7,6 +7,13 @@ import SideMenu from "~/app/_components/SideMenu";
 import ToDos, { UpdateItemPriorityServerAction } from "~/app/_components/ToDos";
 import { revalidatePath } from "next/cache";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
+import Link from "next/link";
+import {
+  DropDownIcon,
+  GeneralHomeIcon,
+  ToDoIcon,
+} from "../../../../../../../ui/Atoms/Icons";
+import { PageTitle } from "../../../../../../../ui/Atoms/Title";
 
 export default async function ToDoPage({
   params,
@@ -52,6 +59,19 @@ export default async function ToDoPage({
       <div className="flex-1">
         <div className="flex justify-center ">
           <div className="max-w-[800px] grow">
+            <Link
+              href="/"
+              className="flex w-max items-center justify-center p-4 xs:hidden"
+            >
+              <div className="-rotate-90 pb-6">
+                <DropDownIcon />
+              </div>
+              <GeneralHomeIcon width={30} height={30} />
+              <p className="pl-2 text-xl">Property Menu</p>
+            </Link>
+            <PageTitle className="flex items-center justify-center">
+              <ToDoIcon width={40} height={40} /> To Dos
+            </PageTitle>
             <ToDos
               toDos={toDos}
               completedToDos={completedToDos}

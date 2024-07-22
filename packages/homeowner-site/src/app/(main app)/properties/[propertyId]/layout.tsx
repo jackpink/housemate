@@ -1,5 +1,5 @@
 import { PropertiesPageWithSideMenu } from "~/app/_components/Layout";
-import { Property } from "../../../../../core/homeowner/property";
+import { Property } from "../../../../../../core/homeowner/property";
 import { redirect } from "next/navigation";
 import Nav from "~/app/_components/Nav";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
