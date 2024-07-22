@@ -5,6 +5,8 @@ import { useState } from "react";
 import { HorizontalLogo } from "../Atoms/Logo";
 import { CTAButton } from "../Atoms/Button";
 import { Text } from "../Atoms/Text";
+import clsx from "clsx";
+import React from "react";
 
 const NavItems: React.FC = () => {
   return (
@@ -86,8 +88,8 @@ const NavWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <div className="bg-brand/60 border-dark relative flex w-full flex-wrap items-center justify-between border-2 py-2">
-        <div className="flex grow flex-col items-center">
+      <div className="bg-brand/60 border-dark relative flex w-full items-center justify-between border-2 p-2">
+        <div className="flex  flex-col items-center">
           <Link href="/" className="mr-3 flex-none overflow-hidden md:w-auto">
             <HorizontalLogo
               height={30}
@@ -99,7 +101,7 @@ const NavWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
           </Link>
         </div>
 
-        <div className="relative flex grow items-center justify-center pt-2">
+        <div className="relative   hidden items-center justify-center md:flex">
           {/* <SignedIn>
             <UserButton userProfileMode="navigation" />
           </SignedIn>
@@ -110,9 +112,49 @@ const NavWrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
           </SignedOut> */}
           {children}
         </div>
+        <div className="flex flex-col items-center justify-center md:hidden">
+          <NavMenuButton isOpen={isOpen} setIsOpen={setIsOpen} />
+        </div>
       </div>
     </>
   );
 };
 
 export default NavWrapper;
+
+type NavMenuButtonProps = {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  className?: string;
+};
+
+export function NavMenuButton({
+  isOpen,
+  setIsOpen,
+  className,
+}: NavMenuButtonProps) {
+  return (
+    <button onClick={() => setIsOpen(!isOpen)} className={className}>
+      <div className="flex h-10 w-10 flex-col gap-2">
+        <span
+          className={clsx(
+            "h-2 transform rounded-full bg-black transition duration-500 ease-in-out",
+            isOpen && "translate-y-4 rotate-45",
+          )}
+        ></span>
+        <span
+          className={clsx(
+            "h-2 rounded-full bg-black transition duration-500 ease-in-out",
+            isOpen && "rotate-[-45deg]",
+          )}
+        ></span>
+        <span
+          className={clsx(
+            "h-2 w-6 rounded-full bg-black transition duration-500 ease-in-out",
+            isOpen && "bg-transparent",
+          )}
+        ></span>
+      </div>
+    </button>
+  );
+}
