@@ -5,10 +5,5 @@ export default async function MainAppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <ManageAccountPageWithSideMenu>{children}</ManageAccountPageWithSideMenu>
-      <div className="h-48"></div>
-    </>
-  );
+  return <>{children}</>;
 }

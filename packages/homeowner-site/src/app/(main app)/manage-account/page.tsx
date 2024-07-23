@@ -1,6 +1,5 @@
 import { PageTitle } from "../../../../../ui/Atoms/Title";
 import { PageWithSingleColumn } from "../../../../../ui/Atoms/PageLayout";
-import { validateRequest } from "~/auth";
 import { redirect } from "next/navigation";
 import { User } from "../../../../../core/homeowner/user";
 import {
@@ -8,14 +7,10 @@ import {
   GeneralSettings,
 } from "~/app/_components/ManageAccount";
 import { getDeviceType } from "~/app/actions";
+import { getUserOrRedirect } from "~/utils/pageRedirects";
 
 export default async function ManageAccountPage() {
-  const { user } = await validateRequest();
-
-  if (!user || !user.id) {
-    // redirect to login
-    redirect("/sign-in");
-  }
+  const user = await getUserOrRedirect();
 
   const deviceType = await getDeviceType();
 
