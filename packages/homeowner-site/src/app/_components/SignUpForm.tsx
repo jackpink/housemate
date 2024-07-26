@@ -11,7 +11,7 @@ import {
   signUpSchema,
 } from "../../../../core/homeowner/forms";
 import React, { useEffect, useRef, useState, useTransition } from "react";
-import { createAndSendVerificationEmailCode, signUp } from "../actions";
+import { createAndSendVerificationEmailCode, signUpAction } from "../actions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PageTitle } from "../../../../ui/Atoms/Title";
@@ -96,7 +96,7 @@ const createUser = async (
     });
 
     console.log("new user");
-    await signUp(result);
+    await signUpAction(result);
     result.firstName;
   } catch (error) {
     console.error("Error signing up", error);

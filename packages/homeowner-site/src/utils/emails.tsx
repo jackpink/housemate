@@ -1,5 +1,7 @@
 import { Resend } from "resend";
 import { env } from "../../../core/env.mjs";
+import { Tailwind, Button } from "@react-email/components";
+import { VerificationEmail } from "./email-templates";
 
 export async function sendVerificationEmail({
   email,
@@ -10,12 +12,13 @@ export async function sendVerificationEmail({
 }) {
   const resend = new Resend(env.RESEND_API_KEY);
 
-  await resend.emails.send({
-    from: "Housemate <no-reply@housemate.dev>",
+  console.log("Sending verification email to", email);
+
+  const response = await resend.emails.send({
+    from: "Housemate <no-reply@accounts.housemate.dev>",
     to: [email],
     subject: "Verification Code",
-    html: "it works!",
-
+    react: <VerificationEmail code={code} />,
     headers: {
       "X-Entity-Ref-ID": "123456789",
     },
@@ -26,4 +29,6 @@ export async function sendVerificationEmail({
       },
     ],
   });
+
+  console.log("Email sent", response);
 }

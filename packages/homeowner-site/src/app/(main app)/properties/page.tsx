@@ -5,6 +5,7 @@ import { Property } from "../../../../../core/homeowner/property";
 import Properties from "~/app/_components/Properties";
 import { redirect } from "next/navigation";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
+import Nav from "~/app/_components/Nav";
 
 async function getProperties({ userId }: { userId: string }) {
   console.log("Getting properties for user", userId);
@@ -17,6 +18,7 @@ export default async function PropertiesPage() {
   const properties = await getProperties({ userId: user.id });
   return (
     <>
+      <Nav properties={properties} currentPropertyId={""} />
       <PageTitle>Properties</PageTitle>
       <h2 className="text-center text-lg font-semibold">
         Here are your properties that you are managing. Select a property to
