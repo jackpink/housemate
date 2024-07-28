@@ -152,7 +152,7 @@ const AddressFound: React.FC<{
       });
   }, [validAddress]);
   return (
-    <div className="flex flex-col items-center pt-20">
+    <div className="flex w-full flex-col items-center pt-20 md:w-3/4 xl:w-1/2">
       <Text className="text-xl font-bold">{address}</Text>
       <Text className="pb-4 pt-2">
         Is this your address? Create property for this address below
@@ -161,7 +161,7 @@ const AddressFound: React.FC<{
         onClick={onClickCreateProperty}
         rounded
         loading={loading}
-        className="pb-4"
+        className="w-full"
       >
         Create Property
       </CTAButton>
