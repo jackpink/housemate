@@ -101,3 +101,15 @@ export const addItemSchema = z.object({
   homeownerId: z.string(),
   propertyId: z.string(),
 });
+
+export const updatePasswordSchema = z
+  .object({
+    currentPassword: z.string(),
+    password: passwordPatterns,
+    confirmPassword: z.string().min(8),
+    userId: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });

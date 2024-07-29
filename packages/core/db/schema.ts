@@ -44,6 +44,16 @@ export const emailVerificationCode = sqliteTable("email_verification_code", {
     .references(() => homeownerUsers.id),
   expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
 });
+
+export const passwordResetToken = sqliteTable("password_reset_token", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  token: text("token").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => homeownerUsers.id),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+});
+
 export const sessionTable = sqliteTable("session", {
   id: text("id").notNull().primaryKey(),
   userId: text("user_id")

@@ -1,4 +1,5 @@
 export * as User from "./user";
+import { verify } from "crypto";
 import { db, schema } from "../db";
 import { eq, gt, and } from "drizzle-orm";
 
@@ -34,6 +35,7 @@ export async function update({
   warrantyAlert,
   taskReminder,
   taskOverdueReminder,
+  password,
 }: {
   id: string;
   firstName?: string;
@@ -41,6 +43,7 @@ export async function update({
   warrantyAlert?: number;
   taskReminder?: number;
   taskOverdueReminder?: number;
+  password?: string;
 }) {
   console.log("Try to update user", id, firstName, lastName);
   const [updated] = await db
@@ -51,6 +54,7 @@ export async function update({
       warrantyAlert,
       taskReminder,
       taskOverdueReminder,
+      password,
     })
     .where(eq(schema.homeownerUsers.id, id))
     .returning({ id: schema.homeownerUsers.id });
@@ -176,4 +180,55 @@ export async function hasActiveVerificationCode({
     );
   if (activeCodes.length > 0) return true;
   return false;
+}
+
+export async function createPasswordResetToken({
+  userId,
+  tokenHash,
+  expirationDate,
+}: {
+  userId: string;
+  tokenHash: string;
+  expirationDate: Date;
+}) {
+  await removePasswordResetTokens(userId);
+  console.log("Try to create email verification code", userId);
+  const [result] = await db
+    .insert(schema.passwordResetToken)
+    .values({
+      userId,
+      token: tokenHash,
+      expiresAt: expirationDate,
+    })
+    .returning({ token: schema.passwordResetToken.token });
+  if (!result) throw new Error("Failed to create password reset token");
+  return result.token;
+}
+
+async function removePasswordResetTokens(userId: string) {
+  console.log("Try to remove passowrd reset tokens", userId);
+  await db
+    .delete(schema.passwordResetToken)
+    .where(eq(schema.passwordResetToken.userId, userId))
+    .returning({ deletedId: schema.passwordResetToken.id });
+}
+
+export async function verifyPasswordResetToken({
+  tokenHash,
+}: {
+  tokenHash: string;
+}) {
+  const [userToken] = await db
+    .select()
+    .from(schema.passwordResetToken)
+    .where(and(eq(schema.passwordResetToken.token, tokenHash)));
+  if (!userToken) {
+    return null;
+  }
+  // isWithinExpirationDate
+  if (userToken.expiresAt < new Date()) {
+    // code has expired
+    return null;
+  }
+  return userToken.userId;
 }
