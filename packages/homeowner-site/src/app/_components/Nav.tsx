@@ -6,6 +6,7 @@ import Link from "next/link";
 import { User } from "lucia";
 import clsx from "clsx";
 import {
+  AccountIcon,
   AlertsIcon,
   GeneralHomeIcon,
   LargeAddIcon,
@@ -111,7 +112,7 @@ function DropDownMenu({
       <Popover.Portal>
         <Popover.Content
           className={clsx(
-            "data-[side=top]:animate-slideDownAndFade min-w-max rounded-lg border-2 border-black bg-white p-4 opacity-0 shadow-md shadow-black transition-all duration-1000	ease-in will-change-[opacity,transform]",
+            "min-w-max rounded-lg border-2 border-black bg-white p-4 opacity-0 shadow-md shadow-black transition-all duration-1000 ease-in	will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade",
             isOpen && "opacity-100",
           )}
           sideOffset={5}
@@ -215,7 +216,7 @@ function PropertySelectorMenuContent({
 }) {
   return (
     <Popover.Content
-      className="data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade min-w-[220px] rounded-md border-2 border-slate-400 bg-white p-4 p-[5px] shadow-sm shadow-slate-400 will-change-[opacity,transform]"
+      className="min-w-[220px] rounded-md border-2 border-slate-400 bg-white p-4 p-[5px] shadow-sm shadow-slate-400 will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
       sideOffset={5}
       side={side}
       avoidCollisions={true}
@@ -287,14 +288,16 @@ function UserButton({ user }: { user: User }) {
         </button>
       </Popover.Trigger>
       <Popover.PopoverPortal>
-        <Popover.Content className="rounded-lg bg-light p-4 shadow-lg">
-          Logged in as
-          <br />
-          <span className="font-semibold">{user.firstName}</span>
-          <div className="flex flex-col items-center gap-4 pt-5">
+        <Popover.Content className="min-w-[220px] rounded-md border-2 border-slate-400 bg-white  shadow-sm shadow-slate-400 will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade">
+          <div className="bg-brand p-4">
+            <p>{`${user.firstName} ${user.lastName}`}</p>
+            <p>{user.email}</p>
+          </div>
+          <div className="p-4">
             <Link href={"/manage-account"}>
-              <button className="rounded-full bg-altSecondary p-3">
-                Manage Account
+              <button className="flex items-center p-2">
+                <AccountIcon colour="black" selected={false} height={25} />
+                <p className="pl-2">Manage Account</p>
               </button>
             </Link>
             <form action={signOutAction}>
@@ -306,6 +309,11 @@ function UserButton({ user }: { user: User }) {
               </button>
             </form>
           </div>
+          <Popover.Arrow
+            className="  fill-brand stroke-slate-400"
+            width={30}
+            height={15}
+          />
         </Popover.Content>
       </Popover.PopoverPortal>
     </Popover.Root>
