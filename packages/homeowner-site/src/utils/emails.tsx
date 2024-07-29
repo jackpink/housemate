@@ -32,3 +32,33 @@ export async function sendVerificationEmail({
 
   console.log("Email sent", response);
 }
+
+export async function sendPasswordResetEmail({
+  email,
+  code,
+}: {
+  email: string;
+  code: string;
+}) {
+  const resend = new Resend(env.RESEND_API_KEY);
+
+  console.log("Sending password reset email to", email);
+
+  const response = await resend.emails.send({
+    from: "Housemate <no-reply@accounts.housemate.dev>",
+    to: [email],
+    subject: "Password Reset",
+    react: <VerificationEmail code={code} />,
+    headers: {
+      "X-Entity-Ref-ID": "123456789",
+    },
+    tags: [
+      {
+        name: "category",
+        value: "confirm_email",
+      },
+    ],
+  });
+
+  console.log("Email sent", response);
+}

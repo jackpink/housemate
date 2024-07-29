@@ -26,7 +26,12 @@ export const VerificationEmail = ({ code }: { code: string }) => {
         <Body className="mx-auto my-auto bg-white px-2 font-sans">
           <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
             <Section className="mt-[32px]">
-              <Logo width="300px" height="300px" fillColour="#c470e7" />
+              <Img
+                src="../../public/logo.png"
+                width="300"
+                height="300"
+                alt="Housemate"
+              />
             </Section>
             <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
               <strong>Verfiy your email</strong>
@@ -41,6 +46,44 @@ export const VerificationEmail = ({ code }: { code: string }) => {
               <Button
                 className="rounded bg-[#000000] px-5 py-3 text-center text-[12px] font-semibold text-white no-underline"
                 href={"www.housemate.dev/sign-in"}
+              >
+                Sign In
+              </Button>
+            </Section>
+          </Container>
+        </Body>
+      </Tailwind>
+    </Html>
+  );
+};
+
+export const PasswordResetEmail = ({ code }: { code: string }) => {
+  return (
+    <Html>
+      <Head />
+      <Preview>preview</Preview>
+      <Tailwind>
+        <Body className="mx-auto my-auto bg-white px-2 font-sans">
+          <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
+            <Section className="mt-[32px]">
+              <Img
+                src="../../public/logo.png"
+                width="300"
+                height="300"
+                alt="Housemate"
+              />
+            </Section>
+            <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
+              <strong>Reset your password</strong>
+            </Heading>
+            <Text className="text-[14px] leading-[24px] text-black">
+              Click the following link to set a new password.
+            </Text>
+
+            <Section className="mb-[32px] mt-[32px] text-center">
+              <Button
+                className="rounded bg-[#000000] px-5 py-3 text-center text-[12px] font-semibold text-white no-underline"
+                href={`www.housemate.dev/password-reset/${code}`}
               >
                 Sign In
               </Button>

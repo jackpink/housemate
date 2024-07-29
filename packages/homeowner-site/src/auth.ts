@@ -1,4 +1,9 @@
-import { Lucia, Session, User as LuciaUser } from "lucia";
+import {
+  Lucia,
+  Session,
+  User as LuciaUser,
+  generateIdFromEntropySize,
+} from "lucia";
 import { adapter } from "../../core/db/authAdapter";
 import { User } from "../../core/homeowner/user";
 import { verify } from "@node-rs/argon2";
@@ -6,8 +11,10 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 import { TimeSpan, createDate } from "oslo";
 import { generateRandomString, alphabet } from "oslo/crypto";
+import { sha256 } from "oslo/crypto";
+import { encodeHex } from "oslo/encoding";
 import { hash } from "@node-rs/argon2";
-import { sendVerificationEmail } from "~/utils/emails";
+import { sendPasswordResetEmail, sendVerificationEmail } from "~/utils/emails";
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
@@ -238,4 +245,68 @@ export async function signUp({
   return {
     success: "User created",
   };
+}
+
+export async function updatePassword({
+  userId,
+  currentPassword,
+  newPassword,
+}: {
+  userId: string;
+  currentPassword: string;
+  newPassword: string;
+}) {
+  const user = await User.getById(userId);
+  if (!user) throw new Error("User not found");
+
+  const passwordMatch = await verify(user.password, currentPassword, {
+    memoryCost: 19456,
+    timeCost: 2,
+    outputLen: 32,
+    parallelism: 1,
+  });
+  if (!passwordMatch) throw new Error("Current password is incorrect");
+  console.log("newPassword", newPassword);
+  const hashedPassword = await hash(newPassword, {
+    memoryCost: 19456,
+    timeCost: 2,
+    outputLen: 32,
+    parallelism: 1,
+  });
+  try {
+    await User.update({ id: userId, password: hashedPassword });
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+  return true;
+}
+
+export async function resetPassword({ userId }: { userId: string }) {
+  const user = await User.getById(userId);
+  if (!user) throw new Error("User not found");
+
+  //generate password reset token
+  const tokenId = generateIdFromEntropySize(25);
+  const tokenHash = encodeHex(await sha256(new TextEncoder().encode(tokenId)));
+  await User.createPasswordResetToken({
+    userId,
+    tokenHash,
+    expirationDate: createDate(new TimeSpan(1, "h")),
+  });
+
+  //send email
+  await sendPasswordResetEmail({ email: user.email, code: tokenId });
+
+  return true;
+}
+
+export async function verifyPasswordResetToken({
+  token,
+}: {
+  token: string;
+}): Promise<string | null> {
+  const tokenHash = encodeHex(await sha256(new TextEncoder().encode(token)));
+
+  return await User.verifyPasswordResetToken({ tokenHash });
 }

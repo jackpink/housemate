@@ -45,7 +45,7 @@ export default async function SignInPage() {
           <SignInForm />
         </div>
         <Link
-          href="/sign-up"
+          href="/password-reset"
           className="mt-2 block text-center font-bold text-brandSecondary"
         >
           Forgot your password?

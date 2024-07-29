@@ -8,8 +8,18 @@ import {
   StandardComponent,
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { User } from "../../../../core/homeowner/user";
-import { updateUser } from "../actions";
+import { updatePasswordAction, updateUser } from "../actions";
 import { CTAButton } from "../../../../ui/Atoms/Button";
+import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
+import React from "react";
+import { useFormState, useFormStatus } from "react-dom";
+import { ErrorMessage } from "../../../../ui/Atoms/Text";
+import {
+  FormState,
+  emptyFormState,
+  fromErrorToFormState,
+  updatePasswordSchema,
+} from "../../../../core/homeowner/forms";
 
 export function GeneralSettings({
   user,
@@ -19,12 +29,12 @@ export function GeneralSettings({
   deviceType: "mobile" | "desktop";
 }) {
   return (
-    <div className="flex w-screen flex-col items-center p-2">
-      <div className="flex w-full justify-between p-2">
+    <div className="flex w-full flex-col items-center p-2">
+      <div className="flex w-full  py-2">
         <EditableComponentLabel label="Email: " />
-        <p className="text-lg">{user.email}</p>
+        <p className="pl-2 text-lg">{user.email}</p>
       </div>
-      <CTAButton rounded>Change Primary Email</CTAButton>
+
       <EditableComponent
         value={user.firstName}
         EditModeComponent={EditableFirstName}
@@ -46,14 +56,8 @@ export function GeneralSettings({
       <div className="flex w-full justify-between p-2">
         <EditableComponentLabel label="Password: " />
       </div>
-      <div className="flex w-full justify-between">
-        <button className="rounded-full bg-brand p-4 text-lg font-semibold">
-          Change Password
-        </button>
-        <button className="rounded-full bg-altSecondary p-4 text-lg font-semibold">
-          Reset Password
-        </button>
-      </div>
+
+      <ChangePassword userId={user.id} />
     </div>
   );
 }
@@ -106,6 +110,93 @@ const EditableLastName: EditModeComponent = ({ value, setValue }) => {
       />
     </div>
   );
+};
+
+function ChangePassword({ userId }: { userId: string }) {
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const { pending } = useFormStatus();
+
+  const [state, formAction] = useFormState(updatePassword, emptyFormState);
+
+  return (
+    <form action={formAction}>
+      <TextInputWithError
+        label="Current Password"
+        name="currentPassword"
+        type={showPassword ? "text" : "password"}
+        error={!!state.fieldErrors["currentPassword"]?.[0]}
+        errorMessage={state.fieldErrors["currentPassword"]?.[0]}
+      />
+      <button className="flex w-full justify-end p-2 text-slate-600">
+        <input
+          type="checkbox"
+          className="mr-2"
+          onChange={() => setShowPassword(!showPassword)}
+          name="showPassword"
+          id="showPassword"
+        />
+        <label htmlFor="showPassword">Show Password</label>
+      </button>
+      <TextInputWithError
+        label="New Password"
+        name="password"
+        type={showPassword ? "text" : "password"}
+        error={!!state.fieldErrors["password"]?.[0]}
+        errorMessage={state.fieldErrors["password"]?.[0]}
+      />
+
+      <TextInputWithError
+        label="Confirm New Password"
+        name="confirmPassword"
+        type={showPassword ? "text" : "password"}
+        error={!!state.fieldErrors["confirmPassword"]?.[0]}
+        errorMessage={state.fieldErrors["confirmPassword"]?.[0]}
+      />
+      <input type="hidden" name="userId" value={userId} />
+      <CTAButton
+        rounded
+        className="w-full"
+        error={state.error}
+        loading={pending}
+      >
+        Update Password
+      </CTAButton>
+      <ErrorMessage error={state.error} errorMessage={state.message} />
+    </form>
+  );
+}
+
+const updatePassword = async (
+  state: any,
+  formData: FormData,
+): Promise<FormState> => {
+  let result;
+
+  try {
+    result = updatePasswordSchema.parse({
+      currentPassword: formData.get("currentPassword"),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirmPassword"),
+      userId: formData.get("userId"),
+    });
+
+    console.log("new user");
+    await updatePasswordAction({
+      currentPassword: result.currentPassword,
+      newPassword: result.password,
+      userId: result.userId,
+    });
+  } catch (error) {
+    console.error("Error signing up", error);
+    return fromErrorToFormState(error);
+  }
+
+  return {
+    error: false,
+    message: "Success",
+    fieldErrors: {},
+  };
 };
 
 /*

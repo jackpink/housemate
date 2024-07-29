@@ -10,6 +10,7 @@ import {
   signIn,
   signOut,
   signUp,
+  updatePassword,
 } from "~/auth";
 import { redirect } from "next/navigation";
 import { IAddress, Property } from "../../../core/homeowner/property";
@@ -72,6 +73,23 @@ export async function signUpAction({
     console.log("Sign up error", error);
     throw error;
   }
+}
+
+export async function updatePasswordAction({
+  userId,
+  currentPassword,
+  newPassword,
+}: {
+  userId: string;
+  currentPassword: string;
+  newPassword: string;
+}) {
+  await updatePassword({
+    userId,
+    currentPassword,
+    newPassword,
+  });
+  revalidatePath("/manage-account");
 }
 
 export async function createAndSendVerificationEmailCode({
