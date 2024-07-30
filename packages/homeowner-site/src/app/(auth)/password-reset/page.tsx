@@ -1,5 +1,8 @@
 import { redirect } from "next/navigation";
-import { SignInForm } from "~/app/_components/SignInForm";
+import {
+  SendPasswordResetEmailForm,
+  SignInForm,
+} from "~/app/_components/SignInForm";
 import { DropDownIcon, EmailSentIcon } from "../../../../../ui/Atoms/Icons";
 import Link from "next/link";
 import Logo from "../../../../../ui/Atoms/Logo";
@@ -33,13 +36,8 @@ export default async function PasswordResetPage() {
         />
         <h1 className="text-xl">Password Reset.</h1>
         <h2>Enter Your email to reset your password </h2>
-        <div className="flex w-full justify-center">
-          <form>
-            <input type="email" />
-            <CTAButton rounded className="flex items-center">
-              Send Reset Email
-            </CTAButton>
-          </form>
+        <div className="flex w-full justify-center pt-10">
+          <SendPasswordResetEmailForm />
         </div>
       </div>
     </div>

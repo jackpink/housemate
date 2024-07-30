@@ -1,12 +1,11 @@
 "use server";
 
-import bcrypt from "bcryptjs";
-import { hash } from "@node-rs/argon2";
 import { User } from "../../../core/homeowner/user";
 import { Item } from "../../../core/homeowner/items/item";
 import {
   generateEmailVerificationCode,
   lucia,
+  resetPassword,
   signIn,
   signOut,
   signUp,
@@ -90,6 +89,24 @@ export async function updatePasswordAction({
     newPassword,
   });
   revalidatePath("/manage-account");
+}
+
+export async function sendPasswordResetEmailAction({
+  email,
+}: {
+  email: string;
+}) {
+  // get user with email
+  const user = await User.getByEmail(email);
+
+  if (!user) {
+    return { error: "User not found" };
+  }
+
+  // generate reset token
+  await resetPassword({ userId: user.id });
+
+  return { success: "Reset email sent" };
 }
 
 export async function createAndSendVerificationEmailCode({

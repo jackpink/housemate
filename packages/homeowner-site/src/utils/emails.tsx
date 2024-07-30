@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { env } from "../../../core/env.mjs";
 import { Tailwind, Button } from "@react-email/components";
-import { VerificationEmail } from "./email-templates";
+import { PasswordResetEmail, VerificationEmail } from "./email-templates";
 
 export async function sendVerificationEmail({
   email,
@@ -48,7 +48,7 @@ export async function sendPasswordResetEmail({
     from: "Housemate <no-reply@accounts.housemate.dev>",
     to: [email],
     subject: "Password Reset",
-    react: <VerificationEmail code={code} />,
+    react: <PasswordResetEmail code={code} />,
     headers: {
       "X-Entity-Ref-ID": "123456789",
     },

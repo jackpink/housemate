@@ -8,10 +8,16 @@ import {
   FormState,
   emptyFormState,
   fromErrorToFormState,
+  passwordResetSchema,
   signInSchema,
+  updatePasswordSchema,
 } from "../../../../core/homeowner/forms";
 import Link from "next/link";
-import { signInAction } from "../actions";
+import {
+  sendPasswordResetEmailAction,
+  signInAction,
+  updatePasswordAction,
+} from "../actions";
 import { ErrorMessage } from "../../../../ui/Atoms/Text";
 
 export function SignInForm() {
@@ -79,7 +85,10 @@ const AttemptSignIn = async (
 export function SendPasswordResetEmailForm() {
   const { pending, data } = useFormStatus();
 
-  const [state, formAction] = useFormState(updatePassword, emptyFormState);
+  const [state, formAction] = useFormState(
+    sendPasswordResetEmail,
+    emptyFormState,
+  );
 
   return (
     <form action={formAction}>
@@ -103,9 +112,33 @@ export function SendPasswordResetEmailForm() {
   );
 }
 
+const sendPasswordResetEmail = async (
+  state: any,
+  formData: FormData,
+): Promise<FormState> => {
+  let result;
+
+  try {
+    result = passwordResetSchema.parse({
+      email: formData.get("email"),
+    });
+
+    await sendPasswordResetEmailAction({ email: result.email });
+  } catch (error) {
+    console.error("Error signing up", error);
+    return fromErrorToFormState(error);
+  }
+
+  return {
+    error: false,
+    message: "Success",
+    fieldErrors: {},
+  };
+};
+
 export function PasswordResetForm() {}
 
-function ChangePassword({ userId }: { userId: string }) {
+export function UpdatePassword({ userId }: { userId: string }) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const { pending } = useFormStatus();
@@ -114,13 +147,6 @@ function ChangePassword({ userId }: { userId: string }) {
 
   return (
     <form action={formAction}>
-      <TextInputWithError
-        label="Current Password"
-        name="currentPassword"
-        type={showPassword ? "text" : "password"}
-        error={!!state.fieldErrors["currentPassword"]?.[0]}
-        errorMessage={state.fieldErrors["currentPassword"]?.[0]}
-      />
       <button className="flex w-full justify-end p-2 text-slate-600">
         <input
           type="checkbox"

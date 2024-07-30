@@ -17,6 +17,8 @@ import {
 } from "@react-email/components";
 import Logo from "../../../ui/Atoms/Logo";
 
+import logo from "../../public/logo.png";
+
 export const VerificationEmail = ({ code }: { code: string }) => {
   return (
     <Html>
@@ -43,12 +45,12 @@ export const VerificationEmail = ({ code }: { code: string }) => {
               <Text className="p-4 text-center text-xl">{code}</Text>
             </Section>
             <Section className="mb-[32px] mt-[32px] text-center">
-              <Button
+              <Link
                 className="rounded bg-[#000000] px-5 py-3 text-center text-[12px] font-semibold text-white no-underline"
                 href={"www.housemate.dev/sign-in"}
               >
                 Sign In
-              </Button>
+              </Link>
             </Section>
           </Container>
         </Body>
@@ -61,7 +63,7 @@ export const PasswordResetEmail = ({ code }: { code: string }) => {
   return (
     <Html>
       <Head />
-      <Preview>preview</Preview>
+      <Preview>You have requested to reset your password.</Preview>
       <Tailwind>
         <Body className="mx-auto my-auto bg-white px-2 font-sans">
           <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
@@ -81,12 +83,12 @@ export const PasswordResetEmail = ({ code }: { code: string }) => {
             </Text>
 
             <Section className="mb-[32px] mt-[32px] text-center">
-              <Button
+              <Link
                 className="rounded bg-[#000000] px-5 py-3 text-center text-[12px] font-semibold text-white no-underline"
-                href={`www.housemate.dev/password-reset/${code}`}
+                href={"https://housemate.dev/password-reset/" + code}
               >
-                Sign In
-              </Button>
+                Reset Password Link
+              </Link>
             </Section>
           </Container>
         </Body>
