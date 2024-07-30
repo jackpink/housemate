@@ -113,3 +113,18 @@ export const updatePasswordSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+export const passwordResetEmailSchema = z.object({
+  email: z.string().email(),
+});
+
+export const passwordResetSchema = z
+  .object({
+    password: passwordPatterns,
+    confirmPassword: z.string().min(8),
+    userId: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
