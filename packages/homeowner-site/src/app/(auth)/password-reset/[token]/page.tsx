@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { SignInForm } from "~/app/_components/SignInForm";
+import { SignInForm, UpdatePassword } from "~/app/_components/SignInForm";
 import { DropDownIcon } from "../../../../../../ui/Atoms/Icons";
 import Link from "next/link";
 import Logo from "../../../../../../ui/Atoms/Logo";
@@ -73,7 +73,9 @@ export default async function PasswordResetPage({
         />
         <h1 className="text-xl">Reset Password.</h1>
         <h2>{`Email: ${user.email}`}</h2>
-        <div className="flex w-full justify-center">New password form</div>
+        <div className="flex w-full justify-center">
+          <UpdatePassword userId={userId} />
+        </div>
       </div>
     </div>
   );

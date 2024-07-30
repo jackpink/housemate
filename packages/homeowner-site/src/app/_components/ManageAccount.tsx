@@ -8,7 +8,11 @@ import {
   StandardComponent,
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { User } from "../../../../core/homeowner/user";
-import { updatePasswordAction, updateUser } from "../actions";
+import {
+  updatePasswordAction,
+  updatePasswordWithCurrentPasswordAction,
+  updateUser,
+} from "../actions";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import React from "react";
@@ -182,7 +186,7 @@ const updatePassword = async (
     });
 
     console.log("new user");
-    await updatePasswordAction({
+    await updatePasswordWithCurrentPasswordAction({
       currentPassword: result.currentPassword,
       newPassword: result.password,
       userId: result.userId,

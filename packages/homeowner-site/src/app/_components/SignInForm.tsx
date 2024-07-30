@@ -8,6 +8,7 @@ import {
   FormState,
   emptyFormState,
   fromErrorToFormState,
+  passwordResetEmailSchema,
   passwordResetSchema,
   signInSchema,
   updatePasswordSchema,
@@ -119,7 +120,7 @@ const sendPasswordResetEmail = async (
   let result;
 
   try {
-    result = passwordResetSchema.parse({
+    result = passwordResetEmailSchema.parse({
       email: formData.get("email"),
     });
 
@@ -147,6 +148,13 @@ export function UpdatePassword({ userId }: { userId: string }) {
 
   return (
     <form action={formAction}>
+      <TextInputWithError
+        label="New Password"
+        name="password"
+        type={showPassword ? "text" : "password"}
+        error={!!state.fieldErrors["password"]?.[0]}
+        errorMessage={state.fieldErrors["password"]?.[0]}
+      />
       <button className="flex w-full justify-end p-2 text-slate-600">
         <input
           type="checkbox"
@@ -157,14 +165,6 @@ export function UpdatePassword({ userId }: { userId: string }) {
         />
         <label htmlFor="showPassword">Show Password</label>
       </button>
-      <TextInputWithError
-        label="New Password"
-        name="password"
-        type={showPassword ? "text" : "password"}
-        error={!!state.fieldErrors["password"]?.[0]}
-        errorMessage={state.fieldErrors["password"]?.[0]}
-      />
-
       <TextInputWithError
         label="Confirm New Password"
         name="confirmPassword"
@@ -193,8 +193,7 @@ const updatePassword = async (
   let result;
 
   try {
-    result = updatePasswordSchema.parse({
-      currentPassword: formData.get("currentPassword"),
+    result = passwordResetSchema.parse({
       password: formData.get("password"),
       confirmPassword: formData.get("confirmPassword"),
       userId: formData.get("userId"),
@@ -202,7 +201,6 @@ const updatePassword = async (
 
     console.log("new user");
     await updatePasswordAction({
-      currentPassword: result.currentPassword,
       newPassword: result.password,
       userId: result.userId,
     });

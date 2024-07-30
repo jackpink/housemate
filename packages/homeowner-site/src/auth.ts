@@ -247,7 +247,7 @@ export async function signUp({
   };
 }
 
-export async function updatePassword({
+export async function updatePasswordWithCurrentPassword({
   userId,
   currentPassword,
   newPassword,
@@ -266,7 +266,16 @@ export async function updatePassword({
     parallelism: 1,
   });
   if (!passwordMatch) throw new Error("Current password is incorrect");
-  console.log("newPassword", newPassword);
+  return await updatePassword({ userId, newPassword });
+}
+
+export async function updatePassword({
+  userId,
+  newPassword,
+}: {
+  userId: string;
+  newPassword: string;
+}) {
   const hashedPassword = await hash(newPassword, {
     memoryCost: 19456,
     timeCost: 2,

@@ -10,6 +10,7 @@ import {
   signOut,
   signUp,
   updatePassword,
+  updatePasswordWithCurrentPassword,
 } from "~/auth";
 import { redirect } from "next/navigation";
 import { IAddress, Property } from "../../../core/homeowner/property";
@@ -74,7 +75,7 @@ export async function signUpAction({
   }
 }
 
-export async function updatePasswordAction({
+export async function updatePasswordWithCurrentPasswordAction({
   userId,
   currentPassword,
   newPassword,
@@ -83,12 +84,23 @@ export async function updatePasswordAction({
   currentPassword: string;
   newPassword: string;
 }) {
-  await updatePassword({
+  await updatePasswordWithCurrentPassword({
     userId,
     currentPassword,
     newPassword,
   });
   revalidatePath("/manage-account");
+}
+
+export async function updatePasswordAction({
+  userId,
+  newPassword,
+}: {
+  userId: string;
+  newPassword: string;
+}) {
+  await updatePassword({ userId, newPassword });
+  revalidatePath("/password-reset");
 }
 
 export async function sendPasswordResetEmailAction({
