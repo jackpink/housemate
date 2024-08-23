@@ -14,17 +14,29 @@ import { Recurring } from "./recurring";
 
 export async function create({
   title,
+  recurring,
+  schedule,
+  date,
   status,
   category,
   homeownerId,
   propertyId,
+  commonTaskId,
 }: {
   title: string;
+  recurring: boolean;
+  schedule: RecurringSchedule;
+  date: Date;
   status: ItemStatus;
   category: ItemCategory;
   homeownerId: string;
   propertyId: string;
+  commonTaskId?: string;
 }) {
+  const dateString = date
+    ? `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : ""}${date.getDate()}`
+    : undefined;
+
   const itemId = await db.transaction(async (tx) => {
     const [folderCreated] = await tx
       .insert(itemFilesFolder)
@@ -37,11 +49,15 @@ export async function create({
       .insert(item)
       .values({
         title,
+        recurring,
+        recurringSchedule: schedule,
+        date: dateString,
         status,
         category,
         homeownerId,
         propertyId,
         filesRootFolderId: folderCreated.id,
+        commonTaskId,
       })
       .returning({ id: item.id });
 

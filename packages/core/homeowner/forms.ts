@@ -1,6 +1,7 @@
 import { z, ZodError } from "zod";
 import { AuthError } from "next-auth";
-import { ItemCategory, ItemStatus } from "../db/schema";
+import { ItemCategory, ItemStatus, RecurringSchedule } from "../db/schema";
+import { commonParams } from "@aws-sdk/client-s3/dist-types/endpoint/EndpointParameters";
 
 /* 
 **********************************************
@@ -94,12 +95,13 @@ export const signUpSchema = z
     path: ["confirmPassword"],
   });
 
-export const addItemSchema = z.object({
+export const addTaskSchema = z.object({
   title: z.string().min(1),
-  status: z.nativeEnum(ItemStatus),
-  category: z.nativeEnum(ItemCategory),
+  recurring: z.boolean(),
+  schedule: z.nativeEnum(RecurringSchedule),
   homeownerId: z.string(),
   propertyId: z.string(),
+  commonTaskId: z.string().optional(),
 });
 
 export const updatePasswordSchema = z
