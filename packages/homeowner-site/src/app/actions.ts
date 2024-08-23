@@ -297,6 +297,7 @@ export async function createTaskAction({
   homeownerId,
   propertyId,
   commonTaskId,
+  date,
 }: {
   title: string;
   recurring: boolean;
@@ -304,12 +305,13 @@ export async function createTaskAction({
   homeownerId: string;
   propertyId: string;
   commonTaskId?: string;
+  date?: string;
 }) {
   const taskId = await Item.create({
     title,
     status: ItemStatus.TODO,
     category: ItemCategory.JOB,
-    date: new Date(),
+    date: date ? new Date(date) : new Date(),
     recurring,
     schedule,
     homeownerId,

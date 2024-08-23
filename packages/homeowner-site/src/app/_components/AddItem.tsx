@@ -21,6 +21,9 @@ import {
 } from "../../../../ui/Atoms/Icons";
 import { RecurringSchedule } from "../../../../core/db/schema";
 import clsx from "clsx";
+import Link from "next/link";
+import { EditableComponentLabel } from "../../../../ui/Molecules/InPlaceEditableComponent";
+import { date } from "drizzle-orm/mysql-core";
 
 export type CommonTask = {
   title: string;
@@ -33,39 +36,79 @@ export type CommonTask = {
 export default function AddItem({
   homeownerId,
   propertyId,
-  commonTasks,
+  interiorCommonTasks,
+  exteriorCommonTasks,
 }: {
   homeownerId: string;
   propertyId: string;
-  commonTasks: CommonTask[];
+  interiorCommonTasks: CommonTask[];
+  exteriorCommonTasks: CommonTask[];
 }) {
   return (
-    <div>
-      <CTAButton rounded className="w-full" onClick={() => {}}>
-        Create Custom Task
-      </CTAButton>
-      <h1>Common Tasks</h1>
-      <div className="grid gap-4">
-        {commonTasks.map((commonTask) => {
-          if (commonTask.exists) {
+    <div className="justify-around p-2 md:flex">
+      <div className="md:hidden">
+        <Link href={`/properties/${propertyId}/add/custom`}>
+          <CTAButton rounded className="w-full" onClick={() => {}}>
+            Create Task
+          </CTAButton>
+        </Link>
+        <p className="text-center">Create your own custom task</p>
+      </div>
+      <div className="hidden md:block">
+        <p className="text-center">Create your own custom task</p>
+        <div className="p-4"></div>
+        <AddTaskForm propertyId={propertyId} homeownerId={homeownerId} />
+      </div>
+      <div>
+        <p className="p-2 text-center font-semibold">OR</p>
+      </div>
+      <div>
+        <p className="pb-4 text-center">Quickly add from common tasks below</p>
+        <h1 className="p-2 text-center text-2xl font-bold">Common Tasks</h1>
+        <div className="grid gap-4">
+          <h2 className="text-center text-xl font-semibold">Interior</h2>
+          {interiorCommonTasks.map((commonTask) => {
+            if (commonTask.exists) {
+              return (
+                <div className=" flex items-center justify-center gap-2 rounded-full border-4 border-green-600 p-2">
+                  <TickIcon colour="#16a34a" />
+                  <p className="text-lg font-semibold text-green-600">
+                    {commonTask.title}
+                  </p>
+                </div>
+              );
+            }
             return (
-              <div className=" flex items-center justify-center gap-2 rounded-full border-4 border-green-600 p-2">
-                <TickIcon colour="#16a34a" />
-                <p className="text-lg font-semibold text-green-600">
-                  {commonTask.title}
-                </p>
-              </div>
+              <AddCommonTask
+                key={commonTask.title}
+                commonTask={commonTask}
+                homeownerId={homeownerId}
+                propertyId={propertyId}
+              />
             );
-          }
-          return (
-            <AddCommonTask
-              key={commonTask.title}
-              commonTask={commonTask}
-              homeownerId={homeownerId}
-              propertyId={propertyId}
-            />
-          );
-        })}
+          })}
+          <h2 className="text-center text-xl font-semibold">Exterior</h2>
+          {exteriorCommonTasks.map((commonTask) => {
+            if (commonTask.exists) {
+              return (
+                <div className=" flex items-center justify-center gap-2 rounded-full border-4 border-green-600 p-2">
+                  <TickIcon colour="#16a34a" />
+                  <p className="text-lg font-semibold text-green-600">
+                    {commonTask.title}
+                  </p>
+                </div>
+              );
+            }
+            return (
+              <AddCommonTask
+                key={commonTask.title}
+                commonTask={commonTask}
+                homeownerId={homeownerId}
+                propertyId={propertyId}
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -82,13 +125,11 @@ function AddCommonTask({
 }) {
   const router = useRouter();
 
-  const { pending } = useFormStatus();
-
   const createItem = async (formState: FormState, formData: FormData) => {
     try {
       const result = addTaskSchema.parse({
         title: formData.get("title") as string,
-        recurring: (formData.get("recurring") as string) === "1",
+        recurring: (formData.get("recurring") as string) === "true",
         schedule: formData.get("schedule") as string,
         homeownerId: formData.get("homeownerId") as string,
         propertyId: formData.get("propertyId") as string,
@@ -118,24 +159,20 @@ function AddCommonTask({
   return (
     <form action={formAction}>
       <input type="hidden" name="title" value={commonTask.title} />
-      <input type="hidden" name="recurring" value={1} />
+      <input type="hidden" name="recurring" value="true" />
       <input type="hidden" name="schedule" value={commonTask.schedule} />
       <input type="hidden" name="homeownerId" value={homeownerId} />
       <input type="hidden" name="propertyId" value={propertyId} />
       <input type="hidden" name="commonTaskId" value={commonTask.id} />
       <ErrorMessage error={state.error} errorMessage={state.message} />
-      <CommonTaskButton title={commonTask.title} pending={pending} />
+      <CommonTaskButton title={commonTask.title} />
     </form>
   );
 }
 
-function CommonTaskButton({
-  title,
-  pending,
-}: {
-  title: string;
-  pending: boolean;
-}) {
+function CommonTaskButton({ title }: { title: string }) {
+  const { pending } = useFormStatus();
+
   return (
     <button
       type="submit"
@@ -156,25 +193,25 @@ function CommonTaskButton({
   );
 }
 
-export function AddItemForm({
+export function AddTaskForm({
   homeownerId,
   propertyId,
 }: {
   homeownerId: string;
   propertyId: string;
 }) {
-  const [category, setCategory] = useState("job");
-
-  const { pending } = useFormStatus();
+  const [isRecurring, setIsRecurring] = useState(true);
 
   const router = useRouter();
 
   const createItem = async (formState: FormState, formData: FormData) => {
     try {
+      console.log("formData", formData.get("date"));
       const result = addTaskSchema.parse({
         title: formData.get("title") as string,
-        status: formData.get("status") as string,
-        category: formData.get("category") as string,
+        recurring: (formData.get("recurring") as string) === "recurring",
+        date: formData.get("date") as string,
+        schedule: formData.get("schedule") as string,
         homeownerId: formData.get("homeownerId") as string,
         propertyId: formData.get("propertyId") as string,
       });
@@ -207,12 +244,14 @@ export function AddItemForm({
         error={!!state.fieldErrors["title"]?.[0]}
         errorMessage={state.fieldErrors["title"]?.[0]}
       />
-      <Category setCategory={setCategory} />
-      <Status category={category} />
-
-      <CTAButton rounded className="mt-8 w-full" loading={pending}>
-        {pending ? "Adding Item..." : "Add Item"}
-      </CTAButton>
+      <DateInput />
+      <Recurring setIsRecuring={setIsRecurring} />
+      {isRecurring ? (
+        <ScheduleInput />
+      ) : (
+        <input type="hidden" name="schedule" value={RecurringSchedule.YEARLY} />
+      )}
+      <CreateTaskButton />
       <ErrorMessage error={state.error} errorMessage={state.message} />
       <input type="hidden" name="homeownerId" value={homeownerId} />
       <input type="hidden" name="propertyId" value={propertyId} />
@@ -220,85 +259,94 @@ export function AddItemForm({
   );
 }
 
-function Status({ category }: { category: string }) {
-  if (category === "issue") {
-    return (
-      <div className="hidden">
-        <label htmlFor="status" className="text-lg">
-          Status
-        </label>
-        <select
-          id="status"
-          name="status"
-          size={1}
-          className="rounded-full bg-altSecondary/70 p-6"
-          value={"todo"}
-        >
-          <option value="todo">To Do</option>
-          <option value="completed">Completed</option>
-        </select>
-      </div>
-    );
-  } else if (category === "product") {
-    return (
-      <div className="hidden">
-        <label htmlFor="status" className="text-lg">
-          Status
-        </label>
-        <select
-          id="status"
-          name="status"
-          size={1}
-          className="rounded-full bg-altSecondary/70 p-6"
-          value={"completed"}
-        >
-          <option value="todo">To Do</option>
-          <option value="completed">Completed</option>
-        </select>
-      </div>
-    );
-  }
+function Recurring({
+  setIsRecuring,
+}: {
+  setIsRecuring: Dispatch<SetStateAction<boolean>>;
+}) {
   return (
     <>
-      <label htmlFor="status" className="text-lg">
-        Status
-      </label>
-      <select
-        id="status"
-        name="status"
-        size={1}
-        className="rounded-full bg-altSecondary/70 p-6"
-      >
-        <option value="todo">To Do</option>
-        <option value="completed">Completed</option>
-      </select>
+      <p className="pb-2 text-lg">Recurring or One Time</p>
+      <div className="flex justify-between">
+        <input
+          type="radio"
+          id="recurring"
+          name="recurring"
+          value="recurring"
+          className="peer/recurring hidden"
+          defaultChecked
+          onChange={(e) => {
+            setIsRecuring(e.target.checked);
+            console.log(e.target.checked);
+          }}
+        />
+        <label
+          htmlFor="recurring"
+          className="cursor-pointer rounded border-2 border-brandSecondary p-2 text-lg peer-checked/recurring:bg-brandSecondary/50 peer-checked/recurring:font-bold"
+        >
+          Recurring
+        </label>
+        <input
+          type="radio"
+          id="one-time"
+          name="recurring"
+          value="one-time"
+          className="peer/one-time hidden"
+          onChange={(e) => {
+            setIsRecuring(!e.target.checked);
+            console.log(!e.target.checked);
+          }}
+        />
+        <label
+          htmlFor="one-time"
+          className="cursor-pointer rounded border-2 border-brandSecondary p-2 text-lg peer-checked/one-time:bg-brandSecondary/50 peer-checked/one-time:font-bold"
+        >
+          One Time
+        </label>
+      </div>
     </>
   );
 }
 
-function Category({
-  setCategory,
-}: {
-  setCategory: Dispatch<SetStateAction<string>>;
-}) {
+function DateInput({}: {}) {
+  const todaysDate = new Date();
+  const dateString = `${todaysDate.getFullYear()}-${todaysDate.getMonth() < 9 ? "0" : ""}${todaysDate.getMonth() + 1}-${todaysDate.getDate() < 10 ? "0" : ""}${todaysDate.getDate()}`;
   return (
-    <>
-      <label htmlFor="category" className="text-lg">
-        Category
-      </label>
+    <div className="w-full pb-4">
+      <p className="text-lg">Date</p>
+      <div className="flex w-full items-center justify-center pt-2 text-lg">
+        <input type="date" defaultValue={dateString} name="date" />
+      </div>
+    </div>
+  );
+}
+
+function ScheduleInput({}: {}) {
+  return (
+    <div className="peer-checked/recurring:hidden">
+      <p className="pb-2 text-lg">Schedule</p>
       <select
-        id="category"
-        name="category"
+        id="schedule"
+        name="schedule"
         size={1}
-        className="rounded-full bg-altSecondary/70 p-6"
-        onChange={(e) => {
-          setCategory(e.target.value);
-        }}
+        className="w-full rounded-full bg-altSecondary/70 p-6 capitalize"
+        defaultValue={RecurringSchedule.YEARLY}
       >
-        <option value="job">Job</option>
-        <option value="product">Product</option>
-        <option value="issue">Issue</option>
+        {Object.values(RecurringSchedule).map((schedule) => (
+          <option key={schedule} value={schedule} className="capitalize">
+            {schedule}
+          </option>
+        ))}
       </select>
-    </>
+    </div>
+  );
+}
+
+function CreateTaskButton() {
+  const { pending } = useFormStatus();
+  return (
+    <CTAButton rounded className="mt-8 w-full" loading={pending}>
+      {pending ? "Adding Task..." : "Add Task"}
+    </CTAButton>
   );
 }
