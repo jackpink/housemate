@@ -2,8 +2,16 @@ import Link from "next/link";
 import SignUpForm from "~/app/_components/SignUpForm";
 import { DropDownIcon } from "../../../../../ui/Atoms/Icons";
 import Logo from "../../../../../ui/Atoms/Logo";
+import { getSession } from "~/auth";
+import { redirect } from "next/navigation";
 
-export default function SignUpPage() {
+export default async function SignUpPage() {
+  const { user } = await getSession();
+
+  if (!!user && !!user.id) {
+    // redirect to login
+    redirect("/properties");
+  }
   return (
     <div>
       <div>
