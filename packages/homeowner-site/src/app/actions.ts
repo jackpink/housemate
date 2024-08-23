@@ -15,7 +15,12 @@ import {
 import { redirect } from "next/navigation";
 import { IAddress, Property } from "../../../core/homeowner/property";
 import { revalidatePath } from "next/cache";
-import { ItemCategory, ItemStatus, property } from "../../../core/db/schema";
+import {
+  ItemCategory,
+  ItemStatus,
+  RecurringSchedule,
+  property,
+} from "../../../core/db/schema";
 import { cookies, headers } from "next/headers";
 import { send } from "process";
 import { sendVerificationEmail } from "~/utils/emails";
@@ -179,30 +184,30 @@ export async function getValidAddress({
   return address;
 }
 
-export async function createItemAction({
-  title,
-  status,
-  category,
-  homeownerId,
-  propertyId,
-}: {
-  title: string;
-  status: ItemStatus;
-  category: ItemCategory;
-  homeownerId: string;
-  propertyId: string;
-}) {
-  const itemId = await Item.create({
-    title,
-    status,
-    category,
-    homeownerId,
-    propertyId,
-  });
-  console.log("Item created", itemId);
-  revalidatePath(`/properties/${propertyId}`);
-  return itemId;
-}
+// export async function createItemAction({
+//   title,
+//   status,
+//   category,
+//   homeownerId,
+//   propertyId,
+// }: {
+//   title: string;
+//   status: ItemStatus;
+//   category: ItemCategory;
+//   homeownerId: string;
+//   propertyId: string;
+// }) {
+//   const itemId = await Item.create({
+//     title,
+//     status,
+//     category,
+//     homeownerId,
+//     propertyId,
+//   });
+//   console.log("Item created", itemId);
+//   revalidatePath(`/properties/${propertyId}`);
+//   return itemId;
+// }
 
 export async function addFileToFolderAction({
   folderId,
@@ -283,4 +288,35 @@ export async function createFolderForItem({
 }) {
   await Item.addFolder({ parentId, name });
   revalidatePath(`/properties/${propertyId}/items/${itemId}`);
+}
+
+export async function createTaskAction({
+  title,
+  recurring,
+  schedule,
+  homeownerId,
+  propertyId,
+  commonTaskId,
+}: {
+  title: string;
+  recurring: boolean;
+  schedule: RecurringSchedule;
+  homeownerId: string;
+  propertyId: string;
+  commonTaskId?: string;
+}) {
+  const taskId = await Item.create({
+    title,
+    status: ItemStatus.TODO,
+    category: ItemCategory.JOB,
+    date: new Date(),
+    recurring,
+    schedule,
+    homeownerId,
+    propertyId,
+    commonTaskId,
+  });
+  console.log("Task created", taskId);
+  revalidatePath(`/properties/${propertyId}`);
+  return taskId;
 }
