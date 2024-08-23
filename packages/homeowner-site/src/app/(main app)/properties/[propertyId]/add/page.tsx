@@ -1,7 +1,7 @@
 import { Property } from "../../../../../../../core/homeowner/property";
 import React from "react";
 import SideMenu from "~/app/_components/SideMenu";
-import AddItem from "~/app/_components/AddItem";
+import AddItem, { CommonTask } from "~/app/_components/AddItem";
 import Link from "next/link";
 import {
   DropDownIcon,
@@ -9,6 +9,9 @@ import {
   OptionsLargeIcon,
 } from "../../../../../../../ui/Atoms/Icons";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
+import { RecurringSchedule, item } from "../../../../../../../core/db/schema";
+import { Item } from "../../../../../../../core/homeowner/items/item";
+import { Todos } from "../../../../../../../core/homeowner/items/todos";
 
 export default async function ToDoPage({
   params,
@@ -24,6 +27,42 @@ export default async function ToDoPage({
   if (user?.id !== property.homeownerId) {
     return <div>Not Authenticated</div>;
   }
+
+  const items = await Todos.getAll({ propertyId: params.propertyId });
+  const commonTasks: CommonTask[] = [
+    {
+      title: "Mow the lawn",
+      recurring: true,
+      schedule: RecurringSchedule.MONTHLY,
+      exists: items.some((item) => item.commonTaskId === "mow-the-lawn"),
+      id: "mow-the-lawn",
+    },
+    {
+      title: "Clean the gutters",
+      recurring: true,
+      schedule: RecurringSchedule.QUARTERLY,
+      exists: items.some((item) => item.commonTaskId === "clean-the-gutters"),
+      id: "clean-the-gutters",
+    },
+    {
+      title: "Change the air filters",
+      recurring: true,
+      schedule: RecurringSchedule.HALF_YEARLY,
+      exists: items.some(
+        (item) => item.commonTaskId === "change-the-air-filters",
+      ),
+      id: "change-the-air-filters",
+    },
+    {
+      title: "Check the smoke alarms",
+      recurring: true,
+      schedule: RecurringSchedule.MONTHLY,
+      exists: items.some(
+        (item) => item.commonTaskId === "check-the-smoke-alarms",
+      ),
+      id: "check-the-smoke-alarms",
+    },
+  ];
 
   return (
     <div className="flex">
@@ -43,7 +82,11 @@ export default async function ToDoPage({
           <span className="pl-2 pr-3">Back to Property Menu</span>
           <OptionsLargeIcon width={30} height={30} />
         </Link>
-        <AddItem homeownerId={user.id} propertyId={params.propertyId} />
+        <AddItem
+          homeownerId={user.id}
+          propertyId={params.propertyId}
+          commonTasks={commonTasks}
+        />
       </div>
     </div>
   );

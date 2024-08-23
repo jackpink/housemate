@@ -60,7 +60,19 @@ export default async function ToDoPage({
   return (
     <div className="flex">
       <SideMenu propertyId={params.propertyId} selected="add" />
+
       <div className="flex w-full flex-col items-center justify-center">
+        <div className="w-full">
+          <Link
+            href={`/properties/${params.propertyId}/add`}
+            className="flex w-max items-center justify-center p-4"
+          >
+            <div className="-rotate-90">
+              <DropDownIcon />
+            </div>
+            <p className="pl-2 text-xl">Back To Add</p>
+          </Link>
+        </div>
         <Link
           href={`/properties/${params.propertyId}`}
           className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black xs:hidden"
