@@ -129,6 +129,7 @@ export const item = sqliteTable("item", {
     .notNull(),
   warrantyEndDate: text("warrantyEndDate"),
   filesRootFolderId: text("filesFolderId"),
+  commonTaskId: text("commonTaskId"),
 });
 
 export const itemRelations = relations(item, ({ one, many }) => ({
