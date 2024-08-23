@@ -102,6 +102,7 @@ export const addTaskSchema = z.object({
   homeownerId: z.string(),
   propertyId: z.string(),
   commonTaskId: z.string().optional(),
+  date: z.string().optional(),
 });
 
 export const updatePasswordSchema = z
