@@ -98,7 +98,7 @@ export default async function ToDoPage({
           <div className="grow">
             <Link
               href={`/properties/${params.propertyId}/schedule`}
-              className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black lg:hidden"
+              className="flex items-center p-2 text-xl lg:hidden"
             >
               <span className="-rotate-90">
                 <DropDownIcon width={20} height={20} />
@@ -106,20 +106,22 @@ export default async function ToDoPage({
               Back to Schedule
               <ScheduleIcon width={60} height={40} />
             </Link>
-            <EditItem
-              item={item}
-              updateItem={updateItem}
-              propertyId={params.propertyId}
-              bucketName={bucketName}
-              Files={
-                <Files
-                  rootFolder={item.filesRootFolder}
-                  deviceType={deviceType}
-                  propertyId={params.propertyId}
-                />
-              }
-              deviceType={deviceType}
-            />
+            <div className="p-2">
+              <EditItem
+                item={item}
+                updateItem={updateItem}
+                propertyId={params.propertyId}
+                bucketName={bucketName}
+                Files={
+                  <Files
+                    rootFolder={item.filesRootFolder}
+                    deviceType={deviceType}
+                    propertyId={params.propertyId}
+                  />
+                }
+                deviceType={deviceType}
+              />
+            </div>
           </div>
         </div>
       </div>
