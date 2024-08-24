@@ -6,6 +6,7 @@ import { Text } from "../../../../../../ui/Atoms/Text";
 import Link from "next/link";
 import {
   LargeAddIcon,
+  LargeSearchIcon,
   PastIcon,
   PlusIcon,
   RecurringIcon,
@@ -64,32 +65,21 @@ export default async function PropertyPage({
           </Link>
 
           <Link
-            href={`/properties/${params.propertyId}/recurring`}
-            className="block"
-          >
-            <div className="h-full w-full p-7">
-              <div className="flex w-full flex-col items-center justify-center">
-                <RecurringIcon width={45} height={45} />
-                <Text className="text-xl font-bold">Recurring</Text>
-              </div>
-            </div>
-          </Link>
-          <Link
-            href={`/properties/${params.propertyId}/past`}
+            href={`/properties/${params.propertyId}/search`}
             className="block"
           >
             <div className="h-full w-full  p-7">
               <div className="flex w-full flex-col items-center justify-center">
-                <PastIcon width={45} height={45} />
-                <Text className="text-xl font-bold">Past Items</Text>
+                <LargeSearchIcon width={45} height={45} />
+                <Text className="text-xl font-bold">Search</Text>
               </div>
             </div>
           </Link>
           <Link href={`/properties/${params.propertyId}/add`} className="block">
             <div className="h-full w-full  p-7">
               <div className="flex w-full flex-col items-center justify-center">
-                <LargeAddIcon width={45} height={45} />
-                <Text className="text-xl font-bold">Add Item</Text>
+                <LargeAddIcon width={40} height={40} />
+                <Text className="text-xl font-bold">Add Task</Text>
               </div>
             </div>
           </Link>
