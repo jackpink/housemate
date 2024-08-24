@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import Image from "next/image";
+import { deleteFileAction } from "../actions";
 import { type Files } from "../../../../core/homeowner/item";
 import {
   CancelIcon,
@@ -38,6 +39,7 @@ import {
   useDialogContext,
 } from "../../../../ui/Atoms/Dialog";
 import { EditableComponentNoButton } from "../../../../ui/Molecules/InPlaceEditableComponent";
+import { useParams } from "next/navigation";
 
 export type StandardComponent = ({
   value,
@@ -99,6 +101,8 @@ function FileMenu({
   file: Files[number];
   updateFile: UpdateFileServerAction;
 }) {
+  const { propertyId } = useParams();
+  console.log("propertyId", propertyId);
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -120,14 +124,26 @@ function FileMenu({
             onClickCancel={() => {}}
           />
 
-          <DeleteButtonDialog />
+          <DeleteButtonDialog
+            fileId={file.id}
+            propertyId={(propertyId as string) || ""}
+          />
         </PopoverDescription>
       </PopoverContent>
     </Popover>
   );
 }
 
-function DeleteButtonDialog({}: {}) {
+function DeleteButtonDialog({
+  fileId,
+  propertyId,
+}: {
+  fileId: string;
+  propertyId: string;
+}) {
+  const onDelete = () => {
+    deleteFileAction({ fileId: fileId, propertyId: propertyId });
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -137,27 +153,55 @@ function DeleteButtonDialog({}: {}) {
         </button>
       </DialogTrigger>
       <DialogContent className="Dialog">
-        <DialogClose className="float-end rounded-lg border-2 border-black p-2">
-          <p>Close</p>
+        <DialogClose className="float-end rounded-lg ">
+          <button className="flex rounded-md bg-slate-300 p-2 shadow-sm shadow-black">
+            <CrossIcon />
+            Cancel
+          </button>
         </DialogClose>
 
         <DialogDescription className="flex  flex-col items-center gap-4 p-2 pt-14">
           <div className="max-w-96">
             <p className="pb-4">Are you sure you want to delete this file?</p>
             <div className="flex w-full justify-between gap-4">
-              <button className="flex rounded-md bg-slate-300 p-2 shadow-sm shadow-black">
-                <CrossIcon />
-                Cancel
-              </button>
-              <button className="flex rounded-md bg-red-400 p-2 shadow-sm shadow-black">
-                <DeleteIcon />
-                Delete
-              </button>
+              <DeleteDialogCancelButton />
+              <DeleteDialogConfirmButton onDelete={onDelete} />
             </div>
           </div>
         </DialogDescription>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function DeleteDialogCancelButton() {
+  const { setOpen } = usePopoverContext();
+
+  return (
+    <button
+      onClick={() => setOpen(false)}
+      className="flex rounded-md bg-slate-300 p-2 shadow-sm shadow-black"
+    >
+      <CrossIcon />
+      Cancel
+    </button>
+  );
+}
+
+function DeleteDialogConfirmButton({ onDelete }: { onDelete: () => void }) {
+  const { setOpen } = usePopoverContext();
+  const onClickDelete = async () => {
+    await onDelete();
+    setOpen(false);
+  };
+  return (
+    <button
+      onClick={onClickDelete}
+      className="flex rounded-md bg-red-400 p-2 shadow-sm shadow-black"
+    >
+      <DeleteIcon />
+      Delete
+    </button>
   );
 }
 
