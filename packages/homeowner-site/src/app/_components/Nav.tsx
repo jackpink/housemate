@@ -13,6 +13,7 @@ import {
   LargeSearchIcon,
   MoveIcon,
   PlusIcon,
+  SignOutIcon,
 } from "../../../../ui/Atoms/Icons";
 import { type Property } from "../../../../core/homeowner/property";
 import { concatAddress } from "~/utils/functions";
@@ -40,7 +41,7 @@ export default function Nav({
     return (
       <NavWrapper>
         <div className="flex gap-4">
-          <div className="relative flex hidden grow items-center justify-between gap-4 sm:flex">
+          <div className="relative flex hidden grow items-center justify-between gap-4 xs:flex">
             <InlineMenu
               properties={properties}
               currentAddress={currentAddress}
@@ -48,7 +49,7 @@ export default function Nav({
               currentPropertyId={currentPropertyId}
             />
           </div>
-          <div className="relative flex flex items-center justify-center sm:hidden">
+          <div className="relative flex flex items-center justify-center xs:hidden">
             <DropDownMenu
               properties={properties}
               currentpropertyId={currentPropertyId}
@@ -89,10 +90,6 @@ function InlineMenu({
         currentPropertyId={currentPropertyId}
       />
 
-      <button className="flex items-center rounded-lg bg-brand p-2 shadow-sm shadow-black">
-        <LargeSearchIcon />
-        Search
-      </button>
       <UserButton user={user} />
     </>
   );
@@ -116,26 +113,41 @@ function DropDownMenu({
       <Popover.Portal>
         <Popover.Content
           className={clsx(
-            "min-w-max rounded-lg border-2 border-black bg-white p-4 opacity-0 shadow-md shadow-black transition-all duration-1000 ease-in	will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade",
+            "min-w-max rounded-lg border-2 border-black bg-white  opacity-0 shadow-md shadow-black transition-all duration-1000 ease-in	will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade",
             isOpen && "opacity-100",
           )}
           sideOffset={5}
         >
-          <p className="italic outline-none">{`${user.firstName} ${user.lastName}`}</p>
-          <p className="italic outline-none">{`${user.email}`}</p>
-          <PropertySelectorSubMenu
-            currentPropertyId={currentpropertyId}
-            properties={properties}
-            onClickCancel={() => {}}
-          />
-          <button className="flex items-center p-2">
-            <LargeSearchIcon width={15} height={15} />
-            <p className="pl-2">Search</p>
-          </button>
-          <button className="flex items-center p-2">
-            <AlertsIcon height={20} colour="black" selected={false} />
-            <p className="pl-1">Notifications</p>
-          </button>
+          <div className="bg-brand p-4">
+            <p>{`${user.firstName} ${user.lastName}`}</p>
+            <p>{user.email}</p>
+          </div>
+          <div className="p-4">
+            <PropertySelectorSubMenu
+              currentPropertyId={currentpropertyId}
+              properties={properties}
+              onClickCancel={() => {}}
+            />
+
+            <Link href={"/manage-account"}>
+              <button className="flex items-center p-2">
+                <AccountIcon colour="black" selected={false} height={25} />
+                <p className="pl-2">Manage Account</p>
+              </button>
+            </Link>
+            <Link href={"/notifications"}>
+              <button className="flex items-center p-2">
+                <AlertsIcon height={20} colour="black" selected={false} />
+                <p className="pl-3">Notifications</p>
+              </button>
+            </Link>
+            <form action={signOutAction}>
+              <button className="flex items-center p-2" onClick={signOutAction}>
+                <SignOutIcon width={25} height={25} />
+                <p className="pl-2">Sign Out</p>
+              </button>
+            </form>
+          </div>
           <Popover.Arrow
             className="  fill-brand stroke-black"
             width={30}
@@ -322,12 +334,16 @@ function UserButton({ user }: { user: User }) {
                 <p className="pl-2">Manage Account</p>
               </button>
             </Link>
+            <Link href={"/notifications"}>
+              <button className="flex items-center p-2">
+                <AlertsIcon height={20} colour="black" selected={false} />
+                <p className="pl-3">Notifications</p>
+              </button>
+            </Link>
             <form action={signOutAction}>
-              <button
-                className="rounded-full bg-brand p-3"
-                onClick={signOutAction}
-              >
-                Sign Out
+              <button className="flex items-center p-2" onClick={signOutAction}>
+                <SignOutIcon width={25} height={25} />
+                <p className="pl-2">Sign Out</p>
               </button>
             </form>
           </div>
