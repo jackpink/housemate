@@ -60,7 +60,7 @@ export default async function ToDoPage({
         <div className="flex justify-center ">
           <div className="max-w-[800px] grow">
             <Link
-              href="/"
+              href={`/properties/${params.propertyId}`}
               className="flex w-max items-center justify-center p-4 xs:hidden"
             >
               <div className="-rotate-90 pb-6">
