@@ -322,3 +322,25 @@ export async function createTaskAction({
   revalidatePath(`/properties/${propertyId}`);
   return taskId;
 }
+
+export async function deleteFileAction({
+  fileId,
+  propertyId,
+}: {
+  fileId: string;
+  propertyId: string;
+}) {
+  await Item.updateFile({ id: fileId, deleted: true });
+  revalidatePath(`/properties/${propertyId}`);
+}
+
+export async function deleteItemAction({
+  itemId,
+  propertyId,
+}: {
+  itemId: string;
+  propertyId: string;
+}) {
+  await Item.update({ id: itemId, deleted: true });
+  revalidatePath(`/properties/${propertyId}`);
+}

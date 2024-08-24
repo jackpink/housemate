@@ -15,15 +15,32 @@ import {
   item,
   property,
 } from "../../../../core/db/schema";
-import { addFileToFolderAction, createFolderForItem } from "../actions";
+import {
+  addFileToFolderAction,
+  createFolderForItem,
+  deleteItemAction,
+} from "../actions";
 import { type ItemWithFiles } from "../../../../core/homeowner/item";
 import React from "react";
 import {
   CompletedIcon,
+  CrossIcon,
+  DeleteIcon,
   LargeAddIcon,
   PlusIcon,
   ToDoIcon,
 } from "../../../../ui/Atoms/Icons";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeading,
+  DialogTrigger,
+  useDialog,
+  useDialogContext,
+} from "../../../../ui/Atoms/Dialog";
+import { usePopoverContext } from "../../../../ui/Atoms/Popover";
 
 const createDateString = (date: Date) => {
   const dateString = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : "1"}${date.getDate()}`;
@@ -120,6 +137,7 @@ export default function EditItem({
             deviceType={deviceType}
           />
         </div>
+        <DeleteButtonDialog itemId={item.id} propertyId={propertyId} />
       </div>
     </div>
   );
@@ -645,5 +663,69 @@ function PhotosAndDocuments({
 
       {Files}
     </div>
+  );
+}
+
+function DeleteButtonDialog({
+  itemId,
+  propertyId,
+}: {
+  itemId: string;
+  propertyId: string;
+}) {
+  const onDelete = () => {
+    deleteItemAction({ itemId: itemId, propertyId: propertyId });
+  };
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="flex">
+          <DeleteIcon width={20} height={20} />
+          <span className="pl-2">Delete</span>
+        </button>
+      </DialogTrigger>
+      <DialogContent className="Dialog">
+        <DialogDescription className="flex  flex-col items-center gap-4 p-2 pt-14">
+          <div className="max-w-96">
+            <p className="pb-4">Are you sure you want to delete this file?</p>
+            <div className="flex w-full justify-between gap-4">
+              <DeleteDialogCancelButton />
+              <DeleteDialogConfirmButton onDelete={onDelete} />
+            </div>
+          </div>
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DeleteDialogCancelButton() {
+  const { setOpen } = useDialogContext();
+
+  return (
+    <button
+      onClick={() => setOpen(false)}
+      className="flex rounded-md bg-slate-300 p-2 shadow-sm shadow-black"
+    >
+      <CrossIcon />
+      Cancel
+    </button>
+  );
+}
+
+function DeleteDialogConfirmButton({ onDelete }: { onDelete: () => void }) {
+  const { setOpen } = useDialogContext();
+  const onClickDelete = async () => {
+    await onDelete();
+    setOpen(false);
+  };
+  return (
+    <button
+      onClick={onClickDelete}
+      className="flex rounded-md bg-red-400 p-2 shadow-sm shadow-black"
+    >
+      <DeleteIcon />
+      Delete
+    </button>
   );
 }

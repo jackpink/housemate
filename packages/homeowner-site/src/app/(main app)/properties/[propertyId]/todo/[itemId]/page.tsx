@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import {
   DropDownIcon,
+  GeneralHomeIcon,
   ToDoListIcon,
   UpArrowIcon,
 } from "../../../../../../../../ui/Atoms/Icons";
@@ -38,7 +39,22 @@ export default async function ToDoPage({
 
   const item = await Item.get(params.itemId);
 
-  if (!item) return <div>Item not found</div>;
+  if (!item)
+    return (
+      <>
+        <Link
+          href={`/properties/${params.propertyId}`}
+          className="flex w-max items-center justify-center p-4 xs:hidden"
+        >
+          <div className="-rotate-90 pb-6">
+            <DropDownIcon />
+          </div>
+          <GeneralHomeIcon width={30} height={30} />
+          <p className="pl-2 text-xl">Property Menu</p>
+        </Link>
+        <div className="p-20 text-center font-bold">Item not found</div>
+      </>
+    );
 
   const updateItemPriority: UpdateItemPriorityServerAction = async ({
     id,
