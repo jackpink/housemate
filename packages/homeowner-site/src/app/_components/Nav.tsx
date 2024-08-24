@@ -45,12 +45,13 @@ export default function Nav({
               properties={properties}
               currentAddress={currentAddress}
               user={user}
+              currentPropertyId={currentPropertyId}
             />
           </div>
           <div className="relative flex flex items-center justify-center sm:hidden">
             <DropDownMenu
               properties={properties}
-              currentAddress={currentAddress}
+              currentpropertyId={currentPropertyId}
               user={user}
             />
           </div>
@@ -71,10 +72,12 @@ function InlineMenu({
   properties,
   currentAddress,
   user,
+  currentPropertyId,
 }: {
   properties: Property[];
   currentAddress?: string;
   user: User;
+  currentPropertyId: string;
 }) {
   console.log("InlineMenu", currentAddress);
   return (
@@ -83,6 +86,7 @@ function InlineMenu({
         address={currentAddress}
         properties={properties}
         onClickCancel={() => {}}
+        currentPropertyId={currentPropertyId}
       />
 
       <button className="flex items-center rounded-lg bg-brand p-2 shadow-sm shadow-black">
@@ -95,11 +99,11 @@ function InlineMenu({
 }
 function DropDownMenu({
   properties,
-  currentAddress,
+  currentpropertyId,
   user,
 }: {
   properties: Property[];
-  currentAddress?: string;
+  currentpropertyId: string;
   user: User;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -120,7 +124,7 @@ function DropDownMenu({
           <p className="italic outline-none">{`${user.firstName} ${user.lastName}`}</p>
           <p className="italic outline-none">{`${user.email}`}</p>
           <PropertySelectorSubMenu
-            address={currentAddress}
+            currentPropertyId={currentpropertyId}
             properties={properties}
             onClickCancel={() => {}}
           />
@@ -144,22 +148,28 @@ function DropDownMenu({
 }
 
 function PropertySelectorSubMenu({
-  address,
+  currentPropertyId,
   properties,
   onClickCancel,
 }: {
-  address: string | undefined;
+  currentPropertyId: string;
   properties: Property[];
   onClickCancel: () => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const { width } = useViewport();
+
+  const currentProperty = properties.find((p) => p.id === currentPropertyId);
+  console.log("Nav", currentPropertyId);
+  const currentAddress = currentProperty
+    ? concatAddress(currentProperty).split(",")[0]
+    : "";
   return (
     <Popover.Root open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
       <Popover.Trigger className="outline-none">
         <button className="flex items-center  p-2 ">
           <MoveIcon />
-          <p>{address ? address : "Select a property"}</p>
+          <p>{currentAddress ? currentAddress : "Select a property"}</p>
         </button>
       </Popover.Trigger>
 
@@ -168,6 +178,7 @@ function PropertySelectorSubMenu({
           properties={properties}
           onClickCancel={onClickCancel}
           side={width < 585 ? "bottom" : "left"}
+          currentPropertyId={currentPropertyId}
         />
       </Popover.Portal>
     </Popover.Root>
@@ -178,10 +189,12 @@ function PropertySelectorMenu({
   address,
   properties,
   onClickCancel,
+  currentPropertyId,
 }: {
   address: string | undefined;
   properties: Property[];
   onClickCancel: () => void;
+  currentPropertyId: string;
 }) {
   return (
     <Popover.Root>
@@ -197,6 +210,7 @@ function PropertySelectorMenu({
           properties={properties}
           onClickCancel={onClickCancel}
           arrowColour="brand"
+          currentPropertyId={currentPropertyId}
         />
       </Popover.Portal>
     </Popover.Root>
@@ -208,11 +222,13 @@ function PropertySelectorMenuContent({
   onClickCancel,
   side = "bottom",
   arrowColour = "white",
+  currentPropertyId,
 }: {
   properties: Property[];
   onClickCancel: () => void;
   side?: "left" | "bottom";
   arrowColour?: "brand" | "white";
+  currentPropertyId: string;
 }) {
   return (
     <Popover.Content
@@ -231,6 +247,7 @@ function PropertySelectorMenuContent({
               property={property}
               key={property.id}
               onClickCancel={onClickCancel}
+              selected={property.id === currentPropertyId}
             />
           ))
         )}
@@ -257,18 +274,23 @@ function PropertySelectorMenuContent({
 function PropertyButton({
   property,
   onClickCancel,
+  selected = false,
 }: {
   property: Property;
   onClickCancel: () => void;
+  selected?: boolean;
 }) {
   return (
-    <button
-      className="flex items-center justify-center p-2"
-      onClick={onClickCancel}
+    <Link
+      className={clsx(
+        "flex items-center justify-between p-2",
+        selected && "bg-brand",
+      )}
+      href={`/properties/${property.id}`}
     >
-      <GeneralHomeIcon />
-      {concatAddress(property)}
-    </button>
+      <GeneralHomeIcon width={30} />
+      <p className="px-2">{concatAddress(property)}</p>
+    </Link>
   );
 }
 
