@@ -134,6 +134,21 @@ export async function getFilesRootFolder(id: string) {
   return result;
 }
 
+export async function getAll({ propertyId }: { propertyId: string }) {
+  const items = await db.query.item.findMany({
+    where: (item, { eq }) => eq(item.propertyId, propertyId),
+
+    with: {
+      filesRootFolder: {
+        with: { files: true },
+      },
+      pastDates: true,
+    },
+    orderBy: [asc(item.date)],
+  });
+  return items;
+}
+
 export async function update({
   id,
   title,
