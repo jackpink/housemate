@@ -16,7 +16,7 @@ export default async function ToDoPage() {
             <ToDosLoading />
           </div>
           <div className="grow">
-            <div className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black lg:hidden">
+            <div className="flex items-center p-2 text-xl lg:hidden">
               <span className="-rotate-90">
                 <DropDownIcon width={20} height={20} />
               </span>
