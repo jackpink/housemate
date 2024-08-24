@@ -73,10 +73,10 @@ export default function Folder({
 
   return (
     <details
-      className="group cursor-pointer rounded-md border-b border-slate-300 bg-white  "
+      className="group cursor-pointer rounded-md border-b border-slate-300 bg-white/30  "
       open
     >
-      <summary className="flex items-center justify-between rounded-md bg-slate-300 p-2 capitalize transition-all duration-500 ease-out group-open:mb-10">
+      <summary className="flex items-center justify-between rounded-t-md bg-altSecondary p-2 capitalize transition-all duration-500 ease-out group-open:mb-10">
         <span className="transition group-open:rotate-180">
           <DropDownIcon />
         </span>
@@ -105,7 +105,7 @@ export default function Folder({
         )}
       </summary>
 
-      <div className="grid gap-4 bg-white pb-8 pl-4 pt-2 transition-all duration-300 ease-in-out">
+      <div className="grid gap-4  pb-8 pl-4 pt-2 transition-all duration-300 ease-in-out">
         {children}
       </div>
     </details>
