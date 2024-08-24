@@ -1,21 +1,25 @@
 import { PageWithSingleColumn } from "../../../../../../../ui/Atoms/PageLayout";
 import { Property } from "../../../../../../../core/homeowner/property";
-import { Item } from "../../../../../../../core/homeowner/item";
+import { Item } from "../../../../../../../core/homeowner/items/item";
 import React from "react";
 import PastItems from "~/app/_components/PastItems";
 import SideMenu from "~/app/_components/SideMenu";
 import Link from "next/link";
 import {
   DropDownIcon,
-  OptionsLargeIcon,
-  PastIcon,
+  GeneralHomeIcon,
+  LargeSearchIcon,
 } from "../../../../../../../ui/Atoms/Icons";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 
 export default async function ToDoPage({
   params,
+  searchParams,
 }: {
   params: { propertyId: string };
+  searchParams: {
+    limit?: number;
+  };
 }) {
   const property = await Property.get(params.propertyId);
 
@@ -27,27 +31,32 @@ export default async function ToDoPage({
     return <div>Not Authenticated</div>;
   }
 
-  const completedItems = await Item.getCompleted(user.id);
+  const completedItems = await Item.getAll({ propertyId: params.propertyId });
 
+  console.log("searchParams Limit", searchParams.limit);
   return (
     <div className="flex">
       <SideMenu propertyId={params.propertyId} selected="past" />
       <PageWithSingleColumn>
-        <div className="flex items-center justify-center p-4 xs:hidden">
-          <PastIcon width={30} height={30} />
-          <h1 className="pl-2 text-2xl font-bold">Past</h1>
-        </div>
         <Link
           href={`/properties/${params.propertyId}`}
-          className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black xs:hidden"
+          className="flex w-max items-center justify-center p-4 xs:hidden"
         >
-          <span className="-rotate-90">
-            <DropDownIcon width={20} height={20} />
-          </span>
-          <span className="pl-2 pr-3">Back to Property Menu</span>
-          <OptionsLargeIcon width={30} height={30} />
+          <div className="-rotate-90 pb-6">
+            <DropDownIcon />
+          </div>
+          <GeneralHomeIcon width={30} height={30} />
+          <p className="pl-2 text-xl">Property Menu</p>
         </Link>
-        <PastItems completedItems={completedItems} />
+        <div className="flex items-center justify-center p-4 xs:hidden">
+          <LargeSearchIcon height={30} width={30} />
+          <h1 className="pl-2 text-2xl font-bold">Search</h1>
+        </div>
+
+        <PastItems
+          completedItems={completedItems}
+          itemsToShow={searchParams.limit || 10}
+        />
       </PageWithSingleColumn>
     </div>
   );

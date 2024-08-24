@@ -23,8 +23,10 @@ import Link from "next/link";
 
 export default function PastItems({
   completedItems,
+  itemsToShow = 10,
 }: {
   completedItems: CompletedItems;
+  itemsToShow?: number;
 }) {
   const { width, height } = useViewport();
   const [filteredItems, setFilteredItems] = React.useState(completedItems);
@@ -60,7 +62,7 @@ export default function PastItems({
     return (
       <div>
         <Filters isMobile={true} />
-        <Items items={newFilteredItems} />
+        <Items items={newFilteredItems} itemsToShow={itemsToShow} />
       </div>
     );
   }
@@ -68,7 +70,7 @@ export default function PastItems({
   return (
     <div className="flex">
       <Filters isMobile={false} />
-      <Items items={newFilteredItems} />
+      <Items items={newFilteredItems} itemsToShow={itemsToShow} />
     </div>
   );
 }
@@ -513,10 +515,27 @@ ITEMS
 ##########################################################################
 */
 
-function Items({ items }: { items: CompletedItems }) {
-  const [itemsToShow, setItemsToShow] = React.useState(2);
-
+function Items({
+  items,
+  itemsToShow,
+}: {
+  items: CompletedItems;
+  itemsToShow: number;
+}) {
   const reducedItems = items.slice(0, itemsToShow);
+
+  // need to add a function to add 10 to itemsToShow
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const addTenToItemsToShowParams = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    const searchLimit = Number(params.get("limit")) || 10;
+    const newSearchLimit = searchLimit + 10;
+    params.set("limit", newSearchLimit.toString());
+    router.push(`${pathname}?${params.toString()}`);
+  };
 
   return (
     <div className="min-w-80 max-w-lg grow">
@@ -540,7 +559,7 @@ function Items({ items }: { items: CompletedItems }) {
         {itemsToShow < items.length && (
           <button
             className="rounded-full bg-altSecondary p-3"
-            onClick={() => setItemsToShow(itemsToShow + 2)}
+            onClick={addTenToItemsToShowParams}
           >
             Load More...
           </button>
@@ -656,7 +675,7 @@ function ShowButton({
   const currentItemId = params.itemId?.toString() || "";
   return (
     <Link
-      href={`/properties/${item.propertyId}/past/${item.id}`}
+      href={`/properties/${item.propertyId}/search/${item.id}`}
       className={clsx(
         "h-full w-20 rounded-sm py-3",
         currentItemId === item.id
