@@ -73,29 +73,22 @@ export default async function ToDoPage({
             <p className="pl-2 text-xl">Back To Add</p>
           </Link>
         </div>
-        <Link
-          href={`/properties/${params.propertyId}`}
-          className="flex items-center rounded-md bg-altSecondary p-2 text-xl shadow-sm shadow-black xs:hidden"
-        >
-          <span className="-rotate-90">
-            <DropDownIcon width={20} height={20} />
-          </span>
-          Back to Property Menu
-        </Link>
-        <EditItem
-          item={item}
-          updateItem={updateItem}
-          propertyId={params.propertyId}
-          bucketName={bucketName}
-          Files={
-            <Files
-              rootFolder={item.filesRootFolder}
-              deviceType={deviceType}
-              propertyId={params.propertyId}
-            />
-          }
-          deviceType={deviceType}
-        />
+        <div className="p-2">
+          <EditItem
+            item={item}
+            updateItem={updateItem}
+            propertyId={params.propertyId}
+            bucketName={bucketName}
+            Files={
+              <Files
+                rootFolder={item.filesRootFolder}
+                deviceType={deviceType}
+                propertyId={params.propertyId}
+              />
+            }
+            deviceType={deviceType}
+          />
+        </div>
       </div>
     </div>
   );
