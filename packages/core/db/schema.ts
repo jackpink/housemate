@@ -31,6 +31,7 @@ export const homeownerUsers = sqliteTable("homeowner_user", {
     .default(false),
   image: text("image"),
   password: text("password").notNull(),
+  deleted: integer("deleted", { mode: "boolean" }).default(false),
   warrantyAlert: integer("warranty_alert").notNull().default(30),
   taskReminder: integer("task_reminder").notNull().default(7),
   taskOverdueReminder: integer("task_overdue_reminder").notNull().default(7),
@@ -73,6 +74,7 @@ export const property = sqliteTable("property", {
   state: text("state").notNull(),
   postcode: text("postcode").notNull(),
   country: text("country").notNull(),
+  deleted: integer("deleted", { mode: "boolean" }).default(false),
   homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
     onDelete: "cascade",
   }),
@@ -130,6 +132,7 @@ export const item = sqliteTable("item", {
   warrantyEndDate: text("warrantyEndDate"),
   filesRootFolderId: text("filesFolderId"),
   commonTaskId: text("commonTaskId"),
+  deleted: integer("deleted", { mode: "boolean" }).default(false),
 });
 
 export const itemRelations = relations(item, ({ one, many }) => ({
@@ -211,6 +214,7 @@ export const itemFile = sqliteTable("item_file", {
   key: text("key").notNull(),
   type: text("type").notNull(),
   bucket: text("bucket").notNull(),
+  deleted: integer("deleted", { mode: "boolean" }).default(false),
   folderId: text("folderId")
     .notNull()
     .references(() => itemFilesFolder.id, {

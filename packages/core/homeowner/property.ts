@@ -2,7 +2,7 @@ export * as Property from "./property";
 import axios from "axios";
 import { property } from "../db/schema";
 import { db } from "../db";
-import { eq, InferSelectModel } from "drizzle-orm";
+import { eq, InferSelectModel, and } from "drizzle-orm";
 import { env } from "../env.mjs";
 
 export async function create({
@@ -55,7 +55,9 @@ export async function getByHomeownerId(homeownerId: string) {
   const properties = await db
     .select()
     .from(property)
-    .where(eq(property.homeownerId, homeownerId));
+    .where(
+      and(eq(property.homeownerId, homeownerId), eq(property.deleted, false)),
+    );
   return properties;
 }
 
@@ -63,7 +65,7 @@ export async function get(id: string) {
   const [propertyObj] = await db
     .select()
     .from(property)
-    .where(eq(property.id, id));
+    .where(and(eq(property.id, id), eq(property.deleted, false)));
   return propertyObj;
 }
 

@@ -80,10 +80,14 @@ export async function get(id: string) {
     with: {
       filesRootFolder: {
         with: {
-          files: true,
+          files: {
+            where: eq(itemFile.deleted, false),
+          },
           folders: {
             with: {
-              files: true,
+              files: {
+                where: eq(itemFile.deleted, false),
+              },
             },
           },
         },
@@ -111,7 +115,9 @@ export async function getFilesFolder(id: string) {
   const result = await db.query.itemFilesFolder.findFirst({
     where: eq(itemFilesFolder.itemId, id),
     with: {
-      files: true,
+      files: {
+        where: eq(itemFile.deleted, false),
+      },
     },
   });
   if (!result) throw new Error("Folder not found");
@@ -122,10 +128,14 @@ export async function getFilesRootFolder(id: string) {
   const result = await db.query.itemFilesFolder.findFirst({
     where: eq(itemFilesFolder.itemId, id),
     with: {
-      files: true,
+      files: {
+        where: eq(itemFile.deleted, false),
+      },
       folders: {
         with: {
-          files: true,
+          files: {
+            where: eq(itemFile.deleted, false),
+          },
         },
       },
     },
@@ -136,11 +146,16 @@ export async function getFilesRootFolder(id: string) {
 
 export async function getAll({ propertyId }: { propertyId: string }) {
   const items = await db.query.item.findMany({
-    where: (item, { eq }) => eq(item.propertyId, propertyId),
+    where: (item, { eq }) =>
+      and(eq(item.propertyId, propertyId), eq(item.deleted, false)),
 
     with: {
       filesRootFolder: {
-        with: { files: true },
+        with: {
+          files: {
+            where: eq(itemFile.deleted, false),
+          },
+        },
       },
       pastDates: true,
     },
@@ -159,6 +174,7 @@ export async function update({
   priority,
   status,
   warrantyEndDate,
+  deleted,
 }: {
   id: string;
   title?: string;
@@ -169,6 +185,7 @@ export async function update({
   priority?: number;
   status?: ItemStatus;
   warrantyEndDate?: string;
+  deleted?: boolean;
 }) {
   if (recurring !== undefined) {
     await Recurring.update({ id, recurring });
@@ -190,6 +207,7 @@ export async function update({
         date: dateString,
         toDoPriority: priority,
         warrantyEndDate,
+        deleted,
       })
       .where(eq(item.id, id));
   }
@@ -237,12 +255,17 @@ export async function updateFile({
   id,
   name,
   folderId,
+  deleted,
 }: {
   id: string;
   name?: string;
   folderId?: string;
+  deleted?: boolean;
 }) {
-  await db.update(itemFile).set({ name, folderId }).where(eq(itemFile.id, id));
+  await db
+    .update(itemFile)
+    .set({ name, folderId, deleted })
+    .where(eq(itemFile.id, id));
 }
 
 export async function addFolder({
