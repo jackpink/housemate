@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   LargeAddIcon,
+  LargeSearchIcon,
   PastIcon,
   RecurringIcon,
   ScheduleIcon,
@@ -43,25 +44,13 @@ export default function SideMenu({
       </Link>
 
       <Link
-        href={`/properties/${propertyId}/recurring`}
-        className={clsx("block", selected === "recurring" && "bg-altSecondary")}
-      >
-        <div className="h-full w-full p-7">
-          <div className="flex w-full flex-col items-center justify-center">
-            <RecurringIcon width={45} height={45} />
-            <Text className="text-xl font-bold">Recurring</Text>
-          </div>
-        </div>
-      </Link>
-
-      <Link
-        href={`/properties/${propertyId}/past`}
+        href={`/properties/${propertyId}/search`}
         className={clsx("block", selected === "past" && "bg-altSecondary")}
       >
         <div className="h-full w-full  p-7">
           <div className="flex w-full flex-col items-center justify-center">
-            <PastIcon width={45} height={45} />
-            <Text className="text-xl font-bold">Past Items</Text>
+            <LargeSearchIcon width={45} height={45} />
+            <Text className="text-xl font-bold">Search</Text>
           </div>
         </div>
       </Link>
@@ -72,7 +61,7 @@ export default function SideMenu({
         <div className="h-full w-full  p-7">
           <div className="flex w-full flex-col items-center justify-center">
             <LargeAddIcon width={45} height={45} />
-            <Text className="text-xl font-bold">Add Item</Text>
+            <Text className="text-xl font-bold">Add Task</Text>
           </div>
         </div>
       </Link>
