@@ -76,7 +76,7 @@ export async function create({
 
 export async function get(id: string) {
   const result = await db.query.item.findFirst({
-    where: eq(item.id, id),
+    where: and(eq(item.id, id), eq(item.deleted, false)),
     with: {
       filesRootFolder: {
         with: {
@@ -217,7 +217,8 @@ export async function update({
     !!title ||
     !!description ||
     !!recurringSchedule ||
-    !!warrantyEndDate
+    !!warrantyEndDate ||
+    !!deleted
   ) {
     await db
       .update(item)
@@ -227,6 +228,7 @@ export async function update({
         recurringSchedule,
         toDoPriority: priority,
         warrantyEndDate,
+        deleted,
       })
       .where(eq(item.id, id));
   }
