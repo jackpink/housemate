@@ -1,12 +1,12 @@
 import { PageTitle } from "../../../../../ui/Atoms/Title";
 import { PageWithSingleColumn } from "../../../../../ui/Atoms/PageLayout";
-import { validateRequest } from "~/auth";
 import { redirect } from "next/navigation";
 import { Alert } from "../../../../../core/homeowner/alert";
 import { Alerts } from "~/app/_components/Alerts";
+import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 
 export default async function AlertsPage() {
-  const { user } = await validateRequest();
+  const user = await getVerifiedUserOrRedirect();
 
   if (!user || !user.id) {
     // redirect to login

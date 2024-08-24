@@ -15,7 +15,6 @@ import {
   item,
   property,
 } from "../../../../core/db/schema";
-import ImageUploader from "../../../../ui/Molecules/ImageUploader";
 import { addFileToFolderAction, createFolderForItem } from "../actions";
 import { type ItemWithFiles } from "../../../../core/homeowner/item";
 import React from "react";
@@ -25,24 +24,6 @@ import {
   PlusIcon,
   ToDoIcon,
 } from "../../../../ui/Atoms/Icons";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeading,
-  DialogTrigger,
-  useDialogContext,
-} from "../../../../ui/Atoms/Dialog";
-import { CTAButton } from "../../../../ui/Atoms/Button";
-import { useFormState } from "react-dom";
-import {
-  FormState,
-  emptyFormState,
-  fromErrorToFormState,
-} from "../../../../core/homeowner/forms";
-import { z } from "zod";
-import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 
 const createDateString = (date: Date) => {
   const dateString = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : "1"}${date.getDate()}`;
@@ -79,8 +60,18 @@ export default function EditItem({
   const date = new Date(item.date);
 
   return (
-    <div className="rounded-xl bg-todo/70">
-      <h1 className="w-full rounded-t-xl bg-todo p-4 text-center font-bold">
+    <div
+      className={clsx(
+        "rounded-xl ",
+        item.status === ItemStatus.COMPLETED ? "bg-completed/30" : "bg-todo/70",
+      )}
+    >
+      <h1
+        className={clsx(
+          "w-full rounded-t-xl p-4 text-center font-bold",
+          item.status === ItemStatus.COMPLETED ? "bg-completed/70" : "bg-todo",
+        )}
+      >
         {item.category === "job" && item.status === "todo"
           ? "Task"
           : item.category === "job" && item.status === "completed"

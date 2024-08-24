@@ -94,20 +94,22 @@ export default async function ToDoPage({
               Back to Search
               <LargeSearchIcon width={60} height={40} />
             </Link>
-            <EditItem
-              item={item}
-              updateItem={updateItem}
-              propertyId={params.propertyId}
-              bucketName={bucketName}
-              Files={
-                <Files
-                  rootFolder={item.filesRootFolder}
-                  deviceType={deviceType}
-                  propertyId={params.propertyId}
-                />
-              }
-              deviceType={deviceType}
-            />
+            <div className="p-2">
+              <EditItem
+                item={item}
+                updateItem={updateItem}
+                propertyId={params.propertyId}
+                bucketName={bucketName}
+                Files={
+                  <Files
+                    rootFolder={item.filesRootFolder}
+                    deviceType={deviceType}
+                    propertyId={params.propertyId}
+                  />
+                }
+                deviceType={deviceType}
+              />
+            </div>
           </div>
         </div>
       </div>
