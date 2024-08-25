@@ -13,7 +13,7 @@ import {
 } from "../../../../ui/Atoms/Icons";
 import { Text } from "../../../../ui/Atoms/Text";
 import { PropsWithChildren } from "react";
-import { auth } from "~/auth";
+
 import { Alert } from "../../../../core/homeowner/alert";
 import clsx from "clsx";
 
@@ -65,53 +65,52 @@ const MainMenuButtons = ({ selected, alerts }: MainMenuButtonsProps) => {
   );
 };
 
-async function PageWithBottomMenu({
-  children,
-  selected,
-}: PropsWithChildren<{ selected: Selected }>) {
-  // get alerts for user
-  const session = await auth();
+// async function PageWithBottomMenu({
+//   children,
+//   selected,
+// }: PropsWithChildren<{ selected: Selected }>) {
+//   // get alerts for user
 
-  const alerts = await Alert.getForHomeowner(session?.user?.id ?? "");
+//   const alerts = await Alert.getForHomeowner(session?.user?.id ?? "");
 
-  const newAlertsCount = alerts.filter((alert) => !alert.viewed).length;
+//   const newAlertsCount = alerts.filter((alert) => !alert.viewed).length;
 
-  return (
-    <div className="flex w-full flex-nowrap">
-      <div className="h-26 fixed bottom-0 z-40  w-full  overflow-hidden border border-t-4 border-altPrimary bg-altPrimary py-3  md:hidden">
-        <BottomMenu
-          selected={selected}
-          MainMenuButtons={MainMenuButtons}
-          alerts={newAlertsCount}
-        />
-      </div>
-      <div className="grow">{children}</div>
-    </div>
-  );
-}
+//   return (
+//     <div className="flex w-full flex-nowrap">
+//       <div className="h-26 fixed bottom-0 z-40  w-full  overflow-hidden border border-t-4 border-altPrimary bg-altPrimary py-3  md:hidden">
+//         <BottomMenu
+//           selected={selected}
+//           MainMenuButtons={MainMenuButtons}
+//           alerts={newAlertsCount}
+//         />
+//       </div>
+//       <div className="grow">{children}</div>
+//     </div>
+//   );
+// }
 
-export async function PropertiesPageWithSideMenu({
-  children,
-}: PropsWithChildren) {
-  return (
-    <PageWithBottomMenu selected={Selected.PROPERTIES}>
-      {children}
-    </PageWithBottomMenu>
-  );
-}
+// export async function PropertiesPageWithSideMenu({
+//   children,
+// }: PropsWithChildren) {
+//   return (
+//     <PageWithBottomMenu selected={Selected.PROPERTIES}>
+//       {children}
+//     </PageWithBottomMenu>
+//   );
+// }
 
-export async function AlertsPageWithSideMenu({ children }: PropsWithChildren) {
-  return (
-    <PageWithBottomMenu selected={Selected.ALERTS}>
-      {children}
-    </PageWithBottomMenu>
-  );
-}
+// export async function AlertsPageWithSideMenu({ children }: PropsWithChildren) {
+//   return (
+//     <PageWithBottomMenu selected={Selected.ALERTS}>
+//       {children}
+//     </PageWithBottomMenu>
+//   );
+// }
 
-export async function ManageAccountPageWithSideMenu({
-  children,
-}: PropsWithChildren) {
-  return (
-    <PageWithBottomMenu selected={Selected.NONE}>{children}</PageWithBottomMenu>
-  );
-}
+// export async function ManageAccountPageWithSideMenu({
+//   children,
+// }: PropsWithChildren) {
+//   return (
+//     <PageWithBottomMenu selected={Selected.NONE}>{children}</PageWithBottomMenu>
+//   );
+// }
