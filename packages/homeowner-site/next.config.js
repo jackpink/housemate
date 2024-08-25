@@ -6,6 +6,11 @@ await import("../core/env.mjs");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  outputFileTracingIncludes: {
+    "/auth": [
+      `./node_modules/argon2/prebuilds/${process.env.ARGON2_PREBUILDS_GLOB || "**"}`,
+    ],
+  },
   experimental: {
     serverComponentsExternalPackages: ["@node-rs/argon2"],
   },
