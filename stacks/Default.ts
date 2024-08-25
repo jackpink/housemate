@@ -10,6 +10,14 @@ export function Default({ stack }: StackContext) {
       environment: {
         TURSO_CONNECTION_URL: env.TURSO_CONNECTION_URL,
         TURSO_AUTH_TOKEN: env.TURSO_AUTH_TOKEN,
+        COGNITO_CLIENT_ID: env.COGNITO_CLIENT_ID,
+        COGNITO_CLIENT_SECRET: env.COGNITO_CLIENT_SECRET,
+        COGNITO_ISSUER: env.COGNITO_ISSUER,
+        AUTH_SECRET: env.AUTH_SECRET,
+        AUTH_URL: env.AUTH_URL,
+        AUTH_TRUST_HOST: env.AUTH_TRUST_HOST,
+        NEXT_PUBLIC_COVER_IMAGE_BUCKET: itemUploadsBucket.bucketName,
+        GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
       },
       function: {
         handler: "packages/functions/alerts.handler",
