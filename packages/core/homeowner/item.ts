@@ -430,10 +430,12 @@ export async function getForUserAndWarrantyDate(
 export type Items = Awaited<ReturnType<typeof getForUserAndWarrantyDate>>;
 
 export async function getForUserAndDate(userId: string, taskDate: string) {
+  console.log("getting items for user and date", userId, taskDate);
   const items = await db.query.item.findMany({
     where: (item, { eq }) =>
       and(eq(item.homeownerId, userId), eq(item.date, taskDate)),
   });
+  console.log("items", items);
   return items;
 }
 
