@@ -22,7 +22,7 @@ export const SideMenu = ({
         height="120"
         width="120"
         className=""
-        colour="#c470e7"
+        fillColour="#c470e7"
         textColour="#f7ece1"
       />
       <div className="grid h-full flex-col content-center justify-center gap-4">
