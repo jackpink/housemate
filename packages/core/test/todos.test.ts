@@ -1,7 +1,7 @@
 import { expect, it } from "vitest";
 import { Item } from "../homeowner/items/item";
 import { User } from "../homeowner/user";
-import { ItemCategory, ItemStatus } from "../db/schema";
+import { ItemCategory, ItemStatus, RecurringSchedule } from "../db/schema";
 import { Property } from "../homeowner/property";
 import { Todos } from "../homeowner/items/todos";
 
@@ -33,6 +33,9 @@ it("add a task", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   expect(itemId).toBeDefined();
   await Item.update({
@@ -75,6 +78,9 @@ it("add 6 tasks and get initial priority", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   const itemId2 = await Item.create({
@@ -83,6 +89,9 @@ it("add 6 tasks and get initial priority", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId3 = await Item.create({
     title: "Clean Gutters",
@@ -90,6 +99,9 @@ it("add 6 tasks and get initial priority", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId4 = await Item.create({
     title: "Clean Gutters",
@@ -97,6 +109,9 @@ it("add 6 tasks and get initial priority", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId5 = await Item.create({
     title: "Clean Gutters",
@@ -104,6 +119,9 @@ it("add 6 tasks and get initial priority", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId6 = await Item.create({
     title: "Clean Gutters",
@@ -111,6 +129,9 @@ it("add 6 tasks and get initial priority", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   // give them dates in rnadom order
@@ -186,6 +207,9 @@ it("add 6 tasks and get initial priority, then add a 7th", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   const itemId2 = await Item.create({
@@ -194,6 +218,9 @@ it("add 6 tasks and get initial priority, then add a 7th", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId3 = await Item.create({
     title: "Clean Gutters 3",
@@ -201,6 +228,9 @@ it("add 6 tasks and get initial priority, then add a 7th", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId4 = await Item.create({
     title: "Clean Gutters 4",
@@ -208,6 +238,9 @@ it("add 6 tasks and get initial priority, then add a 7th", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId5 = await Item.create({
     title: "Clean Gutters 5",
@@ -215,6 +248,9 @@ it("add 6 tasks and get initial priority, then add a 7th", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId6 = await Item.create({
     title: "Clean Gutters 6",
@@ -222,6 +258,9 @@ it("add 6 tasks and get initial priority, then add a 7th", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   // give them dates in rnadom order
@@ -261,6 +300,9 @@ it("add 6 tasks and get initial priority, then add a 7th", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   await Item.update({
@@ -324,6 +366,9 @@ it("add 6 tasks and get initial priority, then move", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   const itemId2 = await Item.create({
@@ -332,6 +377,9 @@ it("add 6 tasks and get initial priority, then move", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId3 = await Item.create({
     title: "Clean Gutters 3",
@@ -339,6 +387,9 @@ it("add 6 tasks and get initial priority, then move", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId4 = await Item.create({
     title: "Clean Gutters 4",
@@ -346,6 +397,9 @@ it("add 6 tasks and get initial priority, then move", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId5 = await Item.create({
     title: "Clean Gutters 5",
@@ -353,6 +407,9 @@ it("add 6 tasks and get initial priority, then move", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId6 = await Item.create({
     title: "Clean Gutters 6",
@@ -360,6 +417,9 @@ it("add 6 tasks and get initial priority, then move", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   // give them dates in rnadom order
@@ -482,6 +542,9 @@ it("add 6 tasks and get initial priority, then set a middle as complete", async 
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   const itemId2 = await Item.create({
@@ -490,6 +553,9 @@ it("add 6 tasks and get initial priority, then set a middle as complete", async 
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId3 = await Item.create({
     title: "Clean Gutters 3",
@@ -497,6 +563,9 @@ it("add 6 tasks and get initial priority, then set a middle as complete", async 
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId4 = await Item.create({
     title: "Clean Gutters 4",
@@ -504,6 +573,9 @@ it("add 6 tasks and get initial priority, then set a middle as complete", async 
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId5 = await Item.create({
     title: "Clean Gutters 5",
@@ -511,6 +583,9 @@ it("add 6 tasks and get initial priority, then set a middle as complete", async 
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId6 = await Item.create({
     title: "Clean Gutters 6",
@@ -518,6 +593,9 @@ it("add 6 tasks and get initial priority, then set a middle as complete", async 
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   // give them dates in rnadom order
@@ -606,6 +684,9 @@ it("add 6 tasks and get initial priority, then set a middle as recurring, then c
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   const itemId2 = await Item.create({
@@ -614,6 +695,9 @@ it("add 6 tasks and get initial priority, then set a middle as recurring, then c
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId3 = await Item.create({
     title: "Clean Gutters 3",
@@ -621,6 +705,9 @@ it("add 6 tasks and get initial priority, then set a middle as recurring, then c
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId4 = await Item.create({
     title: "Clean Gutters 4",
@@ -628,6 +715,9 @@ it("add 6 tasks and get initial priority, then set a middle as recurring, then c
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId5 = await Item.create({
     title: "Clean Gutters 5",
@@ -635,6 +725,9 @@ it("add 6 tasks and get initial priority, then set a middle as recurring, then c
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId6 = await Item.create({
     title: "Clean Gutters 6",
@@ -642,6 +735,9 @@ it("add 6 tasks and get initial priority, then set a middle as recurring, then c
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   // give them dates in rnadom order
@@ -738,6 +834,9 @@ it("add 6 tasks and set as completed in last week, then set new as recurring, th
     status: ItemStatus.COMPLETED,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   const itemId2 = await Item.create({
@@ -746,6 +845,9 @@ it("add 6 tasks and set as completed in last week, then set new as recurring, th
     status: ItemStatus.COMPLETED,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId3 = await Item.create({
     title: "Clean Gutters 3",
@@ -753,6 +855,9 @@ it("add 6 tasks and set as completed in last week, then set new as recurring, th
     status: ItemStatus.COMPLETED,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId4 = await Item.create({
     title: "Clean Gutters 4",
@@ -760,6 +865,9 @@ it("add 6 tasks and set as completed in last week, then set new as recurring, th
     status: ItemStatus.COMPLETED,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId5 = await Item.create({
     title: "Clean Gutters 5",
@@ -767,6 +875,9 @@ it("add 6 tasks and set as completed in last week, then set new as recurring, th
     status: ItemStatus.COMPLETED,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   const itemId6 = await Item.create({
     title: "Clean Gutters 6",
@@ -774,6 +885,9 @@ it("add 6 tasks and set as completed in last week, then set new as recurring, th
     status: ItemStatus.COMPLETED,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
 
   const dateObj = new Date();
@@ -831,6 +945,9 @@ it("add 6 tasks and set as completed in last week, then set new as recurring, th
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: true,
   });
 
   await Item.update({

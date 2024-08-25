@@ -40,7 +40,7 @@ past date with the current date
 import { expect, it } from "vitest";
 import { Item } from "../homeowner/items/item";
 import { User } from "../homeowner/user";
-import { ItemCategory, ItemStatus } from "../db/schema";
+import { ItemCategory, ItemStatus, RecurringSchedule } from "../db/schema";
 import { Property } from "../homeowner/property";
 
 it("make task recurring", async () => {
@@ -67,6 +67,9 @@ it("make task recurring", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   expect(itemId).toBeDefined();
   await Item.update({
@@ -103,6 +106,9 @@ it("set task as complete", async () => {
     status: ItemStatus.TODO,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   expect(itemId).toBeDefined();
   // give it future date
@@ -157,6 +163,9 @@ it("make complete task recurring", async () => {
     status: ItemStatus.COMPLETED,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   expect(itemId).toBeDefined();
   // set as complete
@@ -236,6 +245,9 @@ it("make complete task recurring and set as complete", async () => {
     status: ItemStatus.COMPLETED,
     homeownerId: userId,
     propertyId: propertyId,
+    schedule: RecurringSchedule.WEEKLY,
+    date: new Date("2021-12-06"),
+    recurring: false,
   });
   expect(itemId).toBeDefined();
 
