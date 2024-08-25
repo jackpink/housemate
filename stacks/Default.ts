@@ -5,7 +5,7 @@ export function Default({ stack }: StackContext) {
   const itemUploadsBucket = new Bucket(stack, "ItemUploads");
 
   new Cron(stack, "alertsCron", {
-    schedule: "rate(1 day)",
+    schedule: "rate(60 minutes)",
     job: {
       environment: {
         TURSO_CONNECTION_URL: env.TURSO_CONNECTION_URL,
@@ -18,6 +18,7 @@ export function Default({ stack }: StackContext) {
         AUTH_TRUST_HOST: env.AUTH_TRUST_HOST,
         NEXT_PUBLIC_COVER_IMAGE_BUCKET: itemUploadsBucket.bucketName,
         GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
+        RESEND_API_KEY: env.RESEND_API_KEY,
       },
       function: {
         handler: "packages/functions/alerts.handler",
@@ -39,6 +40,7 @@ export function Default({ stack }: StackContext) {
       AUTH_TRUST_HOST: env.AUTH_TRUST_HOST,
       NEXT_PUBLIC_COVER_IMAGE_BUCKET: itemUploadsBucket.bucketName,
       GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
+      RESEND_API_KEY: env.RESEND_API_KEY,
     },
   });
   stack.addOutputs({
