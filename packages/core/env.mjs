@@ -70,7 +70,7 @@ export const env = createEnv({
     //   process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
     // // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
-    // AWS_SSL_CERTIFICATE_ARN: process.env.AWS_SSL_CERTIFICATE_ARN,
+    AWS_SSL_CERTIFICATE_ARN: process.env.AWS_SSL_CERTIFICATE_ARN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
