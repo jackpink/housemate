@@ -26,14 +26,12 @@ import { send } from "process";
 import { sendVerificationEmail } from "~/utils/emails";
 
 export async function signInAction(email: string, password: string) {
-  // console.log("Try to sign in ", email, password);
   // try {
   await signIn({
     email: email,
     password: password,
   })
     .then(() => {
-      console.log("Sign in finally");
       redirect("/properties");
     })
     .catch((error) => {
@@ -159,7 +157,6 @@ export async function createProperty({
   country: string;
   homeownerId: string;
 }) {
-  console.log;
   const propertyId = await Property.create({
     apartment,
     streetNumber,
@@ -170,7 +167,6 @@ export async function createProperty({
     country,
     homeownerId,
   });
-  console.log("Property created", propertyId);
   revalidatePath("/properties");
   return propertyId;
 }
@@ -318,7 +314,6 @@ export async function createTaskAction({
     propertyId,
     commonTaskId,
   });
-  console.log("Task created", taskId);
   revalidatePath(`/properties/${propertyId}`);
   return taskId;
 }

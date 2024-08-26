@@ -93,7 +93,6 @@ export async function generateEmailVerificationCode({
   userId: string;
 }): Promise<string> {
   let code = generateRandomString(6, alphabet("0-9"));
-  console.log("Generated code", code);
   code = await User.createEmailVerificationCode({
     userId,
     code,

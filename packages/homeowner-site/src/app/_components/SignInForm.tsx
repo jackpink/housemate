@@ -69,7 +69,6 @@ const AttemptSignIn = async (
       password: formData.get("password") as string,
     });
 
-    console.log("Try to sign in ", result.email, result.password);
     await signInAction(result.email, result.password);
   } catch (error) {
     console.error("Error signing in", error);
@@ -199,7 +198,6 @@ const updatePassword = async (
       userId: formData.get("userId"),
     });
 
-    console.log("new user");
     await updatePasswordAction({
       newPassword: result.password,
       userId: result.userId,

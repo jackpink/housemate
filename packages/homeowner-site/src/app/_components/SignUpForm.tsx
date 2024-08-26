@@ -95,7 +95,6 @@ const createUser = async (
       confirmPassword: formData.get("confirmPassword"),
     });
 
-    console.log("new user");
     await signUpAction(result);
     result.firstName;
   } catch (error) {
@@ -181,7 +180,6 @@ export const ResendVerificationEmailButton = ({
 
   useEffect(() => {
     if (isSent) {
-      console.log("running issent timer");
       setTimeout(() => setIsSent(false), 10000);
     }
   }, [isSent]);
