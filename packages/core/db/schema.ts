@@ -35,6 +35,8 @@ export const homeownerUsers = sqliteTable("homeowner_user", {
   warrantyAlert: integer("warranty_alert").notNull().default(30),
   taskReminder: integer("task_reminder").notNull().default(7),
   taskOverdueReminder: integer("task_overdue_reminder").notNull().default(7),
+  storageUsed: integer("storage_used").notNull().default(0),
+  storageLimit: integer("storage_limit").notNull().default(1000000000),
 });
 
 export const emailVerificationCode = sqliteTable("email_verification_code", {

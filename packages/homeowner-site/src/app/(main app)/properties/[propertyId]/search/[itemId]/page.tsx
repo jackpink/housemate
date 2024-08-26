@@ -18,6 +18,8 @@ import Link from "next/link";
 import { Todos } from "../../../../../../../../core/homeowner/items/todos";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 import { ItemNotFound } from "~/app/_components/NotFound";
+import { User } from "../../../../../../../../core/homeowner/user";
+import { freeStorageLimit } from "~/utils/functions";
 
 export default async function ToDoPage({
   params,
@@ -68,6 +70,8 @@ export default async function ToDoPage({
     revalidatePath(`/properties/${params.propertyId}/past/${params.itemId}`);
   };
 
+  const fullUser = await User.getById(user.id);
+
   // @ts-ignore
   const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";
 
@@ -108,6 +112,9 @@ export default async function ToDoPage({
                     rootFolder={item.filesRootFolder}
                     deviceType={deviceType}
                     propertyId={params.propertyId}
+                    isUserStorageFull={
+                      fullUser?.storageUsed >= freeStorageLimit
+                    }
                   />
                 }
                 deviceType={deviceType}

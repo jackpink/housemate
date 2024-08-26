@@ -1,6 +1,6 @@
 export * as User from "./user";
 import { db, schema } from "../db";
-import { eq, gt, and } from "drizzle-orm";
+import { eq, gt, and, sql } from "drizzle-orm";
 
 export async function create({
   firstName,
@@ -59,6 +59,26 @@ export async function update({
     .returning({ id: schema.homeownerUsers.id });
   if (!updated) throw new Error("Failed to update user");
   return updated.id;
+}
+
+export async function updateStorageUsed({
+  id,
+  storage,
+}: {
+  id: string;
+  storage: number;
+}) {
+  console.log("Try to update storage used", id, storage);
+  const [storageUpdated] = await db
+    .update(schema.homeownerUsers)
+    .set({
+      storageUsed: sql`${schema.homeownerUsers.storageUsed} + ${storage}`,
+    })
+    .where(eq(schema.homeownerUsers.id, id))
+    .returning({ id: schema.homeownerUsers.storageUsed });
+  console.log(`${storage} added to storage used now is ${storageUpdated}`);
+  if (!storageUpdated) throw new Error("Failed to update storage used");
+  return true;
 }
 
 export async function getByCredentials(email: string, password: string) {

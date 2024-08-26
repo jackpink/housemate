@@ -37,7 +37,12 @@ import {
   emptyFormState,
   fromErrorToFormState,
 } from "../../../../core/homeowner/forms";
-import { addFileToFolderAction, createFolderForItem } from "../actions";
+import {
+  addFileToFolderAction,
+  createFolderForItem,
+  updateUser,
+  updateUserStorage,
+} from "../actions";
 import { useFormState } from "react-dom";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import { CTAButton } from "../../../../ui/Atoms/Button";
@@ -45,6 +50,7 @@ import { z } from "zod";
 import { useState } from "react";
 import clsx from "clsx";
 import ImageUploader from "../../../../ui/Molecules/ImageUploader";
+import { useSession } from "./ContextProviders";
 
 export type UpdateFolderServerAction = ({}: {
   name: string;
@@ -60,6 +66,7 @@ export default function Folder({
   updateFolder,
   bucketName,
   deviceType,
+  isUserStorageFull,
 }: {
   folder: Folder;
   children: React.ReactNode;
@@ -68,6 +75,7 @@ export default function Folder({
   updateFolder: UpdateFolderServerAction;
   bucketName: string;
   deviceType: "mobile" | "desktop";
+  isUserStorageFull: boolean;
 }) {
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -101,6 +109,7 @@ export default function Folder({
             onRename={() => setIsEditMode(true)}
             bucketName={bucketName}
             deviceType={deviceType}
+            isUserStorageFull={isUserStorageFull}
           />
         )}
       </summary>
@@ -155,6 +164,7 @@ function FolderMenu({
   onRename,
   deviceType,
   bucketName,
+  isUserStorageFull,
 }: {
   folderId: string;
   propertyId: string;
@@ -162,15 +172,19 @@ function FolderMenu({
   onRename: () => void;
   deviceType: "mobile" | "desktop";
   bucketName: string;
+  isUserStorageFull: boolean;
 }) {
+  const user = useSession();
   const onUploadComplete = ({
     name,
     key,
     type,
+    size,
   }: {
     name: string;
     key: string;
     type: string;
+    size: number;
   }) => {
     addFileToFolderAction({
       folderId,
@@ -181,6 +195,9 @@ function FolderMenu({
       propertyId,
       type,
     });
+    // update the users storage
+    console.log("!!!!!!!!!!!size", size);
+    if (user) updateUserStorage({ id: user.id, storage: size });
   };
 
   return (
@@ -211,6 +228,7 @@ function FolderMenu({
             onUploadComplete={onUploadComplete}
             deviceType={deviceType}
             itemId={itemId}
+            isUserStorageFull={isUserStorageFull}
           />
         </PopoverDescription>
       </PopoverContent>
@@ -257,11 +275,13 @@ function UploadFile({
   onUploadComplete,
   deviceType,
   itemId,
+  isUserStorageFull,
 }: {
   bucketName: string;
   onUploadComplete: (file: any) => void;
   deviceType: "mobile" | "desktop";
   itemId: string;
+  isUserStorageFull: boolean;
 }) {
   return (
     <Dialog>
@@ -282,6 +302,7 @@ function UploadFile({
             bucketName={bucketName}
             onUploadComplete={onUploadComplete}
             deviceType={deviceType}
+            isUserStorageFull={isUserStorageFull}
           />
         </DialogDescription>
       </DialogContent>

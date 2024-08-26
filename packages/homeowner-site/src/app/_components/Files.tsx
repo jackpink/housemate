@@ -12,17 +12,20 @@ import { Bucket } from "sst/node/bucket";
 import { MobileFile, UpdateFileServerAction } from "./File";
 import { revalidatePath } from "next/cache";
 import Folder, { UpdateFolderServerAction } from "./Folder";
+import { is } from "drizzle-orm";
 
 export default function Files({
   rootFolder,
   deviceType,
   propertyId,
   isThumbnail = false,
+  isUserStorageFull,
 }: {
   rootFolder: ItemWithFiles["filesRootFolder"];
   deviceType: "mobile" | "desktop";
   propertyId: string;
   isThumbnail?: boolean;
+  isUserStorageFull: boolean;
 }) {
   if (!rootFolder) {
     return <div>No files</div>;
@@ -66,6 +69,7 @@ export default function Files({
       allFolders={allFolders}
       itemId={rootFolder.itemId!}
       updateFolder={updateFolder}
+      isUserStorageFull={isUserStorageFull}
     />
   );
 }
@@ -103,6 +107,7 @@ function FilesList({
   allFolders,
   itemId,
   updateFolder,
+  isUserStorageFull,
 }: {
   rootFolder: RootFolder;
   deviceType: "mobile" | "desktop";
@@ -110,6 +115,7 @@ function FilesList({
   allFolders: FolderType[];
   itemId: string;
   updateFolder: UpdateFolderServerAction;
+  isUserStorageFull: boolean;
 }) {
   // @ts-ignore
   const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";
@@ -122,6 +128,7 @@ function FilesList({
         updateFolder={updateFolder}
         bucketName={bucketName}
         deviceType={deviceType}
+        isUserStorageFull={isUserStorageFull}
       >
         {rootFolder.files.map((file) => (
           <File
@@ -142,6 +149,7 @@ function FilesList({
             updateFolder={updateFolder}
             bucketName={bucketName}
             deviceType={deviceType}
+            isUserStorageFull={isUserStorageFull}
           >
             {folder.files.map((file) => (
               <File

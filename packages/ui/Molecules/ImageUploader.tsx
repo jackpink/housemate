@@ -7,14 +7,17 @@ import { useState } from "react";
 import { CTAButton } from "../Atoms/Button";
 import { ErrorMessage, Text } from "../Atoms/Text";
 import {
+  AccountIcon,
   CancelIcon,
   ConfirmIcon,
   CrossIcon,
   PdfFileIcon,
   RetryIcon,
+  StorageFullIcon,
   UploadIcon,
   WarningIcon,
 } from "../Atoms/Icons";
+import Link from "next/link";
 
 type UploadStatus =
   | "fileSizeError"
@@ -35,18 +38,22 @@ export default function ImageUploader({
   deviceType,
   onUploadComplete,
   bucketName,
+  isUserStorageFull,
 }: {
   bucketKey: string;
   bucketName: string;
   deviceType: "mobile" | "desktop";
+  isUserStorageFull: boolean;
   onUploadComplete: ({
     key,
     name,
     type,
+    size,
   }: {
     key: string;
     name: string;
     type: string;
+    size: number;
   }) => void;
 }) {
   const [currentUploads, setCurrentUploads] = useState<Upload[]>([]);
@@ -106,6 +113,7 @@ export default function ImageUploader({
           key: key,
           name: upload.file.name,
           type: upload.file.type,
+          size: upload.file.size,
         });
         // await updateProperty({ coverImageKey: key, propertyId: propertyId });
         setCurrentUploads((currentUploads) => {
@@ -131,6 +139,23 @@ export default function ImageUploader({
         }
       });
   };
+  if (isUserStorageFull) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <StorageFullIcon width={80} height={80} colour="red" />
+        <Text className="pb-8 text-red-500">
+          Your storage is full. Please delete some files to upload more
+        </Text>
+        <Link
+          href="/manage-account"
+          className="flex items-center justify-center rounded-lg border-2 border-black p-2 p-2"
+        >
+          <AccountIcon colour="black" selected={false} height={30} /> Manage
+          Account
+        </Link>
+      </div>
+    );
+  }
   console.log("deviceType", deviceType);
   if (deviceType === "mobile") {
     console.log("mobile imatge updloader");

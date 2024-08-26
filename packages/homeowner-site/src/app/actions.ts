@@ -223,6 +223,7 @@ export async function addFileToFolderAction({
   type: string;
 }) {
   const itemFileId = Item.addFile({ folderId, name, key, bucket, type });
+  // need to update users storage
   revalidatePath(`/properties/${propertyId}/items/${itemId}`);
   return itemFileId;
 }
@@ -259,6 +260,15 @@ export async function updateUser({
 }) {
   "use server";
   // update user
+  console.log(
+    "Updating user",
+    id,
+    firstName,
+    lastName,
+    warrantyAlert,
+    taskReminder,
+    taskOverdueReminder,
+  );
   const user = await User.update({
     id,
     firstName,
@@ -268,6 +278,24 @@ export async function updateUser({
     taskOverdueReminder,
   });
   if (!user) throw new Error("Failed to update user");
+  revalidatePath(`/manage-account`);
+}
+
+export async function updateUserStorage({
+  id,
+  storage,
+}: {
+  id: string;
+  storage: number;
+}) {
+  "use server";
+  // update user storage
+  console.log("Updating user storage", id, storage);
+  const user = await User.updateStorageUsed({
+    id,
+    storage,
+  });
+  if (!user) throw new Error("Failed to update user storage");
   revalidatePath(`/manage-account`);
 }
 
