@@ -1,5 +1,6 @@
 import { StackContext, NextjsSite, Bucket, Cron } from "sst/constructs";
 import { env } from "../packages/core/env.mjs";
+import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 
 export function Default({ stack }: StackContext) {
   const itemUploadsBucket = new Bucket(stack, "ItemUploads");
@@ -42,7 +43,20 @@ export function Default({ stack }: StackContext) {
       GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
       RESEND_API_KEY: env.RESEND_API_KEY,
     },
+    customDomain: {
+      domainName: "housemate.dev",
+      isExternalDomain: true,
+      cdk: {
+        certificate: Certificate.fromCertificateArn(
+          stack,
+          "Certificate",
+          env.AWS_SSL_CERTIFICATE_ARN,
+        ),
+      },
+      domainAlias: "www.housemate.dev",
+    },
   });
+
   stack.addOutputs({
     SiteUrl: site.url,
   });
