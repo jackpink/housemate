@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { Todos } from "../../../../../../../../core/homeowner/items/todos";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
+import { ItemNotFound } from "~/app/_components/NotFound";
 
 export default async function ToDoPage({
   params,
@@ -36,21 +37,7 @@ export default async function ToDoPage({
   const item = await Item.get(params.itemId);
 
   if (!item)
-    return (
-      <>
-        <Link
-          href={`/properties/${params.propertyId}`}
-          className="flex w-max items-center justify-center p-4 xs:hidden"
-        >
-          <div className="-rotate-90 pb-6">
-            <DropDownIcon />
-          </div>
-          <GeneralHomeIcon width={30} height={30} />
-          <p className="pl-2 text-xl">Property Menu</p>
-        </Link>
-        <div className="p-20 text-center font-bold">Item not found</div>
-      </>
-    );
+    return <ItemNotFound propertyId={params.propertyId} currentPage="search" />;
 
   const user = await getVerifiedUserOrRedirect();
 
@@ -90,7 +77,7 @@ export default async function ToDoPage({
 
   return (
     <div className="flex w-full">
-      <SideMenu propertyId={params.propertyId} selected="past" />
+      <SideMenu propertyId={params.propertyId} selected="search" />
       <div className="flex-1">
         <div className="flex justify-center ">
           <div className="hidden max-w-[800px] grow lg:block">

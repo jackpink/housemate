@@ -18,6 +18,7 @@ import Files from "~/app/_components/Files";
 import { Bucket } from "sst/node/bucket";
 import Schedule from "~/app/_components/Schedule";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
+import { ItemNotFound } from "~/app/_components/NotFound";
 
 export default async function ToDoPage({
   params,
@@ -45,19 +46,7 @@ export default async function ToDoPage({
 
   if (!item)
     return (
-      <>
-        <Link
-          href={`/properties/${params.propertyId}`}
-          className="flex w-max items-center justify-center p-4 xs:hidden"
-        >
-          <div className="-rotate-90 pb-6">
-            <DropDownIcon />
-          </div>
-          <GeneralHomeIcon width={30} height={30} />
-          <p className="pl-2 text-xl">Property Menu</p>
-        </Link>
-        <div className="p-20 text-center font-bold">Item not found</div>
-      </>
+      <ItemNotFound propertyId={params.propertyId} currentPage="schedule" />
     );
 
   const pastMonths = searchParams.pastMonths || 3;

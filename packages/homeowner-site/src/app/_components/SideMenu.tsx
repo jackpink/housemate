@@ -16,7 +16,7 @@ export default function SideMenu({
   selected,
 }: {
   propertyId: string;
-  selected: "todo" | "schedule" | "recurring" | "past" | "add";
+  selected: "todo" | "schedule" | "recurring" | "search" | "add";
 }) {
   return (
     <aside className="hidden max-w-min xs:block">
@@ -45,7 +45,7 @@ export default function SideMenu({
 
       <Link
         href={`/properties/${propertyId}/search`}
-        className={clsx("block", selected === "past" && "bg-altSecondary")}
+        className={clsx("block", selected === "search" && "bg-altSecondary")}
       >
         <div className="h-full w-full  p-7">
           <div className="flex w-full flex-col items-center justify-center">

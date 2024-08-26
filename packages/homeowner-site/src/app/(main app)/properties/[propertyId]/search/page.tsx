@@ -36,7 +36,7 @@ export default async function ToDoPage({
   console.log("searchParams Limit", searchParams.limit);
   return (
     <div className="flex">
-      <SideMenu propertyId={params.propertyId} selected="past" />
+      <SideMenu propertyId={params.propertyId} selected="search" />
       <PageWithSingleColumn>
         <Link
           href={`/properties/${params.propertyId}`}
