@@ -70,6 +70,7 @@ async function createTaskAlertForItem(
     console.log("Alert already exists for item", item.id);
     return;
   }
+  console.log("no alerts exist, Creating alert for item", item.id);
   const title = `Task Reminder alert for ${item.title}`;
   const description = `The task ${item.title} is due on ${item.date}`;
   const alertId = await Alert.create({
