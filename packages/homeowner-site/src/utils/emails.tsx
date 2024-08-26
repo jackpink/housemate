@@ -1,7 +1,8 @@
 import { Resend } from "resend";
 import { env } from "../../../core/env.mjs";
 import { Tailwind, Button } from "@react-email/components";
-import { PasswordResetEmail, VerificationEmail } from "./email-templates";
+import VerificationEmail from "../../../transactional/emails/VerificationEmail";
+import PasswordResetEmail from "../../../transactional/emails/ResetPassword";
 
 export async function sendVerificationEmail({
   email,
