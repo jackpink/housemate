@@ -1,7 +1,7 @@
 before_compile:
   - echo "Before compile"
   - n 20.9.0
-  - npm install @node-rs/argon2-linux-arm64-gnu
+#  - npm install @node-rs/argon2-linux-arm64-gnu --force
 
 #compile:
 #  - echo "Override compile"
