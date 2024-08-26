@@ -53,7 +53,6 @@ export function Default({ stack }: StackContext) {
           env.AWS_SSL_CERTIFICATE_ARN,
         ),
       },
-      domainAlias: "www.housemate.dev",
     },
   });
 
