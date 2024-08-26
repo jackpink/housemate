@@ -1,7 +1,5 @@
 import { z, ZodError } from "zod";
-import { AuthError } from "next-auth";
 import { ItemCategory, ItemStatus, RecurringSchedule } from "../db/schema";
-import { commonParams } from "@aws-sdk/client-s3/dist-types/endpoint/EndpointParameters";
 
 /* 
 **********************************************

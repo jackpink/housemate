@@ -5,7 +5,7 @@ export function Default({ stack }: StackContext) {
   const itemUploadsBucket = new Bucket(stack, "ItemUploads");
 
   new Cron(stack, "alertsCron", {
-    schedule: "rate(60 minutes)",
+    schedule: "rate(10 minutes)",
     job: {
       function: {
         handler: "packages/functions/alerts.handler",
