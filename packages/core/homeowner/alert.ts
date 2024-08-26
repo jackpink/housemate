@@ -16,6 +16,14 @@ export async function create({
   propertyId: string;
   itemId?: string;
 }) {
+  console.log(
+    "Try to create alert",
+    title,
+    description,
+    homeownerId,
+    propertyId,
+    itemId,
+  );
   const [created] = await db
     .insert(homeownerAlert)
     .values({
