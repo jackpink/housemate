@@ -59,7 +59,7 @@ export async function getForHomeowner(homeownerId: string) {
 
 export async function getForItem(itemId: string) {
   const today = new Date();
-  const todayDateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+  const todayDateString = `${today.getFullYear()}-${today.getMonth() < 9 ? "0" : ""}${today.getMonth() + 1}-${today.getDate() < 10 ? "0" : ""}${today.getDate()}`;
   console.log("todayDateString", todayDateString);
   const alerts = await db
     .select()
