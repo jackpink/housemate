@@ -22,6 +22,7 @@ export function Default({ stack }: StackContext) {
   //         NEXT_PUBLIC_COVER_IMAGE_BUCKET: itemUploadsBucket.bucketName,
   //         GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
   //         RESEND_API_KEY: env.RESEND_API_KEY,
+  // AWS_SSL_CERTIFICATE_ARN: env.AWS_SSL_CERTIFICATE_ARN,
   //       },
   //     },
   //   },
@@ -42,6 +43,7 @@ export function Default({ stack }: StackContext) {
       NEXT_PUBLIC_COVER_IMAGE_BUCKET: itemUploadsBucket.bucketName,
       GOOGLE_MAPS_API_KEY: env.GOOGLE_MAPS_API_KEY,
       RESEND_API_KEY: env.RESEND_API_KEY,
+      AWS_SSL_CERTIFICATE_ARN: env.AWS_SSL_CERTIFICATE_ARN,
     },
     customDomain: {
       domainName: "housemate.dev",
