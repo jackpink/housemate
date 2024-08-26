@@ -25,7 +25,7 @@ export async function get({
   futureMonths: number;
 }) {
   const items = await db.query.item.findMany({
-    where: eq(item.propertyId, propertyId),
+    where: and(eq(item.propertyId, propertyId), eq(item.deleted, false)),
     with: {
       filesRootFolder: {
         with: { files: true },

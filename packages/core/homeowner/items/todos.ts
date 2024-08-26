@@ -10,7 +10,11 @@ export async function getAll({ propertyId }: { propertyId: string }) {
   // console.log("now query");
   const items = await db.query.item.findMany({
     where: (item, { eq }) =>
-      and(eq(item.propertyId, propertyId), eq(item.status, ItemStatus.TODO)),
+      and(
+        eq(item.propertyId, propertyId),
+        eq(item.status, ItemStatus.TODO),
+        eq(item.deleted, false),
+      ),
 
     with: {
       filesRootFolder: {
@@ -35,6 +39,7 @@ export async function getAllCompleted({
     where: (item, {}) =>
       and(
         eq(item.propertyId, propertyId),
+        eq(item.deleted, false),
         or(
           eq(item.category, ItemCategory.JOB),
           eq(item.category, ItemCategory.ISSUE),
