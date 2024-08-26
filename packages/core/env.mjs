@@ -24,7 +24,7 @@ export const env = createEnv({
     // UPSTASH_REDIS_REST_TOKEN: z.string(),
     // WEBHOOK_SECRET: z.string(),
     GOOGLE_MAPS_API_KEY: z.string(),
-    // AWS_SSL_CERTIFICATE_ARN: z.string(),
+    AWS_SSL_CERTIFICATE_ARN: z.string(),
   },
 
   /**
