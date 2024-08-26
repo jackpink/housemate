@@ -137,6 +137,8 @@ export default function EditItem({
             deviceType={deviceType}
           />
         </div>
+      </div>
+      <div className="flex justify-center gap-4 p-4">
         <DeleteButtonDialog itemId={item.id} propertyId={propertyId} />
       </div>
     </div>
