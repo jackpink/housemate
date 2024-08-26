@@ -1,6 +1,13 @@
-import { ToDoIcon } from "../../../../ui/Atoms/Icons";
+import {
+  DropDownIcon,
+  GeneralHomeIcon,
+  ToDoIcon,
+  ToDoListIcon,
+} from "../../../../ui/Atoms/Icons";
 import { ParagraphText } from "../../../../ui/Atoms/Text";
+import { PageTitle } from "../../../../ui/Atoms/Title";
 import { EditableComponentLabel } from "../../../../ui/Molecules/InPlaceEditableComponent";
+import SideMenu from "./SideMenu";
 
 export function ToDosLoading() {
   return (
@@ -134,3 +141,53 @@ const DateOfItem = function () {
     </div>
   );
 };
+
+export function ToDoEditItemPageLoading() {
+  return (
+    <div className="flex w-full">
+      <SideMenu propertyId="" selected="todo" />
+      <div className="flex-1">
+        <div className="flex justify-center ">
+          <div className="hidden max-w-[800px] grow lg:block">
+            <ToDosLoading />
+          </div>
+          <div className="grow">
+            <div className="flex items-center p-2 text-xl lg:hidden">
+              <span className="-rotate-90">
+                <DropDownIcon width={20} height={20} />
+              </span>
+              Back to To Dos
+              <ToDoListIcon width={60} height={40} />
+            </div>
+            <EditItemLoading />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ToDoPageLoading() {
+  return (
+    <div className="flex w-full">
+      <SideMenu propertyId={""} selected="todo" />
+      <div className="flex-1">
+        <div className="flex justify-center ">
+          <div className="max-w-[800px] grow">
+            <div className="flex w-max items-center justify-center p-4 xs:hidden">
+              <div className="-rotate-90 pb-6">
+                <DropDownIcon />
+              </div>
+              <GeneralHomeIcon width={30} height={30} />
+              <p className="pl-2 text-xl">Property Menu</p>
+            </div>
+            <PageTitle className="flex items-center justify-center">
+              <ToDoIcon width={40} height={40} /> To Dos
+            </PageTitle>
+            <ToDosLoading />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
