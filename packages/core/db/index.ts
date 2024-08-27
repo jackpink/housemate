@@ -3,6 +3,7 @@ import { db } from "./client";
 import { env } from "../env.mjs";
 
 export const config = defineConfig({
+  dialect: "sqlite",
   schema: "../core/db/schema.ts",
   driver: "turso",
   dbCredentials: {

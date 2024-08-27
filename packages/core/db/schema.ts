@@ -233,9 +233,7 @@ export const itemFileRelations = relations(itemFile, ({ one }) => ({
 }));
 
 export const homeownerAlert = sqliteTable("homeowner_alert", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   description: text("description"),
   date: text("date")
