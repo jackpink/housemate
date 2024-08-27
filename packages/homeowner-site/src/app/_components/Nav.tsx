@@ -395,7 +395,7 @@ export function NavMenuButton({
     <button
       onClick={() => setIsOpen(!isOpen)}
       className={clsx(
-        "flex h-16 w-16 items-center justify-center rounded-full bg-brand shadow-sm  shadow-black outline-none",
+        "flex h-16 w-16 items-center justify-center rounded-full bg-brand shadow-sm  shadow-black outline-none active:shadow-none",
         className,
       )}
     >
