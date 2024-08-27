@@ -314,7 +314,7 @@ function ToDoOptionsPopover({
       <PopoverTrigger asChild>
         <button
           className={clsx(
-            " flex w-20 flex-col items-center justify-center px-1 active:bg-black/10",
+            " flex w-20 flex-col items-center justify-center px-1 focus:bg-black/20",
             isSelected ? "bg-brandSecondary" : isTask ? "bg-todo" : "bg-issue",
           )}
         >
@@ -322,7 +322,7 @@ function ToDoOptionsPopover({
           Options
         </button>
       </PopoverTrigger>
-      <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
+      <PopoverContent className="rounded-lg border-2 border-black bg-white p-4 shadow-lg">
         <PopoverDescription className="flex flex-col items-start gap-4 pt-5">
           <AnimatedLink
             href={`${propertyPathname}todo/${itemId}`}
@@ -690,7 +690,7 @@ function CompletedOptionsPopover({
           Options
         </button>
       </PopoverTrigger>
-      <PopoverContent className="rounded-lg border-2 border-dark bg-light p-4 shadow-lg">
+      <PopoverContent className="rounded-lg border-2 border-black bg-white p-4 shadow-lg">
         <PopoverDescription className="flex flex-col items-start gap-4 pt-5">
           <Link
             href={`${propertyPathname}/todo/${itemId}`}
