@@ -43,7 +43,7 @@ export async function update({
   viewed,
   description,
 }: {
-  id: string;
+  id: number;
   viewed: boolean;
   description?: string;
 }) {
