@@ -41,50 +41,72 @@ export default async function PropertyPage({
       <PageTitle>{address}</PageTitle>
       <PageWithSingleColumn>
         <div className="grid grid-cols-2 gap-2  p-10">
-          <Link
+          <MainMenuLinkButton
             href={`/properties/${params.propertyId}/todo`}
-            className="block"
-          >
-            <div className="h-full w-full  p-7">
-              <div className="flex w-full flex-col items-center justify-center">
-                <ToDoListIcon width={45} height={45} />
-                <Text className="text-xl font-bold">To Do List</Text>
-              </div>
-            </div>
-          </Link>
-          <Link
+            Icon={<ToDoListIcon width={45} height={45} colour="black" />}
+            IconSecondary={
+              <ToDoListIcon width={45} height={45} colour="#c470e7" />
+            }
+            title="To Do List"
+          />
+          <MainMenuLinkButton
             href={`/properties/${params.propertyId}/schedule`}
-            className="block"
-          >
-            <div className="h-full w-full p-7">
-              <div className="flex w-full flex-col items-center justify-center">
-                <ScheduleIcon width={45} height={45} />
-                <Text className="text-xl font-bold">Schedule</Text>
-              </div>
-            </div>
-          </Link>
+            Icon={<ScheduleIcon width={45} height={45} />}
+            IconSecondary={
+              <ScheduleIcon width={45} height={45} colour="#c470e7" />
+            }
+            title="Schedule"
+          />
 
-          <Link
+          <MainMenuLinkButton
             href={`/properties/${params.propertyId}/search`}
-            className="block"
-          >
-            <div className="h-full w-full  p-7">
-              <div className="flex w-full flex-col items-center justify-center">
-                <LargeSearchIcon width={45} height={45} />
-                <Text className="text-xl font-bold">Search</Text>
-              </div>
-            </div>
-          </Link>
-          <Link href={`/properties/${params.propertyId}/add`} className="block">
-            <div className="h-full w-full  p-7">
-              <div className="flex w-full flex-col items-center justify-center">
-                <LargeAddIcon width={40} height={40} />
-                <Text className="text-xl font-bold">Add Task</Text>
-              </div>
-            </div>
-          </Link>
+            Icon={<LargeSearchIcon width={45} height={45} />}
+            IconSecondary={
+              <LargeSearchIcon width={45} height={45} colour="#c470e7" />
+            }
+            title="Search"
+          />
+
+          <MainMenuLinkButton
+            href={`/properties/${params.propertyId}/add`}
+            Icon={<LargeAddIcon width={40} height={40} />}
+            IconSecondary={
+              <LargeAddIcon width={40} height={40} colour="#c470e7" />
+            }
+            title="Add Task"
+          />
         </div>
       </PageWithSingleColumn>
     </>
+  );
+}
+
+function MainMenuLinkButton({
+  href,
+  Icon,
+  IconSecondary,
+  title,
+}: {
+  href: string;
+  Icon: React.ReactNode;
+  IconSecondary: React.ReactNode;
+  title: string;
+}) {
+  return (
+    <Link href={href} className="group/todo hover:bg-red block">
+      <div className="h-full w-full  p-7">
+        <div className="flex w-full flex-col items-center justify-center">
+          <div className=" group-hover/todo:hidden group-focus/todo:hidden">
+            {Icon}
+          </div>
+          <div className="hidden group-hover/todo:flex group-focus/todo:flex group-focus/todo:animate-pulse">
+            {IconSecondary}
+          </div>
+          <Text className="text-xl font-bold group-hover/todo:text-brandSecondary group-focus/todo:animate-pulse group-focus/todo:text-brandSecondary">
+            {title}
+          </Text>
+        </div>
+      </div>
+    </Link>
   );
 }
