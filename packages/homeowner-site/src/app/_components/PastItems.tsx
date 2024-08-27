@@ -364,7 +364,7 @@ function AddFilterDialog({
               className="w-full rounded-full border-2 border-slate-400 p-4"
             />
           </FilterContainer>
-          <FilterContainer
+          {/* <FilterContainer
             filterName="category"
             filterStatus={filters.category.status}
             toggleFilterStatus={toggleFilterStatus}
@@ -378,7 +378,7 @@ function AddFilterDialog({
               <option value="issue">Issue</option>
               <option value="product">Product</option>
             </select>
-          </FilterContainer>
+          </FilterContainer> */}
           <FilterContainer
             filterName="date"
             filterStatus={filters.date.status}
@@ -468,7 +468,7 @@ function FiltersForDesktop({
           className="w-full rounded-full border-2 border-slate-400 p-4"
         />
       </FilterContainer>
-      <FilterContainer
+      {/* <FilterContainer
         filterName="category"
         filterStatus={filters.category.status}
         toggleFilterStatus={toggleFilterStatus}
@@ -482,7 +482,7 @@ function FiltersForDesktop({
           <option value="issue">Issue</option>
           <option value="product">Product</option>
         </select>
-      </FilterContainer>
+      </FilterContainer> */}
       <FilterContainer
         filterName="date"
         filterStatus={filters.date.status}
