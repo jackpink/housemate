@@ -211,7 +211,7 @@ function PropertySelectorMenu({
   return (
     <Popover.Root>
       <Popover.Trigger asChild className="outline-none">
-        <button className="flex items-center rounded-lg border-black bg-brand p-2 shadow-sm shadow-black">
+        <button className="flex items-center rounded-lg border-black bg-brand p-2 shadow-sm shadow-black active:shadow-none">
           <MoveIcon />
           <p>{address ? address : "Select a property"}</p>
         </button>
@@ -315,7 +315,7 @@ function UserButton({ user }: { user: User }) {
       <Popover.Trigger asChild>
         <button
           className={clsx(
-            "flex h-12 w-12 items-center justify-center rounded-full border-black bg-brand font-bold shadow-sm shadow-black",
+            "flex h-12 w-12 items-center justify-center rounded-full border-black bg-brand font-bold shadow-sm shadow-black active:shadow-none",
           )}
         >
           {initials}
