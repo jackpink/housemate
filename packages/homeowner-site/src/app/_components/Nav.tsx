@@ -1,7 +1,12 @@
 "use client";
 
 import { signOutAction } from "../actions";
-import { CTAButton } from "../../../../ui/Atoms/Button";
+import {
+  CTAButton,
+  PopoverButton,
+  PopoverFormButton,
+  PopoverLinkButton,
+} from "../../../../ui/Atoms/Button";
 import Link from "next/link";
 import { User } from "lucia";
 import clsx from "clsx";
@@ -328,24 +333,35 @@ function UserButton({ user }: { user: User }) {
             <p>{user.email}</p>
           </div>
           <div className="p-4">
-            <Link href={"/manage-account"}>
-              <button className="flex items-center p-2">
-                <AccountIcon colour="black" selected={false} height={25} />
-                <p className="pl-2">Manage Account</p>
-              </button>
-            </Link>
-            <Link href={"/notifications"}>
-              <button className="flex items-center p-2">
-                <AlertsIcon height={20} colour="black" selected={false} />
-                <p className="pl-3">Notifications</p>
-              </button>
-            </Link>
-            <form action={signOutAction}>
-              <button className="flex items-center p-2" onClick={signOutAction}>
-                <SignOutIcon width={25} height={25} />
-                <p className="pl-2">Sign Out</p>
-              </button>
-            </form>
+            <PopoverLinkButton
+              href="/manage-account"
+              Icon={<AccountIcon colour="black" selected={false} height={25} />}
+              IconSecondary={
+                <AccountIcon colour="#c470e7" selected={false} height={25} />
+              }
+              title="Manage Account"
+              iconPadding={2}
+            />
+
+            <PopoverLinkButton
+              href="/notifications"
+              Icon={<AlertsIcon height={20} colour="black" selected={false} />}
+              IconSecondary={
+                <AlertsIcon height={20} colour="#c470e7" selected={false} />
+              }
+              title="Notifications"
+              iconPadding={3}
+            />
+
+            <PopoverFormButton
+              onClick={signOutAction}
+              Icon={<SignOutIcon width={25} height={25} />}
+              IconSecondary={
+                <SignOutIcon width={25} height={25} colour="#c470e7" />
+              }
+              title="Sign Out"
+              iconPadding={2}
+            />
           </div>
           <Popover.Arrow
             className="  fill-brand stroke-slate-400"

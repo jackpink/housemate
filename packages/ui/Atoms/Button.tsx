@@ -6,6 +6,7 @@ import { useFormStatus } from "react-dom";
 import { Text } from "./Text";
 import { LoadingIcon } from "./Icons";
 import React from "react";
+import Link from "next/link";
 
 type ButtonProps = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -92,3 +93,116 @@ export const LargeButtonContent: React.FC<React.PropsWithChildren> = ({
 }) => {
   return <Text className="text-dark font-sans text-lg">{children}</Text>;
 };
+
+export function PopoverButton({
+  onClick,
+  Icon,
+  IconSecondary,
+  title,
+  iconPadding,
+}: {
+  onClick: () => void;
+  Icon: React.ReactNode;
+  IconSecondary: React.ReactNode;
+  title: string;
+  iconPadding: 1 | 2 | 3 | 4 | 5;
+}) {
+  return (
+    <button onClick={onClick} className="group/nav flex items-center p-2">
+      <div className=" group-hover/nav:hidden group-focus/nav:hidden">
+        {Icon}
+      </div>
+      <div className="hidden group-hover/nav:flex group-focus/nav:flex group-focus/nav:animate-pulse">
+        {IconSecondary}
+      </div>
+      <p
+        className={clsx(
+          "group-hover/nav:text-brandSecondary group-focus/nav:text-brandSecondary group-focus/nav:animate-pulse",
+          iconPadding === 1 && "pl-1",
+          iconPadding === 2 && "pl-2",
+          iconPadding === 3 && "pl-3",
+          iconPadding === 4 && "pl-4",
+          iconPadding === 5 && "pl-5",
+        )}
+      >
+        {title}
+      </p>
+    </button>
+  );
+}
+
+export function PopoverFormButton({
+  onClick,
+  Icon,
+  IconSecondary,
+  title,
+  iconPadding,
+}: {
+  onClick: () => void;
+  Icon: React.ReactNode;
+  IconSecondary: React.ReactNode;
+  title: string;
+  iconPadding: 1 | 2 | 3 | 4 | 5;
+}) {
+  return (
+    <form action={onClick} className="group/nav">
+      <button onClick={onClick} className=" flex items-center p-2">
+        <div className=" group-hover/nav:hidden group-focus/nav:hidden">
+          {Icon}
+        </div>
+        <div className="hidden group-hover/nav:flex group-focus/nav:flex group-focus/nav:animate-pulse">
+          {IconSecondary}
+        </div>
+        <p
+          className={clsx(
+            "group-hover/nav:text-brandSecondary group-focus/nav:text-brandSecondary group-focus/nav:animate-pulse",
+            iconPadding === 1 && "pl-1",
+            iconPadding === 2 && "pl-2",
+            iconPadding === 3 && "pl-3",
+            iconPadding === 4 && "pl-4",
+            iconPadding === 5 && "pl-5",
+          )}
+        >
+          {title}
+        </p>
+      </button>
+    </form>
+  );
+}
+
+export function PopoverLinkButton({
+  href,
+  Icon,
+  IconSecondary,
+  title,
+  iconPadding,
+}: {
+  href: string;
+  Icon: React.ReactNode;
+  IconSecondary: React.ReactNode;
+  title: string;
+  iconPadding: 1 | 2 | 3 | 4 | 5;
+}) {
+  return (
+    <Link href={href} className="group/nav flex items-center p-2">
+      <div className=" group-hover/nav:hidden group-focus/nav:hidden">
+        {Icon}
+      </div>
+      <div className="hidden group-hover/nav:flex group-focus/nav:flex group-focus/nav:animate-pulse">
+        {IconSecondary}
+      </div>
+      <p
+        className={clsx(
+          "group-hover/nav:text-brandSecondary group-focus/nav:text-brandSecondary group-focus/nav:animate-pulse",
+          iconPadding === 1 && "pl-1",
+          iconPadding === 2 && "pl-2",
+          iconPadding === 3 && "pl-3",
+          iconPadding === 4 && "pl-4",
+          iconPadding === 5 && "pl-5",
+        )}
+      >
+        {title}
+      </p>
+    </Link>
+  );
+}
