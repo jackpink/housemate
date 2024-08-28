@@ -70,15 +70,17 @@ export async function ItemAlert({
   const item = await Item.get(alert.itemId!);
   if (!item) return <div>Item not found</div>;
 
+  const alertDate = new Date(item.date).toDateString();
+
   return (
-    <div className="flex">
+    <Link
+      href={`/properties/${alert.propertyId}/todo/${alert.itemId}`}
+      className="flex rounded-lg bg-brandSecondary/40 p-3"
+    >
       <div className="grow">
-        <h1 className="pb-2 text-lg font-semibold">{alert.title}</h1>
-        <p className="pb-1 text-sm">{address}</p>
-        <Link href={`/properties/${alert.propertyId}/items/${alert.itemId}`}>
-          <button className="rounded-full bg-brand p-3 font-medium capitalize">{`${item.category} - ${item.title}`}</button>
-        </Link>
-        <p>{alert.description}</p>
+        <h1 className="pb-2 text-lg font-semibold">{`Task Reminder - ${item.title}`}</h1>
+        <p className="pb-2 text-sm">{address}</p>
+        <p className="text-sm">{alertDate}</p>
       </div>
       <div className="flex w-20 flex-col items-center justify-center">
         <div
@@ -89,6 +91,6 @@ export async function ItemAlert({
         ></div>
         <p className="capitalize text-brandSecondary">{daysSinceAlert}</p>
       </div>
-    </div>
+    </Link>
   );
 }
