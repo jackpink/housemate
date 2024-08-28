@@ -30,6 +30,13 @@ export default async function AlertsPage() {
 
   const unViewedAlerts = alerts.filter((alert) => !alert.viewed).length;
 
+  //update alerts to viewed
+  alerts.forEach(async (alert) => {
+    if (!alert.viewed) {
+      await Alert.update({ id: alert.id, viewed: true });
+    }
+  });
+
   return (
     <>
       <Nav properties={properties} currentPropertyId={""} />
@@ -45,9 +52,11 @@ export default async function AlertsPage() {
       </Link>
       <PageTitle className="flex items-center justify-center gap-4">
         <AlertsIcon height={40} selected={false} colour="black" /> Notifications
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brandSecondary text-lg text-white">
-          {unViewedAlerts}
-        </span>
+        {unViewedAlerts > 0 && (
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brandSecondary text-lg text-white">
+            {unViewedAlerts}
+          </span>
+        )}
       </PageTitle>
 
       <div className="mx-auto w-full md:w-112 ">
