@@ -1,6 +1,10 @@
 import { User } from "../core/homeowner/user";
 import { Item, type Items } from "../core/homeowner/item";
 import { Alert } from "../core/homeowner/alert";
+import { Resend } from "resend";
+import { env } from "../core/env.mjs";
+import { render } from "@react-email/components";
+import TaskUpcomingNotification from "../transactional/emails/TaskUpcomingNotification";
 
 export async function handler() {
   const allHomeownerUsers = await User.getAll();
@@ -14,21 +18,21 @@ export async function handler() {
   }
 }
 
-async function checkWarranties(userId: string, warrantySetting: number) {
-  console.log("Checking warranties");
-  const todaysDate = new Date();
-  const warrantyDate = new Date(todaysDate.getDate() + warrantySetting)
-    .toISOString()
-    .split("T")[0];
-  console.log("Warranty date", warrantyDate);
-  const itemsWithWarrantyAlerts = await Item.getForUserAndWarrantyDate(
-    userId,
-    warrantyDate,
-  );
-  for (const item of itemsWithWarrantyAlerts) {
-    await createWarrantyAlertForItem(item, userId);
-  }
-}
+// async function checkWarranties(userId: string, warrantySetting: number) {
+//   console.log("Checking warranties");
+//   const todaysDate = new Date();
+//   const warrantyDate = new Date(todaysDate.getDate() + warrantySetting)
+//     .toISOString()
+//     .split("T")[0];
+//   console.log("Warranty date", warrantyDate);
+//   const itemsWithWarrantyAlerts = await Item.getForUserAndWarrantyDate(
+//     userId,
+//     warrantyDate,
+//   );
+//   for (const item of itemsWithWarrantyAlerts) {
+//     await createWarrantyAlertForItem(item, userId);
+//   }
+// }
 
 async function createWarrantyAlertForItem(
   item: Items[number],
@@ -50,7 +54,7 @@ export async function checkTaskReminders(userId: string, taskSetting: number) {
   console.log("Checking task reminders");
   const todaysDate = new Date();
   todaysDate.setDate(todaysDate.getDate() + taskSetting);
-  const dateString = todaysDate.toISOString().split("T")[0];
+  const dateString = `${todaysDate.getFullYear()}-${todaysDate.getMonth() < 9 ? "0" : ""}${todaysDate.getMonth() + 1}-${todaysDate.getDate() < 10 ? "0" : ""}${todaysDate.getDate()}`;
   console.log("Task date", dateString);
   const itemsWithTaskAlerts = await Item.getForUserAndDate(userId, dateString);
   console.log("Items with task alerts", itemsWithTaskAlerts);
@@ -81,4 +85,52 @@ async function createTaskAlertForItem(
     itemId: item.id,
   });
   console.log("Alert created", alertId);
+}
+
+export async function sendTaskReminderEmail({
+  email,
+  address,
+  taskTitle,
+  date,
+  propertyId,
+  taskId,
+}: {
+  email: string;
+  address: string;
+  taskTitle: string;
+  date: string;
+  propertyId: string;
+  taskId: string;
+}) {
+  const resend = new Resend(env.RESEND_API_KEY);
+
+  console.log("Sending task reminder email to", email);
+
+  const emailHtml = render(
+    TaskUpcomingNotification({
+      address,
+      taskTitle,
+      date,
+      propertyId,
+      taskId,
+    }),
+  );
+
+  const response = await resend.emails.send({
+    from: "Housemate <no-reply@aacounts.housemate.dev>",
+    to: [email],
+    subject: "Task Reminder",
+    html: emailHtml,
+    headers: {
+      "X-Entity-Ref-ID": "123456789",
+    },
+    tags: [
+      {
+        name: "category",
+        value: "task_reminder",
+      },
+    ],
+  });
+
+  console.log("Email sent", response);
 }
