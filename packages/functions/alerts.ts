@@ -5,6 +5,7 @@ import { Resend } from "resend";
 import { env } from "../core/env.mjs";
 import { render } from "@react-email/components";
 import TaskUpcomingNotification from "../transactional/emails/TaskUpcomingNotification";
+import { Property } from "../core/homeowner/property";
 
 export async function handler() {
   const allHomeownerUsers = await User.getAll();
@@ -60,6 +61,20 @@ export async function checkTaskReminders(userId: string, taskSetting: number) {
   console.log("Items with task alerts", itemsWithTaskAlerts);
   for (const item of itemsWithTaskAlerts) {
     await createTaskAlertForItem(item, userId);
+    const user = await User.getById(userId);
+    const property = await Property.get(item.propertyId);
+    let address = "";
+    if (property) {
+      address = concatAddress(property);
+    }
+    await sendTaskReminderEmail({
+      email: user.email,
+      address: address,
+      taskTitle: item.title,
+      date: item.date,
+      propertyId: item.propertyId,
+      taskId: item.id,
+    });
   }
 }
 
@@ -87,7 +102,7 @@ async function createTaskAlertForItem(
   console.log("Alert created", alertId);
 }
 
-export async function sendTaskReminderEmail({
+async function sendTaskReminderEmail({
   email,
   address,
   taskTitle,
@@ -133,4 +148,33 @@ export async function sendTaskReminderEmail({
   });
 
   console.log("Email sent", response);
+}
+
+export const concatAddress = (addressObject: IAddress) => {
+  let address =
+    addressObject.streetNumber +
+    " " +
+    addressObject.streetName +
+    ", " +
+    addressObject.suburb +
+    ", " +
+    addressObject.state +
+    ", " +
+    addressObject.country;
+  if (!!addressObject.apartment) {
+    // add apartment number in front /
+
+    address = addressObject.apartment + " / " + address;
+  }
+  return address;
+};
+
+interface IAddress {
+  apartment: string | null;
+  streetNumber: string;
+  streetName: string;
+  suburb: string;
+  postcode: string;
+  state: string;
+  country: string;
 }
