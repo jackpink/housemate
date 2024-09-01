@@ -31,10 +31,10 @@ export default function VerificationEmail({
           <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
             <Section className="mt-[32px]">
               <Img
-                src="static/logo.png"
+                src="https://housemate.dev/neutral-logo.png"
                 width="300"
                 height="300"
-                alt="Housemate"
+                alt="housemate"
                 className="mx-auto"
               />
             </Section>
