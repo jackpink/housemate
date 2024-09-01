@@ -66,6 +66,20 @@ export async function getForHomeowner(homeownerId: string) {
   return alerts;
 }
 
+export async function getNumberOfUnviewed(homeownerId: string) {
+  const alerts = await db
+    .select()
+    .from(homeownerAlert)
+    .where(
+      and(
+        eq(homeownerAlert.homeownerId, homeownerId),
+        eq(homeownerAlert.viewed, false),
+      ),
+    );
+
+  return alerts.length;
+}
+
 export async function getForItem(itemId: string) {
   const today = new Date();
   const todayDateString = `${today.getFullYear()}-${today.getMonth() < 9 ? "0" : ""}${today.getMonth() + 1}-${today.getDate() < 10 ? "0" : ""}${today.getDate()}`;
