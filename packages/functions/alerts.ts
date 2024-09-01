@@ -132,7 +132,7 @@ async function sendTaskReminderEmail({
   );
 
   const response = await resend.emails.send({
-    from: "Housemate <no-reply@aacounts.housemate.dev>",
+    from: "Housemate <no-reply@accounts.housemate.dev>",
     to: [email],
     subject: "Task Reminder",
     html: emailHtml,
