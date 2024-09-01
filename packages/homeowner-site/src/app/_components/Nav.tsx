@@ -152,15 +152,6 @@ function DropDownMenu({
               iconPadding={2}
             />
 
-            <PopoverLinkButton
-              href="/notifications"
-              Icon={<AlertsIcon height={20} colour="black" selected={false} />}
-              IconSecondary={
-                <AlertsIcon height={20} colour="#c470e7" selected={false} />
-              }
-              title="Notifications"
-              iconPadding={3}
-            />
             <NotificationsButton
               unviewedNotifications={unviewedNotifications}
             />
@@ -371,15 +362,6 @@ function UserButton({
               iconPadding={2}
             />
 
-            <PopoverLinkButton
-              href="/notifications"
-              Icon={<AlertsIcon height={20} colour="black" selected={false} />}
-              IconSecondary={
-                <AlertsIcon height={20} colour="#c470e7" selected={false} />
-              }
-              title="Notifications"
-              iconPadding={3}
-            />
             <NotificationsButton
               unviewedNotifications={unviewedNotifications}
             />
