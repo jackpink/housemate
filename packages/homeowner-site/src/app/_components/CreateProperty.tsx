@@ -12,7 +12,11 @@ import { useSession } from "./ContextProviders";
 
 type ValidAddress = Awaited<ReturnType<typeof getValidAddress>>;
 
-export default function CreateProperty() {
+export default function CreateProperty({
+  isLimitReached,
+}: {
+  isLimitReached: boolean;
+}) {
   const [addressSearchTerm, setAddressSearchTerm] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
   const [validAddress, setValidAddress] = useState<ValidAddress | null>(null);
@@ -37,7 +41,10 @@ export default function CreateProperty() {
         onClickSearch={onClickSearch}
         searchLoading={searchLoading}
       />
-      <AddressResults validAddress={validAddress} />
+      <AddressResults
+        validAddress={validAddress}
+        isLimitReached={isLimitReached}
+      />
     </div>
   );
 }
@@ -83,9 +90,13 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
 
 type AddressResultsProps = {
   validAddress: IAddress | null;
+  isLimitReached: boolean;
 };
 
-const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
+const AddressResults: React.FC<AddressResultsProps> = ({
+  validAddress,
+  isLimitReached,
+}) => {
   const user = useSession();
 
   if (!validAddress || !user) {
@@ -105,6 +116,7 @@ const AddressResults: React.FC<AddressResultsProps> = ({ validAddress }) => {
       address={address}
       validAddress={validAddress}
       userId={user.id}
+      isLimitReached={isLimitReached}
     />
   );
 };
@@ -113,7 +125,8 @@ const AddressFound: React.FC<{
   address: string;
   validAddress: IAddress;
   userId: string;
-}> = ({ address, validAddress, userId }) => {
+  isLimitReached: boolean;
+}> = ({ address, validAddress, userId, isLimitReached }) => {
   // const { mutate: createProperty, isLoading: isCreatingProperty } =
   //   api.property.create.useMutation({
   //     onSuccess: (property) => {
@@ -157,10 +170,17 @@ const AddressFound: React.FC<{
       <Text className="pb-4 pt-2">
         Is this your address? Create property for this address below
       </Text>
+
+      <ErrorMessage
+        error={isLimitReached}
+        errorMessage="Property limit reached for your account"
+      />
+
       <CTAButton
         onClick={onClickCreateProperty}
         rounded
         loading={loading}
+        disabled={isLimitReached}
         className="w-full"
       >
         Create Property

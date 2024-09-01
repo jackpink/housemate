@@ -16,6 +16,7 @@ async function getProperties({ userId }: { userId: string }) {
 export default async function CreatePropertyPage() {
   const user = await getVerifiedUserOrRedirect();
   const properties = await getProperties({ userId: user.id });
+  const isLimitReached = properties.length >= 2;
   const unviewedNotifications = await Alert.getNumberOfUnviewed(user.id);
   return (
     <>
@@ -37,7 +38,7 @@ export default async function CreatePropertyPage() {
 
       <PageWithSingleColumn>
         <div className="pt-20">
-          <CreateProperty />
+          <CreateProperty isLimitReached={isLimitReached} />
         </div>
       </PageWithSingleColumn>
     </>
