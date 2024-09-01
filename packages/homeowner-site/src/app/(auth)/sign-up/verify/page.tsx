@@ -36,7 +36,7 @@ export default async function VerifyEmailPage() {
   if (!hasActiveCode) {
     return (
       <div>
-        <Nav properties={[]} currentPropertyId="" />
+        <Nav properties={[]} currentPropertyId="" unviewedNotifications={0} />
         <div>
           <Link href="/" className="flex w-max items-center justify-center p-4">
             <div className="-rotate-90">
@@ -72,7 +72,7 @@ export default async function VerifyEmailPage() {
 
   return (
     <div>
-      <Nav properties={[]} currentPropertyId="" />
+      <Nav properties={[]} currentPropertyId="" unviewedNotifications={0} />
       <div>
         <Link href="/" className="flex w-max items-center justify-center p-4">
           <div className="-rotate-90">

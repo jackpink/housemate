@@ -1,6 +1,7 @@
 import { Property } from "../../../../../../core/homeowner/property";
 import Nav from "~/app/_components/Nav";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
+import { Alert } from "../../../../../../core/homeowner/alert";
 
 async function getAddresses({ userId }: { userId: string }) {
   console.log("Getting properties for user", userId);
@@ -18,9 +19,15 @@ export default async function MainAppLayout({
   console.log("params", params);
 
   const properties = await getAddresses({ userId: user.id });
+
+  const unviewedNotifications = await Alert.getNumberOfUnviewed(user.id);
   return (
     <>
-      <Nav properties={properties} currentPropertyId={params.propertyId} />
+      <Nav
+        properties={properties}
+        currentPropertyId={params.propertyId}
+        unviewedNotifications={unviewedNotifications}
+      />
       {children}
     </>
   );

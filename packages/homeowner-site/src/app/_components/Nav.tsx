@@ -1,6 +1,6 @@
 "use client";
 
-import { signOutAction } from "../actions";
+import { getUnviewedNotificationsAction, signOutAction } from "../actions";
 import {
   CTAButton,
   PopoverButton,
@@ -31,9 +31,11 @@ import * as Popover from "@radix-ui/react-popover";
 export default function Nav({
   properties,
   currentPropertyId,
+  unviewedNotifications,
 }: {
   properties: Property[];
   currentPropertyId: string;
+  unviewedNotifications: number;
 }) {
   const currentProperty = properties.find((p) => p.id === currentPropertyId);
   console.log("Nav", currentPropertyId);
@@ -52,6 +54,7 @@ export default function Nav({
               currentAddress={currentAddress}
               user={user}
               currentPropertyId={currentPropertyId}
+              unviewedNotifications={unviewedNotifications}
             />
           </div>
           <div className="relative flex flex items-center justify-center xs:hidden">
@@ -59,6 +62,7 @@ export default function Nav({
               properties={properties}
               currentpropertyId={currentPropertyId}
               user={user}
+              unviewedNotifications={unviewedNotifications}
             />
           </div>
         </div>
@@ -79,11 +83,13 @@ function InlineMenu({
   currentAddress,
   user,
   currentPropertyId,
+  unviewedNotifications,
 }: {
   properties: Property[];
   currentAddress?: string;
   user: User;
   currentPropertyId: string;
+  unviewedNotifications: number;
 }) {
   console.log("InlineMenu", currentAddress);
   return (
@@ -95,7 +101,7 @@ function InlineMenu({
         currentPropertyId={currentPropertyId}
       />
 
-      <UserButton user={user} />
+      <UserButton user={user} unviewedNotifications={unviewedNotifications} />
     </>
   );
 }
@@ -103,10 +109,12 @@ function DropDownMenu({
   properties,
   currentpropertyId,
   user,
+  unviewedNotifications,
 }: {
   properties: Property[];
   currentpropertyId: string;
   user: User;
+  unviewedNotifications: number;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -152,6 +160,9 @@ function DropDownMenu({
               }
               title="Notifications"
               iconPadding={3}
+            />
+            <NotificationsButton
+              unviewedNotifications={unviewedNotifications}
             />
 
             <PopoverFormButton
@@ -322,7 +333,13 @@ function PropertyButton({
   );
 }
 
-function UserButton({ user }: { user: User }) {
+function UserButton({
+  user,
+  unviewedNotifications,
+}: {
+  user: User;
+  unviewedNotifications: number;
+}) {
   console.log("User", user);
   const initials = `${user.firstName.split("")[0]?.toUpperCase()}
     ${user.lastName.split("")[0]?.toUpperCase()}`;
@@ -362,6 +379,9 @@ function UserButton({ user }: { user: User }) {
               }
               title="Notifications"
               iconPadding={3}
+            />
+            <NotificationsButton
+              unviewedNotifications={unviewedNotifications}
             />
 
             <PopoverFormButton
@@ -447,5 +467,31 @@ export function NavMenuButton({
         ></span>
       </div>
     </button>
+  );
+}
+
+function NotificationsButton({
+  unviewedNotifications,
+}: {
+  unviewedNotifications: number;
+}) {
+  //const unviewedNotifications = getUnviewedNotificationsAction({ homeownerId });
+  return (
+    <div className="flex items-center justify-between">
+      <PopoverLinkButton
+        href="/notifications"
+        Icon={<AlertsIcon height={20} colour="black" selected={false} />}
+        IconSecondary={
+          <AlertsIcon height={20} colour="#c470e7" selected={false} />
+        }
+        title="Notifications"
+        iconPadding={3}
+      />
+      {unviewedNotifications > 0 && (
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brandSecondary text-lg text-white">
+          {unviewedNotifications}
+        </span>
+      )}
+    </div>
   );
 }

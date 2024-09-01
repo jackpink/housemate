@@ -24,6 +24,7 @@ import {
 import { cookies, headers } from "next/headers";
 import { send } from "process";
 import { sendVerificationEmail } from "~/utils/emails";
+import { Alert } from "../../../core/homeowner/alert";
 
 export async function signInAction(email: string, password: string) {
   // try {
@@ -366,4 +367,14 @@ export async function deleteItemAction({
 }) {
   await Item.update({ id: itemId, deleted: true });
   revalidatePath(`/properties/${propertyId}`);
+}
+
+export async function getUnviewedNotificationsAction({
+  homeownerId,
+}: {
+  homeownerId: string;
+}) {
+  console.log("Getting unviewed notifications", homeownerId);
+  const alertsLength = await Alert.getNumberOfUnviewed(homeownerId);
+  return alertsLength;
 }

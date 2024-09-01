@@ -39,7 +39,11 @@ export default async function AlertsPage() {
 
   return (
     <>
-      <Nav properties={properties} currentPropertyId={""} />
+      <Nav
+        properties={properties}
+        currentPropertyId={""}
+        unviewedNotifications={unViewedAlerts}
+      />
       <Link
         href={`/properties/`}
         className="flex w-max items-center justify-center p-4"
