@@ -4,9 +4,19 @@ import clsx from "clsx";
 import { ReactNode, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { Text } from "./Text";
-import { LoadingIcon } from "./Icons";
+import { CrossIcon, DeleteIcon, LoadingIcon } from "./Icons";
 import React from "react";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeading,
+  DialogTrigger,
+  useDialog,
+  useDialogContext,
+} from "./Dialog";
 
 type ButtonProps = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -204,5 +214,65 @@ export function PopoverLinkButton({
         {title}
       </p>
     </Link>
+  );
+}
+
+function DeleteDialogCancelButton() {
+  const { setOpen } = useDialogContext();
+
+  return (
+    <button
+      onClick={() => setOpen(false)}
+      className="flex rounded-md bg-slate-300 p-2 shadow-sm shadow-black"
+    >
+      <CrossIcon />
+      Cancel
+    </button>
+  );
+}
+
+function DeleteDialogConfirmButton({ onDelete }: { onDelete: () => void }) {
+  const { setOpen } = useDialogContext();
+  const onClickDelete = async () => {
+    await onDelete();
+    setOpen(false);
+  };
+  return (
+    <button
+      onClick={onClickDelete}
+      className="flex rounded-md bg-red-400 p-2 shadow-sm shadow-black"
+    >
+      <DeleteIcon />
+      Delete
+    </button>
+  );
+}
+
+export function DeleteButtonWithDialog({
+  label,
+  onDelete,
+  children,
+}: {
+  label: string;
+  onDelete: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="Dialog">
+        <DialogDescription className="flex  flex-col items-center gap-4 p-2 pt-14">
+          <div className="max-w-96">
+            <p className="pb-4">
+              Are you sure you want to delete this {label}?
+            </p>
+            <div className="flex w-full justify-between gap-4">
+              <DeleteDialogCancelButton />
+              <DeleteDialogConfirmButton onDelete={onDelete} />
+            </div>
+          </div>
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
   );
 }

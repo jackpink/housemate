@@ -41,6 +41,7 @@ import {
   useDialogContext,
 } from "../../../../ui/Atoms/Dialog";
 import { usePopoverContext } from "../../../../ui/Atoms/Popover";
+import { DeleteButtonWithDialog } from "../../../../ui/Atoms/Button";
 
 const createDateString = (date: Date) => {
   const dateString = `${date.getFullYear()}-${date.getMonth() < 9 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : "1"}${date.getDate()}`;
@@ -679,55 +680,11 @@ function DeleteButtonDialog({
     deleteItemAction({ itemId: itemId, propertyId: propertyId });
   };
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button className="flex">
-          <DeleteIcon width={20} height={20} />
-          <span className="pl-2">Delete</span>
-        </button>
-      </DialogTrigger>
-      <DialogContent className="Dialog">
-        <DialogDescription className="flex  flex-col items-center gap-4 p-2 pt-14">
-          <div className="max-w-96">
-            <p className="pb-4">Are you sure you want to delete this file?</p>
-            <div className="flex w-full justify-between gap-4">
-              <DeleteDialogCancelButton />
-              <DeleteDialogConfirmButton onDelete={onDelete} />
-            </div>
-          </div>
-        </DialogDescription>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function DeleteDialogCancelButton() {
-  const { setOpen } = useDialogContext();
-
-  return (
-    <button
-      onClick={() => setOpen(false)}
-      className="flex rounded-md bg-slate-300 p-2 shadow-sm shadow-black"
-    >
-      <CrossIcon />
-      Cancel
-    </button>
-  );
-}
-
-function DeleteDialogConfirmButton({ onDelete }: { onDelete: () => void }) {
-  const { setOpen } = useDialogContext();
-  const onClickDelete = async () => {
-    await onDelete();
-    setOpen(false);
-  };
-  return (
-    <button
-      onClick={onClickDelete}
-      className="flex rounded-md bg-red-400 p-2 shadow-sm shadow-black"
-    >
-      <DeleteIcon />
-      Delete
-    </button>
+    <DeleteButtonWithDialog label="item" onDelete={onDelete}>
+      <button className="flex">
+        <DeleteIcon width={20} height={20} />
+        <span className="pl-2">Delete</span>
+      </button>
+    </DeleteButtonWithDialog>
   );
 }
