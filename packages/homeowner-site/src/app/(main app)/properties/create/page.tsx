@@ -6,6 +6,7 @@ import { Property } from "../../../../../../core/homeowner/property";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 import Link from "next/link";
 import { DropDownIcon } from "../../../../../../ui/Atoms/Icons";
+import { Alert } from "../../../../../../core/homeowner/alert";
 
 async function getProperties({ userId }: { userId: string }) {
   console.log("Getting properties for user", userId);
@@ -15,9 +16,14 @@ async function getProperties({ userId }: { userId: string }) {
 export default async function CreatePropertyPage() {
   const user = await getVerifiedUserOrRedirect();
   const properties = await getProperties({ userId: user.id });
+  const unviewedNotifications = await Alert.getNumberOfUnviewed(user.id);
   return (
     <>
-      <Nav properties={properties} currentPropertyId={""} />
+      <Nav
+        properties={properties}
+        currentPropertyId={""}
+        unviewedNotifications={unviewedNotifications}
+      />
       <Link
         href="/properties"
         className="flex w-max items-center justify-center p-4"
