@@ -39,11 +39,18 @@ export default function TaskUpcomingNotification({
           <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
             <Section className="mt-[32px]">
               <Img
-                src="static/logo.png"
+                src="https://housemate.dev/logo.png"
                 width="300"
                 height="300"
-                alt="Housemate"
-                className="mx-auto"
+                alt="housemate"
+                className="mx-auto dark:hidden"
+              />
+              <Img
+                src="https://housemate.dev/dark-logo.png"
+                width="300"
+                height="300"
+                alt="housemate"
+                className="mx-auto hidden dark:block"
               />
             </Section>
             <Heading className="mx-0 mt-[30px] p-0 text-center text-[24px] font-normal text-black">
