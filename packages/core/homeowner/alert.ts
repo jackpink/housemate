@@ -1,7 +1,7 @@
 export * as Alert from "./alert";
 import { db } from "../db";
 import { homeownerAlert } from "../db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 
 export async function create({
   title,
@@ -60,7 +60,8 @@ export async function getForHomeowner(homeownerId: string) {
   const alerts = await db
     .select()
     .from(homeownerAlert)
-    .where(eq(homeownerAlert.homeownerId, homeownerId));
+    .where(eq(homeownerAlert.homeownerId, homeownerId))
+    .orderBy(desc(homeownerAlert.date));
 
   return alerts;
 }
