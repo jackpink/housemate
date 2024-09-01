@@ -10,6 +10,7 @@ import { getDeviceType } from "~/app/actions";
 import { getUserOrRedirect } from "~/utils/pageRedirects";
 import { Property } from "../../../../../core/homeowner/property";
 import Nav from "~/app/_components/Nav";
+import { Alert } from "../../../../../core/homeowner/alert";
 
 async function getProperties({ userId }: { userId: string }) {
   console.log("Getting properties for user", userId);
@@ -28,12 +29,18 @@ export default async function ManageAccountPage() {
   }
   const properties = await getProperties({ userId: user.id });
 
+  const unviewedNotifications = await Alert.getNumberOfUnviewed(user.id);
+
   return (
     <>
-      <Nav properties={properties} currentPropertyId={""} />
+      <Nav
+        properties={properties}
+        currentPropertyId={""}
+        unviewedNotifications={unviewedNotifications}
+      />
       <PageTitle>Manage Account</PageTitle>
 
-      <div className="md:w-112 mx-auto w-full ">
+      <div className="mx-auto w-full md:w-112 ">
         <h1 className="border-b-2 border-black font-semibold">General</h1>
         <div className="flex flex-col items-center justify-center">
           <GeneralSettings user={userObj} deviceType={deviceType} />
