@@ -184,3 +184,7 @@ export async function getValidAddress({
   console.log("AddressObj", AddressObj);
   return AddressObj;
 }
+
+export async function remove({ id }: { id: string }) {
+  await db.update(property).set({ deleted: true }).where(eq(property.id, id));
+}
