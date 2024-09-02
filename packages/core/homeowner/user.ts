@@ -90,8 +90,13 @@ export async function getByEmail(email: string) {
   const user = await db
     .select()
     .from(schema.homeownerUsers)
-    .where(eq(schema.homeownerUsers.email, email));
-  if (!user[0]) throw new Error("User not found");
+    .where(
+      and(
+        eq(schema.homeownerUsers.email, email),
+        eq(schema.homeownerUsers.deleted, false),
+      ),
+    );
+  if (!user[0]) return null;
   return user[0];
 }
 
@@ -108,7 +113,7 @@ export async function getById(id: string) {
   if (!user[0]) return null;
   return user[0];
 }
-export type User = Awaited<ReturnType<typeof getByEmail>>;
+export type User = Awaited<ReturnType<typeof getAll>>[0];
 
 export async function getAll() {
   const users = await db.select().from(schema.homeownerUsers);

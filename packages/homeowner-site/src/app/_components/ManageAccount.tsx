@@ -10,6 +10,7 @@ import {
 import { User } from "../../../../core/homeowner/user";
 import {
   deleteAccountAction,
+  signOutAction,
   updatePasswordAction,
   updatePasswordWithCurrentPasswordAction,
   updateUser,
@@ -402,6 +403,7 @@ export function DeleteAccountButton({ userId }: { userId: string }) {
   const onDelete = () => {
     console.log("delete account");
     deleteAccountAction({ userId: userId });
+    signOutAction();
   };
   return (
     <DeleteButtonWithDialog label="Account" onDelete={onDelete}>
