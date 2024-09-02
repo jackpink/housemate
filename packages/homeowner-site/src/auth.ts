@@ -205,7 +205,9 @@ export async function signUp({
   const existingUser = await User.getByEmail(email);
 
   if (existingUser) {
-    throw new Error("User already exists");
+    return {
+      error: "User already exists",
+    };
   }
 
   // Hash the password
@@ -226,7 +228,9 @@ export async function signUp({
     });
   } catch (e) {
     console.log(e);
-    throw e;
+    return {
+      error: "Failed to create user",
+    };
   }
 
   const session = await lucia.createSession(userId, {

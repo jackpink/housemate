@@ -27,7 +27,6 @@ import { sendVerificationEmail } from "~/utils/emails";
 import { Alert } from "../../../core/homeowner/alert";
 
 export async function signInAction(email: string, password: string) {
-  // try {
   const result = await signIn({
     email: email,
     password: password,
@@ -40,9 +39,6 @@ export async function signInAction(email: string, password: string) {
   }
 
   return result;
-
-  //   }
-  // }
 }
 
 export async function signOutAction() {
@@ -66,21 +62,19 @@ export async function signUpAction({
   email: string;
   password: string;
 }) {
-  try {
-    await signUp({
-      firstName,
-      lastName,
-      email,
-      password,
-    });
+  const result = await signUp({
+    firstName,
+    lastName,
+    email,
+    password,
+  });
+
+  if (result.error) {
+    return { error: result.error };
+  } else if (result.success) {
     redirect("/sign-up/verify");
-  } catch (error: any) {
-    console.log("Sign up error", error);
-    if (error.message === "User already exists") {
-      return { error: "User already exists" };
-    }
-    throw error;
   }
+  return result;
 }
 
 export async function updatePasswordWithCurrentPasswordAction({

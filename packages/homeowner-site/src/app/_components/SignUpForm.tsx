@@ -95,8 +95,14 @@ const createUser = async (
       confirmPassword: formData.get("confirmPassword"),
     });
 
-    await signUpAction(result);
-    result.firstName;
+    const signUpResult = await signUpAction(result);
+    if (signUpResult.error) {
+      return {
+        error: true,
+        message: signUpResult.error,
+        fieldErrors: {},
+      };
+    }
   } catch (error) {
     console.error("Error signing up", error);
     return fromErrorToFormState(error);
