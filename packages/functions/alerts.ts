@@ -61,20 +61,6 @@ export async function checkTaskReminders(userId: string, taskSetting: number) {
   console.log("Items with task alerts", itemsWithTaskAlerts);
   for (const item of itemsWithTaskAlerts) {
     await createTaskAlertForItem(item, userId);
-    const user = await User.getById(userId);
-    const property = await Property.get(item.propertyId);
-    let address = "";
-    if (property) {
-      address = concatAddress(property);
-    }
-    await sendTaskReminderEmail({
-      email: user.email,
-      address: address,
-      taskTitle: item.title,
-      date: item.date,
-      propertyId: item.propertyId,
-      taskId: item.id,
-    });
   }
 }
 
@@ -100,6 +86,20 @@ async function createTaskAlertForItem(
     itemId: item.id,
   });
   console.log("Alert created", alertId);
+  const user = await User.getById(homeownerId);
+  const property = await Property.get(item.propertyId);
+  let address = "";
+  if (property) {
+    address = concatAddress(property);
+  }
+  await sendTaskReminderEmail({
+    email: user.email,
+    address: address,
+    taskTitle: item.title,
+    date: item.date,
+    propertyId: item.propertyId,
+    taskId: item.id,
+  });
 }
 
 async function sendTaskReminderEmail({
