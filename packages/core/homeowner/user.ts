@@ -1,4 +1,5 @@
 export * as User from "./user";
+import { error } from "console";
 import { db, schema } from "../db";
 import { eq, gt, and, sql } from "drizzle-orm";
 
@@ -90,6 +91,7 @@ export async function getByEmail(email: string) {
     .select()
     .from(schema.homeownerUsers)
     .where(eq(schema.homeownerUsers.email, email));
+  if (!user[0]) throw new Error("User not found");
   return user[0];
 }
 
@@ -97,11 +99,16 @@ export async function getById(id: string) {
   const user = await db
     .select()
     .from(schema.homeownerUsers)
-    .where(eq(schema.homeownerUsers.id, id));
-  if (!user[0]) throw new Error("User not found");
+    .where(
+      and(
+        eq(schema.homeownerUsers.id, id),
+        eq(schema.homeownerUsers.deleted, false),
+      ),
+    );
+  if (!user[0]) return null;
   return user[0];
 }
-export type User = Awaited<ReturnType<typeof getById>>;
+export type User = Awaited<ReturnType<typeof getByEmail>>;
 
 export async function getAll() {
   const users = await db.select().from(schema.homeownerUsers);
@@ -250,4 +257,11 @@ export async function verifyPasswordResetToken({
     return null;
   }
   return userToken.userId;
+}
+
+export async function remove({ id }: { id: string }) {
+  await db
+    .update(schema.homeownerUsers)
+    .set({ deleted: true })
+    .where(eq(schema.homeownerUsers.id, id));
 }
