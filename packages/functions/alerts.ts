@@ -92,14 +92,15 @@ async function createTaskAlertForItem(
   if (property) {
     address = concatAddress(property);
   }
-  await sendTaskReminderEmail({
-    email: user.email,
-    address: address,
-    taskTitle: item.title,
-    date: item.date,
-    propertyId: item.propertyId,
-    taskId: item.id,
-  });
+  if (user)
+    await sendTaskReminderEmail({
+      email: user.email,
+      address: address,
+      taskTitle: item.title,
+      date: item.date,
+      propertyId: item.propertyId,
+      taskId: item.id,
+    });
 }
 
 async function sendTaskReminderEmail({
