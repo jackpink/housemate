@@ -13,6 +13,7 @@ import { RecurringSchedule, item } from "../../../../../../../core/db/schema";
 import { Item } from "../../../../../../../core/homeowner/items/item";
 import { Todos } from "../../../../../../../core/homeowner/items/todos";
 import { int } from "drizzle-orm/mysql-core";
+import { PropertyNotFound } from "~/app/_components/NotFound";
 
 export default async function ToDoPage({
   params,
@@ -21,7 +22,7 @@ export default async function ToDoPage({
 }) {
   const property = await Property.get(params.propertyId);
 
-  if (!property) return <div>Property not found</div>;
+  if (!property) return <PropertyNotFound />;
 
   const user = await getVerifiedUserOrRedirect();
 

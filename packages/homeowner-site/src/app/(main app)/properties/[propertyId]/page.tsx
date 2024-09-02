@@ -17,6 +17,7 @@ import {
 import { concatAddress } from "~/utils/functions";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
 import { DeletePropertyButtonDialog } from "~/app/_components/CreateProperty";
+import { PropertyNotFound } from "~/app/_components/NotFound";
 
 export default async function PropertyPage({
   params,
@@ -27,7 +28,7 @@ export default async function PropertyPage({
 
   const property = await Property.get(params.propertyId);
 
-  if (!property) return <div>Property not found</div>;
+  if (!property) return <PropertyNotFound />;
 
   const address = concatAddress(property);
 

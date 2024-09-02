@@ -18,7 +18,7 @@ import Files from "~/app/_components/Files";
 import { Bucket } from "sst/node/bucket";
 import Schedule from "~/app/_components/Schedule";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
-import { ItemNotFound } from "~/app/_components/NotFound";
+import { ItemNotFound, PropertyNotFound } from "~/app/_components/NotFound";
 import { User } from "../../../../../../../../core/homeowner/user";
 import { freeStorageLimit } from "~/utils/functions";
 
@@ -36,7 +36,7 @@ export default async function ToDoPage({
 
   const property = await Property.get(params.propertyId);
 
-  if (!property) return <div>Property not found</div>;
+  if (!property) return <PropertyNotFound />;
 
   const user = await getVerifiedUserOrRedirect();
 

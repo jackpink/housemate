@@ -14,6 +14,7 @@ import {
   ToDoIcon,
 } from "../../../../../../../ui/Atoms/Icons";
 import { PageTitle } from "../../../../../../../ui/Atoms/Title";
+import { PropertyNotFound } from "~/app/_components/NotFound";
 
 export default async function ToDoPage({
   params,
@@ -22,7 +23,7 @@ export default async function ToDoPage({
 }) {
   const property = await Property.get(params.propertyId);
 
-  if (!property) return <div>Property not found</div>;
+  if (!property) return <PropertyNotFound />;
 
   const user = await getVerifiedUserOrRedirect();
 
