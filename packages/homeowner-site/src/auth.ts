@@ -65,7 +65,9 @@ export async function signIn({
     // Since protecting against this is non-trivial,
     // it is crucial your implementation is protected against brute-force attacks with login throttling etc.
     // If usernames are public, you may outright tell the user that the username is invalid.
-    throw new Error("Incorrect username or password");
+    return {
+      error: "Incorrect username or password",
+    };
   }
 
   const validPassword = await verify(existingUser.password, password, {
@@ -75,7 +77,9 @@ export async function signIn({
     parallelism: 1,
   });
   if (!validPassword) {
-    throw new Error("Incorrect username or password");
+    return {
+      error: "Incorrect username or password",
+    };
   }
 
   const session = await lucia.createSession(existingUser.id, {});
@@ -85,6 +89,10 @@ export async function signIn({
     sessionCookie.value,
     sessionCookie.attributes,
   );
+
+  return {
+    success: "Signed in",
+  };
 }
 
 export async function generateEmailVerificationCode({
