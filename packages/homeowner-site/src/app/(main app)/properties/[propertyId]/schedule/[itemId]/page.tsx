@@ -86,6 +86,9 @@ export default async function ToDoPage({
     revalidatePath(`/properties/${params.propertyId}/past/${params.itemId}`);
   };
   const fullUser = await User.getById(user.id);
+  if (!fullUser) {
+    return <div>Can't fnuid user</div>;
+  }
 
   // @ts-ignore
   const bucketName = (Bucket.ItemUploads.bucketName as string) || "not found";

@@ -52,6 +52,10 @@ export default async function PasswordResetPage({
 
   const user = await User.getById(userId);
 
+  if (!user) {
+    return <div>Can't fnuid user</div>;
+  }
+
   return (
     <div>
       <div>

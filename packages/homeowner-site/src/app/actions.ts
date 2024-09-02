@@ -385,3 +385,7 @@ export async function deletePropertyAction({
   await Property.remove({ id: propertyId });
   revalidatePath("/properties");
 }
+
+export async function deleteAccountAction({ userId }: { userId: string }) {
+  await User.remove({ id: userId });
+}

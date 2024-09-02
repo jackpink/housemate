@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { User } from "../../../../../core/homeowner/user";
 import {
   AlertSettings,
+  DeleteAccountButton,
   GeneralSettings,
 } from "~/app/_components/ManageAccount";
 import { getDeviceType } from "~/app/actions";
@@ -48,6 +49,9 @@ export default async function ManageAccountPage() {
         <h1 className="border-b-2 border-black font-semibold">Alerts</h1>
         <div>
           <AlertSettings user={userObj} deviceType={deviceType} />
+        </div>
+        <div className="flex w-full justify-center pt-10">
+          <DeleteAccountButton userId={user.id} />
         </div>
       </div>
     </>

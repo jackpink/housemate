@@ -9,11 +9,12 @@ import {
 } from "../../../../ui/Molecules/InPlaceEditableComponent";
 import { User } from "../../../../core/homeowner/user";
 import {
+  deleteAccountAction,
   updatePasswordAction,
   updatePasswordWithCurrentPasswordAction,
   updateUser,
 } from "../actions";
-import { CTAButton } from "../../../../ui/Atoms/Button";
+import { CTAButton, DeleteButtonWithDialog } from "../../../../ui/Atoms/Button";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import React from "react";
 import { useFormState, useFormStatus } from "react-dom";
@@ -24,6 +25,7 @@ import {
   fromErrorToFormState,
   updatePasswordSchema,
 } from "../../../../core/homeowner/forms";
+import { DeleteIcon } from "../../../../ui/Atoms/Icons";
 
 export function GeneralSettings({
   user,
@@ -394,4 +396,19 @@ function getAlertNumber(value: string) {
     default:
       return 0;
   }
+}
+
+export function DeleteAccountButton({ userId }: { userId: string }) {
+  const onDelete = () => {
+    console.log("delete account");
+    deleteAccountAction({ userId: userId });
+  };
+  return (
+    <DeleteButtonWithDialog label="Account" onDelete={onDelete}>
+      <button className="flex">
+        <DeleteIcon width={20} height={20} />
+        <span className="pl-2">Delete Account</span>
+      </button>
+    </DeleteButtonWithDialog>
+  );
 }
