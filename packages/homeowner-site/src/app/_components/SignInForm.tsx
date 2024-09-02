@@ -20,6 +20,7 @@ import {
   updatePasswordAction,
 } from "../actions";
 import { ErrorMessage } from "../../../../ui/Atoms/Text";
+import { sign } from "crypto";
 
 export function SignInForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -69,7 +70,14 @@ const AttemptSignIn = async (
       password: formData.get("password") as string,
     });
 
-    await signInAction(result.email, result.password);
+    const signInResult = await signInAction(result.email, result.password);
+    if (signInResult.error) {
+      return {
+        error: true,
+        message: signInResult.error,
+        fieldErrors: {},
+      };
+    }
   } catch (error) {
     console.error("Error signing in", error);
     return fromErrorToFormState(error);

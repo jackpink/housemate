@@ -28,17 +28,18 @@ import { Alert } from "../../../core/homeowner/alert";
 
 export async function signInAction(email: string, password: string) {
   // try {
-  await signIn({
+  const result = await signIn({
     email: email,
     password: password,
-  })
-    .then(() => {
-      redirect("/properties");
-    })
-    .catch((error) => {
-      console.log("Sign in error", error);
-      throw error;
-    });
+  });
+
+  if (result.error) {
+    return { error: result.error };
+  } else if (result.success) {
+    redirect("/properties");
+  }
+
+  return result;
 
   //   }
   // }
@@ -73,8 +74,11 @@ export async function signUpAction({
       password,
     });
     redirect("/sign-up/verify");
-  } catch (error) {
+  } catch (error: any) {
     console.log("Sign up error", error);
+    if (error.message === "User already exists") {
+      return { error: "User already exists" };
+    }
     throw error;
   }
 }
