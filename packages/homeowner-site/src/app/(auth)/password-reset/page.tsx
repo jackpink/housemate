@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import {
-  SendPasswordResetEmailForm,
+  SendPasswordResetEmail,
   SignInForm,
 } from "~/app/_components/SignInForm";
 import { DropDownIcon, EmailSentIcon } from "../../../../../ui/Atoms/Icons";
@@ -37,7 +37,7 @@ export default async function PasswordResetPage() {
         <h1 className="text-xl">Password Reset.</h1>
         <h2>Enter Your email to reset your password </h2>
         <div className="flex w-full justify-center pt-10">
-          <SendPasswordResetEmailForm />
+          <SendPasswordResetEmail />
         </div>
       </div>
     </div>

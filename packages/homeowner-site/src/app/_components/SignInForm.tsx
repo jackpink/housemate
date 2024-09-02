@@ -2,7 +2,7 @@
 
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import { useFormState, useFormStatus } from "react-dom";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import {
   FormState,
@@ -82,16 +82,25 @@ const AttemptSignIn = async (
   };
 };
 
-export function SendPasswordResetEmailForm() {
+function SendPasswordResetEmailForm({ state }: { state: FormState }) {
+  const [sent, setSent] = React.useState(false);
   const { pending, data } = useFormStatus();
-
-  const [state, formAction] = useFormState(
-    sendPasswordResetEmail,
-    emptyFormState,
-  );
-
+  if (data && !sent) {
+    setSent(true);
+  }
+  if (!pending && sent) {
+    console.log(pending, sent);
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <p>We have sent a password reset link. Please check your email.</p>
+        <Link href="/signin">
+          <CTAButton rounded>Back to Sign In</CTAButton>
+        </Link>
+      </div>
+    );
+  }
   return (
-    <form action={formAction}>
+    <>
       <TextInputWithError
         label="Email"
         name="email"
@@ -108,6 +117,19 @@ export function SendPasswordResetEmailForm() {
         Send Reset Email
       </CTAButton>
       <ErrorMessage error={state.error} errorMessage={state.message} />
+    </>
+  );
+}
+
+export function SendPasswordResetEmail() {
+  const [state, formAction] = useFormState(
+    sendPasswordResetEmail,
+    emptyFormState,
+  );
+
+  return (
+    <form action={formAction} className="grid gap-2">
+      <SendPasswordResetEmailForm state={state} />
     </form>
   );
 }
@@ -136,17 +158,35 @@ const sendPasswordResetEmail = async (
   };
 };
 
-export function PasswordResetForm() {}
-
-export function UpdatePassword({ userId }: { userId: string }) {
-  const [showPassword, setShowPassword] = React.useState(false);
-
-  const { pending } = useFormStatus();
-
-  const [state, formAction] = useFormState(updatePassword, emptyFormState);
-
+export function UpdatePasswordForm({
+  showPassword,
+  setShowPassword,
+  userId,
+  state,
+}: {
+  showPassword: boolean;
+  setShowPassword: Dispatch<SetStateAction<boolean>>;
+  userId: string;
+  state: FormState;
+}) {
+  const [updated, setUpdated] = React.useState(false);
+  const { pending, data } = useFormStatus();
+  if (data && !updated) {
+    setUpdated(true);
+  }
+  if (!pending && updated) {
+    console.log(pending, updated);
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <p>Your Password has now been updated. Please use this to sign in.</p>
+        <Link href="/signin">
+          <CTAButton rounded>Back to Sign In</CTAButton>
+        </Link>
+      </div>
+    );
+  }
   return (
-    <form action={formAction}>
+    <>
       <TextInputWithError
         label="New Password"
         name="password"
@@ -181,6 +221,23 @@ export function UpdatePassword({ userId }: { userId: string }) {
         Update Password
       </CTAButton>
       <ErrorMessage error={state.error} errorMessage={state.message} />
+    </>
+  );
+}
+
+export function UpdatePassword({ userId }: { userId: string }) {
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const [state, formAction] = useFormState(updatePassword, emptyFormState);
+
+  return (
+    <form action={formAction}>
+      <UpdatePasswordForm
+        showPassword={showPassword}
+        setShowPassword={setShowPassword}
+        userId={userId}
+        state={state}
+      />
     </form>
   );
 }
