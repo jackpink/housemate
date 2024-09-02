@@ -378,3 +378,12 @@ export async function getUnviewedNotificationsAction({
   const alertsLength = await Alert.getNumberOfUnviewed(homeownerId);
   return alertsLength;
 }
+
+export async function deletePropertyAction({
+  propertyId,
+}: {
+  propertyId: string;
+}) {
+  await Property.remove({ id: propertyId });
+  revalidatePath("/properties");
+}

@@ -2,11 +2,15 @@
 
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { IAddress } from "../../../../core/homeowner/property";
-import { CTAButton } from "../../../../ui/Atoms/Button";
-import { SearchIcon } from "../../../../ui/Atoms/Icons";
+import { CTAButton, DeleteButtonWithDialog } from "../../../../ui/Atoms/Button";
+import { DeleteIcon, SearchIcon } from "../../../../ui/Atoms/Icons";
 import { ErrorMessage, Text } from "../../../../ui/Atoms/Text";
 import { useRouter } from "next/navigation";
-import { createProperty, getValidAddress } from "../actions";
+import {
+  createProperty,
+  deletePropertyAction,
+  getValidAddress,
+} from "../actions";
 import { concatAddress } from "~/utils/functions";
 import { useSession } from "./ContextProviders";
 
@@ -192,3 +196,21 @@ const AddressFound: React.FC<{
     </div>
   );
 };
+
+export function DeletePropertyButtonDialog({
+  propertyId,
+}: {
+  propertyId: string;
+}) {
+  const onDelete = () => {
+    deletePropertyAction({ propertyId: propertyId });
+  };
+  return (
+    <DeleteButtonWithDialog label="property" onDelete={onDelete}>
+      <button className="flex">
+        <DeleteIcon width={20} height={20} />
+        <span className="pl-2">Delete Property</span>
+      </button>
+    </DeleteButtonWithDialog>
+  );
+}

@@ -16,6 +16,7 @@ import {
 } from "../../../../../../ui/Atoms/Icons";
 import { concatAddress } from "~/utils/functions";
 import { getVerifiedUserOrRedirect } from "~/utils/pageRedirects";
+import { DeletePropertyButtonDialog } from "~/app/_components/CreateProperty";
 
 export default async function PropertyPage({
   params,
@@ -76,6 +77,9 @@ export default async function PropertyPage({
             title="Add Task"
           />
         </div>
+        <div className="flex w-full justify-center">
+          <DeletePropertyButtonDialog propertyId={params.propertyId} />
+        </div>
       </PageWithSingleColumn>
     </>
   );
@@ -93,8 +97,8 @@ function MainMenuLinkButton({
   title: string;
 }) {
   return (
-    <Link href={href} className="group/todo hover:bg-red block">
-      <div className="h-full w-full  p-7">
+    <Link href={href} className="group/todo block">
+      <div className="h-full w-full p-7">
         <div className="flex w-full flex-col items-center justify-center">
           <div className=" group-hover/todo:hidden group-focus/todo:hidden">
             {Icon}
