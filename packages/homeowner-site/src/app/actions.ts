@@ -387,5 +387,6 @@ export async function deletePropertyAction({
 }
 
 export async function deleteAccountAction({ userId }: { userId: string }) {
+  await signOut();
   await User.remove({ id: userId });
 }

@@ -25,7 +25,7 @@ export const homeownerUsers = sqliteTable("homeowner_user", {
   firstName: text("first_name").notNull().default(""),
   lastName: text("last_name").notNull().default(""),
   name: text("name"),
-  email: text("email").notNull().unique(),
+  email: text("email").notNull(),
   emailVerified: integer("email_verified", { mode: "boolean" })
     .notNull()
     .default(false),
