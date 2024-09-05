@@ -42,7 +42,7 @@ export const CTAButton: React.FC<ButtonProps> = ({
   error = false,
 }) => {
   const [buttonError, setButtonError] = React.useState(error);
-  console.log("error", error);
+
   const { pending } = useFormStatus();
 
   useEffect(() => {
