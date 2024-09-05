@@ -15,7 +15,11 @@ import {
   updatePasswordWithCurrentPasswordAction,
   updateUser,
 } from "../actions";
-import { CTAButton, DeleteButtonWithDialog } from "../../../../ui/Atoms/Button";
+import {
+  CTAButton,
+  DeleteButtonWithDialog,
+  DeleteButtonWithDialogAndTextConfirmation,
+} from "../../../../ui/Atoms/Button";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
 import React from "react";
 import { useFormState, useFormStatus } from "react-dom";
@@ -406,11 +410,14 @@ export function DeleteAccountButton({ userId }: { userId: string }) {
     signOutAction();
   };
   return (
-    <DeleteButtonWithDialog label="Account" onDelete={onDelete}>
+    <DeleteButtonWithDialogAndTextConfirmation
+      label="Account"
+      onDelete={onDelete}
+    >
       <button className="flex">
         <DeleteIcon width={20} height={20} />
         <span className="pl-2">Delete Account</span>
       </button>
-    </DeleteButtonWithDialog>
+    </DeleteButtonWithDialogAndTextConfirmation>
   );
 }

@@ -231,7 +231,13 @@ function DeleteDialogCancelButton() {
   );
 }
 
-function DeleteDialogConfirmButton({ onDelete }: { onDelete: () => void }) {
+function DeleteDialogConfirmButton({
+  onDelete,
+  disabled,
+}: {
+  onDelete: () => void;
+  disabled?: boolean;
+}) {
   const { setOpen } = useDialogContext();
   const onClickDelete = async () => {
     await onDelete();
@@ -240,7 +246,10 @@ function DeleteDialogConfirmButton({ onDelete }: { onDelete: () => void }) {
   return (
     <button
       onClick={onClickDelete}
-      className="flex rounded-md bg-red-400 p-2 shadow-sm shadow-black"
+      className={clsx(
+        "flex rounded-md bg-red-400 p-2 shadow-sm shadow-black",
+        disabled && "cursor-not-allowed opacity-50",
+      )}
     >
       <DeleteIcon />
       Delete
@@ -269,6 +278,46 @@ export function DeleteButtonWithDialog({
             <div className="flex w-full justify-between gap-4">
               <DeleteDialogCancelButton />
               <DeleteDialogConfirmButton onDelete={onDelete} />
+            </div>
+          </div>
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function DeleteButtonWithDialogAndTextConfirmation({
+  label,
+  onDelete,
+  children,
+}: {
+  label: string;
+  onDelete: () => void;
+  children: ReactNode;
+}) {
+  const [confirmation, setConfirmation] = React.useState("");
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="Dialog">
+        <DialogDescription className="flex  flex-col items-center gap-4 p-2 pt-14">
+          <div className="max-w-96">
+            <p className="pb-4">
+              Are you sure you want to delete this {label}? Type{" "}
+              <strong className="uppercase"> delete {label}</strong> to confirm.
+            </p>
+            <input
+              type="text"
+              className="w-full p-2 "
+              value={confirmation}
+              onChange={(e) => setConfirmation(e.currentTarget.value)}
+            />
+            <div className="flex w-full justify-between gap-4 pt-4">
+              <DeleteDialogCancelButton />
+              <DeleteDialogConfirmButton
+                onDelete={onDelete}
+                disabled={confirmation !== "DELETE ACCOUNT"}
+              />
             </div>
           </div>
         </DialogDescription>
