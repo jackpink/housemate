@@ -2,7 +2,11 @@
 
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { IAddress } from "../../../../core/homeowner/property";
-import { CTAButton, DeleteButtonWithDialog } from "../../../../ui/Atoms/Button";
+import {
+  CTAButton,
+  DeleteButtonWithDialog,
+  DeleteButtonWithDialogAndTextConfirmation,
+} from "../../../../ui/Atoms/Button";
 import { DeleteIcon, SearchIcon } from "../../../../ui/Atoms/Icons";
 import { ErrorMessage, Text } from "../../../../ui/Atoms/Text";
 import { useRouter } from "next/navigation";
@@ -206,11 +210,14 @@ export function DeletePropertyButtonDialog({
     deletePropertyAction({ propertyId: propertyId });
   };
   return (
-    <DeleteButtonWithDialog label="property" onDelete={onDelete}>
+    <DeleteButtonWithDialogAndTextConfirmation
+      label="property"
+      onDelete={onDelete}
+    >
       <button className="flex">
         <DeleteIcon width={20} height={20} />
         <span className="pl-2">Delete Property</span>
       </button>
-    </DeleteButtonWithDialog>
+    </DeleteButtonWithDialogAndTextConfirmation>
   );
 }

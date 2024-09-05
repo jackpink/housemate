@@ -308,7 +308,7 @@ export function DeleteButtonWithDialogAndTextConfirmation({
             </p>
             <input
               type="text"
-              className="w-full p-2 "
+              className="w-full rounded border border-slate-500 p-2"
               value={confirmation}
               onChange={(e) => setConfirmation(e.currentTarget.value)}
             />
@@ -316,7 +316,7 @@ export function DeleteButtonWithDialogAndTextConfirmation({
               <DeleteDialogCancelButton />
               <DeleteDialogConfirmButton
                 onDelete={onDelete}
-                disabled={confirmation !== "DELETE ACCOUNT"}
+                disabled={confirmation !== "DELETE " + label.toUpperCase()}
               />
             </div>
           </div>
