@@ -10,6 +10,7 @@ import {
 import { User } from "../../../../core/homeowner/user";
 import {
   deleteAccountAction,
+  sendPasswordResetEmailAction,
   signOutAction,
   updatePasswordAction,
   updatePasswordWithCurrentPasswordAction,
@@ -28,9 +29,11 @@ import {
   FormState,
   emptyFormState,
   fromErrorToFormState,
+  passwordResetEmailSchema,
   updatePasswordSchema,
 } from "../../../../core/homeowner/forms";
-import { DeleteIcon } from "../../../../ui/Atoms/Icons";
+import { DeleteIcon, EmailSentIcon } from "../../../../ui/Atoms/Icons";
+import Link from "next/link";
 
 export function GeneralSettings({
   user,
@@ -68,7 +71,7 @@ export function GeneralSettings({
         <EditableComponentLabel label="Password: " />
       </div>
 
-      <ChangePassword userId={user.id} />
+      <ChangePassword userId={user.id} email={user.email} />
     </div>
   );
 }
@@ -123,7 +126,7 @@ const EditableLastName: EditModeComponent = ({ value, setValue }) => {
   );
 };
 
-function ChangePassword({ userId }: { userId: string }) {
+function ChangePassword({ userId, email }: { userId: string; email: string }) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const { pending } = useFormStatus();
@@ -131,50 +134,55 @@ function ChangePassword({ userId }: { userId: string }) {
   const [state, formAction] = useFormState(updatePassword, emptyFormState);
 
   return (
-    <form action={formAction}>
-      <TextInputWithError
-        label="Current Password"
-        name="currentPassword"
-        type={showPassword ? "text" : "password"}
-        error={!!state.fieldErrors["currentPassword"]?.[0]}
-        errorMessage={state.fieldErrors["currentPassword"]?.[0]}
-      />
-      <button className="flex w-full justify-end p-2 text-slate-600">
-        <input
-          type="checkbox"
-          className="mr-2"
-          onChange={() => setShowPassword(!showPassword)}
-          name="showPassword"
-          id="showPassword"
+    <div className="grid gap-4">
+      <form action={formAction}>
+        <TextInputWithError
+          label="Current Password"
+          name="currentPassword"
+          type={showPassword ? "text" : "password"}
+          error={!!state.fieldErrors["currentPassword"]?.[0]}
+          errorMessage={state.fieldErrors["currentPassword"]?.[0]}
         />
-        <label htmlFor="showPassword">Show Password</label>
-      </button>
-      <TextInputWithError
-        label="New Password"
-        name="password"
-        type={showPassword ? "text" : "password"}
-        error={!!state.fieldErrors["password"]?.[0]}
-        errorMessage={state.fieldErrors["password"]?.[0]}
-      />
+        <button className="flex w-full justify-end p-2 text-slate-600">
+          <input
+            type="checkbox"
+            className="mr-2"
+            onChange={() => setShowPassword(!showPassword)}
+            name="showPassword"
+            id="showPassword"
+          />
+          <label htmlFor="showPassword">Show Password</label>
+        </button>
+        <TextInputWithError
+          label="New Password"
+          name="password"
+          type={showPassword ? "text" : "password"}
+          error={!!state.fieldErrors["password"]?.[0]}
+          errorMessage={state.fieldErrors["password"]?.[0]}
+        />
 
-      <TextInputWithError
-        label="Confirm New Password"
-        name="confirmPassword"
-        type={showPassword ? "text" : "password"}
-        error={!!state.fieldErrors["confirmPassword"]?.[0]}
-        errorMessage={state.fieldErrors["confirmPassword"]?.[0]}
-      />
-      <input type="hidden" name="userId" value={userId} />
-      <CTAButton
-        rounded
-        className="w-full"
-        error={state.error}
-        loading={pending}
-      >
-        Update Password
-      </CTAButton>
-      <ErrorMessage error={state.error} errorMessage={state.message} />
-    </form>
+        <TextInputWithError
+          label="Confirm New Password"
+          name="confirmPassword"
+          type={showPassword ? "text" : "password"}
+          error={!!state.fieldErrors["confirmPassword"]?.[0]}
+          errorMessage={state.fieldErrors["confirmPassword"]?.[0]}
+        />
+        <input type="hidden" name="userId" value={userId} />
+        <div className="p-2"></div>
+        <CTAButton
+          rounded
+          className="w-full"
+          error={state.error}
+          loading={pending}
+        >
+          Update Password
+        </CTAButton>
+        <ErrorMessage error={state.error} errorMessage={state.message} />
+      </form>
+
+      <SendPasswordResetEmail email={email} />
+    </div>
   );
 }
 
@@ -201,6 +209,91 @@ const updatePassword = async (
   } catch (error) {
     console.error("Error signing up", error);
     return fromErrorToFormState(error);
+  }
+
+  return {
+    error: false,
+    message: "Success",
+    fieldErrors: {},
+  };
+};
+
+function SendPasswordResetEmailForm({
+  state,
+  email,
+}: {
+  state: FormState;
+  email: string;
+}) {
+  const [sent, setSent] = React.useState(false);
+  const { pending, data } = useFormStatus();
+  if (data && !sent) {
+    setSent(true);
+  }
+  // may be sent and
+  if (!pending && sent && !state.error) {
+    console.log(pending, sent, state.error);
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <EmailSentIcon width={50} height={50} />
+        <p>We have sent a password reset link. Please check your email.</p>
+      </div>
+    );
+  }
+  return (
+    <>
+      <input type="hidden" name="email" value={email} />
+      <CTAButton
+        rounded
+        className="w-full"
+        error={state.error}
+        loading={pending}
+      >
+        Send Reset Email
+      </CTAButton>
+      <ErrorMessage error={state.error} errorMessage={state.message} />
+    </>
+  );
+}
+
+export function SendPasswordResetEmail({ email }: { email: string }) {
+  const [state, formAction] = useFormState(
+    sendPasswordResetEmail,
+    emptyFormState,
+  );
+
+  return (
+    <form action={formAction} className="grid w-full gap-2">
+      <SendPasswordResetEmailForm state={state} email={email} />
+    </form>
+  );
+}
+
+const sendPasswordResetEmail = async (
+  state: any,
+  formData: FormData,
+): Promise<FormState> => {
+  let result;
+  try {
+    result = passwordResetEmailSchema.parse({
+      email: formData.get("email"),
+    });
+  } catch (error) {
+    console.error("Error signing up", error);
+    return fromErrorToFormState(error);
+  }
+
+  const actionResult = await sendPasswordResetEmailAction({
+    email: result.email,
+  });
+
+  if (actionResult.error) {
+    console.error("Error signing up", actionResult.error);
+    return {
+      error: true,
+      message: actionResult.error,
+      fieldErrors: {},
+    };
   }
 
   return {
