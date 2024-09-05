@@ -25,7 +25,7 @@ export default function VerificationEmail({
   return (
     <Html>
       <Head />
-      <Preview>preview</Preview>
+      <Preview>{code}</Preview>
       <Tailwind>
         <Body className="mx-auto my-auto bg-white px-2 font-sans">
           <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]">
@@ -50,7 +50,7 @@ export default function VerificationEmail({
             <Section className="mb-[32px] mt-[32px] text-center">
               <Link
                 className="rounded bg-[#7df2cd] px-5 py-3 text-center text-[12px] font-semibold text-black no-underline"
-                href="www.housemate.dev/sign-in"
+                href="https://housemate.dev/sign-in"
               >
                 Sign In
               </Link>
