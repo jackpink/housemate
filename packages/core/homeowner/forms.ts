@@ -129,3 +129,8 @@ export const passwordResetSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+export const verifyCodeSchema = z.object({
+  code: z.string().length(6),
+  userId: z.string(),
+});

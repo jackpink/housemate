@@ -11,6 +11,7 @@ import {
   signUp,
   updatePassword,
   updatePasswordWithCurrentPassword,
+  verifyEmailVerificationCode,
 } from "~/auth";
 import { redirect } from "next/navigation";
 import { IAddress, Property } from "../../../core/homeowner/property";
@@ -389,4 +390,22 @@ export async function deletePropertyAction({
 export async function deleteAccountAction({ userId }: { userId: string }) {
   await signOut();
   await User.remove({ id: userId });
+}
+
+export async function verifyCodeAction({
+  userId,
+  code,
+}: {
+  userId: string;
+  code: string;
+}) {
+  const result = await verifyEmailVerificationCode({
+    userId: userId,
+    code,
+  });
+  if (result) {
+    redirect("/properties");
+  } else {
+    return { error: "Invalid code" };
+  }
 }

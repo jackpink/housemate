@@ -101,7 +101,7 @@ export default async function VerifyEmailPage() {
         </ResendVerificationEmailButton>
 
         <div className=" w-full ">
-          <EmailCodeVerificationComponent verifyCode={verifyCode} />
+          <EmailCodeVerificationComponent userId={user.id} />
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { CTAButton } from "../../../../ui/Atoms/Button";
 import { ErrorMessage } from "../../../../ui/Atoms/Text";
 import { TextInputWithError } from "../../../../ui/Atoms/TextInput";
@@ -9,9 +9,14 @@ import {
   emptyFormState,
   fromErrorToFormState,
   signUpSchema,
+  verifyCodeSchema,
 } from "../../../../core/homeowner/forms";
 import React, { useEffect, useRef, useState, useTransition } from "react";
-import { createAndSendVerificationEmailCode, signUpAction } from "../actions";
+import {
+  createAndSendVerificationEmailCode,
+  signUpAction,
+  verifyCodeAction,
+} from "../actions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PageTitle } from "../../../../ui/Atoms/Title";
@@ -115,11 +120,7 @@ const createUser = async (
   };
 };
 
-export function EmailCodeVerificationComponent({
-  verifyCode,
-}: {
-  verifyCode: (code: string) => void;
-}) {
+export function EmailCodeVerificationComponent({ userId }: { userId: string }) {
   const [code, setCode] = useState(Array<string>(6).fill(""));
 
   const verificationCodeRefs = useRef(
@@ -138,6 +139,8 @@ export function EmailCodeVerificationComponent({
     }
   };
 
+  const [state, formAction] = useFormState(verifyCode, emptyFormState);
+
   return (
     <>
       <PageTitle>Enter Code Emailed to You</PageTitle>
@@ -155,14 +158,58 @@ export function EmailCodeVerificationComponent({
             />
           ))}
         </div>
-        <CTAButton onClick={() => verifyCode(code.join(""))} rounded>
-          Verify
-        </CTAButton>
+        <form action={formAction}>
+          <input type="hidden" name="userId" value={userId} />
+          <input type="hidden" name="code" value={code.join("")} />
+          <VerifyButton />
+        </form>
+
+        <ErrorMessage error={state.error} errorMessage={state.message} />
       </div>
     </>
   );
 }
 
+function VerifyButton() {
+  const { pending } = useFormStatus();
+  return (
+    <CTAButton rounded loading={pending}>
+      Verify
+    </CTAButton>
+  );
+}
+
+const verifyCode = async (
+  state: any,
+  formData: FormData,
+): Promise<FormState> => {
+  let result;
+
+  try {
+    result = verifyCodeSchema.parse({
+      code: formData.get("code"),
+      userId: formData.get("userId"),
+    });
+
+    const signUpResult = await verifyCodeAction(result);
+    if (signUpResult.error) {
+      return {
+        error: true,
+        message: signUpResult.error,
+        fieldErrors: {},
+      };
+    }
+  } catch (error) {
+    console.error("Error signing up", error);
+    return fromErrorToFormState(error);
+  }
+
+  return {
+    error: false,
+    message: "Success",
+    fieldErrors: {},
+  };
+};
 export const ResendVerificationEmailButton = ({
   children,
   userId,
