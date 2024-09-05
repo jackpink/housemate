@@ -79,7 +79,7 @@ const AttemptSignIn = async (
       };
     }
   } catch (error) {
-    console.error("Error signing in", error);
+    console.error("Error: ", error);
     return fromErrorToFormState(error);
   }
 
@@ -96,12 +96,13 @@ function SendPasswordResetEmailForm({ state }: { state: FormState }) {
   if (data && !sent) {
     setSent(true);
   }
-  if (!pending && sent) {
-    console.log(pending, sent);
+  // may be sent and
+  if (!pending && sent && !state.error) {
+    console.log(pending, sent, state.error);
     return (
       <div className="flex flex-col items-center justify-center">
         <p>We have sent a password reset link. Please check your email.</p>
-        <Link href="/signin">
+        <Link href="/sign-in">
           <CTAButton rounded>Back to Sign In</CTAButton>
         </Link>
       </div>
@@ -147,16 +148,26 @@ const sendPasswordResetEmail = async (
   formData: FormData,
 ): Promise<FormState> => {
   let result;
-
   try {
     result = passwordResetEmailSchema.parse({
       email: formData.get("email"),
     });
-
-    await sendPasswordResetEmailAction({ email: result.email });
   } catch (error) {
     console.error("Error signing up", error);
     return fromErrorToFormState(error);
+  }
+
+  const actionResult = await sendPasswordResetEmailAction({
+    email: result.email,
+  });
+
+  if (actionResult.error) {
+    console.error("Error signing up", actionResult.error);
+    return {
+      error: true,
+      message: actionResult.error,
+      fieldErrors: {},
+    };
   }
 
   return {
@@ -187,7 +198,7 @@ export function UpdatePasswordForm({
     return (
       <div className="flex flex-col items-center justify-center">
         <p>Your Password has now been updated. Please use this to sign in.</p>
-        <Link href="/signin">
+        <Link href="/sign-in">
           <CTAButton rounded>Back to Sign In</CTAButton>
         </Link>
       </div>
