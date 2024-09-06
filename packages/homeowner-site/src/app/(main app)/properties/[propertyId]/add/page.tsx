@@ -44,11 +44,61 @@ export default async function ToDoPage({
     {
       title: "Check the Smoke Alarms",
       recurring: true,
-      schedule: RecurringSchedule.MONTHLY,
+      schedule: RecurringSchedule.QUARTERLY,
       exists: items.some(
         (item) => item.commonTaskId === "check-the-smoke-alarms",
       ),
       id: "check-the-smoke-alarms",
+    },
+    {
+      title: "Clean range hood filters",
+      recurring: true,
+      schedule: RecurringSchedule.QUARTERLY,
+      exists: items.some(
+        (item) => item.commonTaskId === "clean-range-hood-filters",
+      ),
+      id: "clean-range-hood-filters",
+    },
+    {
+      title: "Clean the Refrigerator Coils",
+      recurring: true,
+      schedule: RecurringSchedule.HALF_YEARLY,
+      exists: items.some(
+        (item) => item.commonTaskId === "clean-the-refrigerator-coils",
+      ),
+      id: "clean-the-refrigerator-coils",
+    },
+    {
+      title: "Clean the Oven",
+      recurring: true,
+      schedule: RecurringSchedule.QUARTERLY,
+      exists: items.some((item) => item.commonTaskId === "clean-the-oven"),
+      id: "clean-the-oven",
+    },
+    {
+      title: "Clean the Dishwasher",
+      recurring: true,
+      schedule: RecurringSchedule.QUARTERLY,
+      exists: items.some(
+        (item) => item.commonTaskId === "clean-the-dishwasher",
+      ),
+      id: "clean-the-dishwasher",
+    },
+    {
+      title: "Deep clean the Bathrooms",
+      recurring: true,
+      schedule: RecurringSchedule.HALF_YEARLY,
+      exists: items.some(
+        (item) => item.commonTaskId === "deep-clean-the-bathrooms",
+      ),
+      id: "deep-clean-the-bathrooms",
+    },
+    {
+      title: "Pest Control",
+      recurring: true,
+      schedule: RecurringSchedule.HALF_YEARLY,
+      exists: items.some((item) => item.commonTaskId === "pest-control"),
+      id: "pest-control",
     },
   ];
 
@@ -66,6 +116,13 @@ export default async function ToDoPage({
       schedule: RecurringSchedule.QUARTERLY,
       exists: items.some((item) => item.commonTaskId === "clean-the-gutters"),
       id: "clean-the-gutters",
+    },
+    {
+      title: "Trim the Trees",
+      recurring: true,
+      schedule: RecurringSchedule.HALF_YEARLY,
+      exists: items.some((item) => item.commonTaskId === "trim-the-trees"),
+      id: "trim-the-trees",
     },
   ];
   return (
