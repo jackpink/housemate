@@ -11,6 +11,10 @@ compile:
 before_build:
   - echo "Before build"
   - npx sst version
+  - echo "Generating migration files for updated schema"
+  - npm run db:generate
+  - echo "Migrating database"
+  - npm run db:migrate
 
 before_deploy:
   - echo "Before deploy"
