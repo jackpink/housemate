@@ -1,5 +1,5 @@
 import { defineConfig } from "drizzle-kit";
-import { db } from "./client";
+import { db, client } from "./client";
 import { env } from "../env.mjs";
 
 export const config = defineConfig({
@@ -14,4 +14,4 @@ export const config = defineConfig({
 
 export * as schema from "./schema";
 
-export { db };
+export { db, client };
