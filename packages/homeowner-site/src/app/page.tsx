@@ -54,8 +54,8 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="bg-brand/50">
-        <div className="grid max-w-screen-lg gap-8 md:grid-cols-2 ">
+      <div className="flex w-full flex-col items-center justify-center bg-brand/50">
+        <div className="grid max-w-screen-lg gap-8 md:grid-cols-2">
           <div className="hidden items-center justify-center md:flex">
             <Image
               src={scheduleMarketing}
@@ -92,7 +92,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="bg-brand/50">
+      <div className="flex w-full flex-col items-center justify-center bg-brand/60">
         <div className="grid max-w-screen-lg gap-8 md:grid-cols-2 ">
           <div className="container flex flex-col items-center gap-4  px-4 py-16 ">
             <div className="flex items-center justify-center ">
@@ -132,7 +132,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="bg-brand/50">
+      <div className="flex w-full flex-col items-center justify-center bg-brand/50">
         <div className="grid max-w-screen-lg gap-8 md:grid-cols-2 ">
           <div className="hidden items-center justify-center md:flex">
             <Image
