@@ -5,9 +5,9 @@
     
 </p>
 
-[housemate.dev](http://housemate.dev)
+Housemate is a web app for home owners to manage their property's maintenance tasks.
 
-Housemate is a web app for home owners to manage their property's maintenance tasks. The tech stack has been selected to allow for the app to be easily updated and changed as it evolves to match the users needs.
+Your home is your most important asset. It's crucial to stay on top of tasks and keep detailed records of all work done.
 
 ## Schedule shows upcoming Tasks
 
@@ -33,6 +33,14 @@ Housemate is a web app for home owners to manage their property's maintenance ta
     <img src="https://housemate.dev/email.gif" width="313" alt="Housemate Logo"><br>
 </p>
 
+## 🚀 Quick Start
+
+Navigate to [housemate.dev](http://housemate.dev) and sign up!
+
+## Stack
+
+The tech stack has been selected to allow for the app to be easily updated and changed as it evolves to match the users needs.
+
 It is built with:
 
 - NextJS App Router
@@ -40,4 +48,27 @@ It is built with:
 
 Allowing for Typescript types to be inferred from the DB schema to the front end.
 
-It is deployed on AWS with SST
+Styled with:
+
+- Tailwind CSS
+
+Auth:
+
+- Lucia
+
+Deployed On:
+
+- AWS (Lambda, CloudFront, S3)
+- Turso (Sqlite DB)
+
+Deployed With:
+
+- SST
+- seed.run
+
+Dev Tools used:
+
+- Prettier
+- EsLint
+
+- Google Maps API
