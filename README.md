@@ -7,6 +7,13 @@
 
 Housemate is a web app for home owners to manage their property's maintenance tasks. The tech stack has been selected to allow for the app to be easily updated and changed as it evolves to match the users needs.
 
+<p>
+    <img src="https://housemate.dev/schedule-show.gif" width="313" alt="Housemate Logo"><br>
+    <img src="https://housemate.dev/todo-complete.gif" width="313" alt="Housemate Logo"><br>
+    <img src="https://housemate.dev/file-upload.gif" width="313" alt="Housemate Logo"><br>
+    
+</p>
+
 It is built with:
 
 - NextJS App Router
