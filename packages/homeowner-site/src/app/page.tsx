@@ -12,6 +12,8 @@ import scheduleMarketing from "../../public/schedulemarketingimage.png";
 import todoMarketing from "../../public/todomarketingimage.png";
 import remindersMarketing from "../../public/remindersmarketingimage.png";
 import { EmailSentIcon, ScheduleIcon, ToDoIcon } from "../../../ui/Atoms/Icons";
+import scheduleGif from "../../public/schedule-show.gif";
+import todoGif from "../../public/todo-complete.gif";
 
 export default function HomePage() {
   return (
@@ -56,12 +58,13 @@ export default function HomePage() {
       </div>
       <div className="flex w-full flex-col items-center justify-center bg-brand/50">
         <div className="grid max-w-screen-lg gap-8 md:grid-cols-2">
-          <div className="hidden items-center justify-center md:flex">
+          <div className="hidden items-center justify-center p-2 md:flex">
             <Image
-              src={scheduleMarketing}
+              src={scheduleGif}
               alt="Schedule Marketing"
               width={500}
               height={500}
+              unoptimized={true}
             />
           </div>
           <div className="container flex flex-col items-center gap-4  px-4 py-16 ">
@@ -69,12 +72,13 @@ export default function HomePage() {
               <ScheduleIcon width={30} height={30} />
               <h2 className="pl-2 text-2xl font-bold">Schedule</h2>
             </div>
-            <div className=" items-center justify-center md:hidden">
+            <div className=" items-center justify-center p-2 md:hidden">
               <Image
-                src={scheduleMarketing}
+                src={scheduleGif}
                 alt="Schedule Marketing"
                 width={300}
                 height={300}
+                unoptimized={true}
               />
             </div>
             <div className="flex flex-col items-center justify-center gap-4 text-center ">
@@ -99,12 +103,13 @@ export default function HomePage() {
               <ToDoIcon width={40} height={40} />
               <h2 className="pl-2 text-2xl font-bold">To Dos</h2>
             </div>
-            <div className="items-center justify-center md:hidden">
+            <div className="items-center justify-center p-2 md:hidden">
               <Image
-                src={todoMarketing}
+                src={todoGif}
                 alt="To Do Marketing"
                 width={300}
                 height={300}
+                unoptimized={true}
               />
             </div>
             <div className="flex flex-col items-center justify-center gap-4 text-center ">
@@ -122,12 +127,13 @@ export default function HomePage() {
               </p>
             </div>
           </div>
-          <div className="hidden items-center justify-center md:flex">
+          <div className="hidden items-center justify-center p-2 md:flex">
             <Image
-              src={todoMarketing}
+              src={todoGif}
               alt="To Do Marketing"
               width={500}
               height={500}
+              unoptimized={true}
             />
           </div>
         </div>
