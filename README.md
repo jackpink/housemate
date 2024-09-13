@@ -1,7 +1,7 @@
 # housemate.dev
 
 <p>
-    <a href="https://housemate.dev"><img src="https://housemate.dev/logo.png" width="313" alt="Housemate Logo"></a><br>
+    <a href="https://housemate.dev"><img src="https://housemate.dev/neutral-logo.png" width="313" alt="Housemate Logo"></a><br>
     
 </p>
 
