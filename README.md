@@ -30,7 +30,7 @@ Your home is your most important asset. It's crucial to stay on top of tasks and
 ## Receive automated reminders via email
 
 <p>
-    <img src="https://housemate.dev/email.gif" width="313" alt="Housemate Logo"><br>
+    <img src="https://housemate.dev/remindersmarketingimage.png" width="313" alt="Housemate Logo"><br>
 </p>
 
 ## 🚀 Quick Start
@@ -70,5 +70,6 @@ Dev Tools used:
 
 - Prettier
 - EsLint
+- Vitest
 
 - Google Maps API
