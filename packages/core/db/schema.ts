@@ -65,22 +65,30 @@ export const sessionTable = sqliteTable("session", {
   expiresAt: integer("expires_at").notNull(),
 });
 
-export const property = sqliteTable("property", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  apartment: text("apartment"),
-  streetNumber: text("street_number").notNull(),
-  streetName: text("street_name").notNull(),
-  suburb: text("suburb").notNull(),
-  state: text("state").notNull(),
-  postcode: text("postcode").notNull(),
-  country: text("country").notNull(),
-  deleted: integer("deleted", { mode: "boolean" }).default(false),
-  homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
-    onDelete: "cascade",
-  }),
-});
+export const property = sqliteTable(
+  "property",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    apartment: text("apartment"),
+    streetNumber: text("street_number").notNull(),
+    streetName: text("street_name").notNull(),
+    suburb: text("suburb").notNull(),
+    state: text("state").notNull(),
+    postcode: text("postcode").notNull(),
+    country: text("country").notNull(),
+    deleted: integer("deleted", { mode: "boolean" }).default(false),
+    homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (property) => {
+    return {
+      homeownerIdIdx: index("homeowner_id_idx").on(property.homeownerId),
+    };
+  },
+);
 
 export enum ItemCategory {
   JOB = "job",
