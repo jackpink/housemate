@@ -9,31 +9,31 @@ Housemate is a web app for home owners to manage their property's maintenance ta
 
 Your home is your most important asset. It's crucial to stay on top of tasks and keep detailed records of all work done.
 
-## Schedule shows upcoming Tasks
+- Schedule shows upcoming Tasks
 
 <p>
     <img src="https://housemate.dev/schedule-show.gif" width="313" alt="Housemate Logo"><br>
 </p>
 
-## Update priority and complete tasks in to dos
+- Update priority and complete tasks in to dos
 
 <p>
     <img src="https://housemate.dev/todo-complete.gif" width="313" alt="Housemate Logo"><br>
 </p>
 
-## Keep records by uploading pdfs and images
+- Keep records by uploading pdfs and images
 
 <p>
     <img src="https://housemate.dev/file-upload.gif" width="313" alt="Housemate Logo"><br>
 </p>
 
-## Receive automated reminders via email
+- Receive automated reminders via email
 
 <p>
     <img src="https://housemate.dev/remindersmarketingimage.png" width="313" alt="Housemate Logo"><br>
 </p>
 
-## 🚀 Quick Start
+## Quick Start
 
 Navigate to [housemate.dev](http://housemate.dev) and sign up!
 
