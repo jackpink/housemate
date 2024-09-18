@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Session, User as LuciaUser } from "lucia";
+import { set } from "zod";
 
 const defaultViewport = { width: 1000, height: 1000 };
 
@@ -14,8 +15,8 @@ export const ViewportProvider = ({
 }) => {
   // This is the exact same logic that we previously had in our hook
 
-  const [width, setWidth] = React.useState(window.innerWidth);
-  const [height, setHeight] = React.useState(window.innerHeight);
+  const [width, setWidth] = React.useState(350);
+  const [height, setHeight] = React.useState(350);
 
   const handleWindowResize = () => {
     setWidth(window.innerWidth);
@@ -24,6 +25,8 @@ export const ViewportProvider = ({
 
   React.useEffect(() => {
     window.addEventListener("resize", handleWindowResize);
+    setWidth(window.innerWidth);
+    setHeight(window.innerHeight);
     return () => window.removeEventListener("resize", handleWindowResize);
   }, []);
   /* Now we are dealing with a context instead of a Hook, so instead
