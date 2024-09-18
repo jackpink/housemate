@@ -85,7 +85,9 @@ export const property = sqliteTable(
   },
   (property) => {
     return {
-      homeownerIdIdx: index("homeowner_id_idx").on(property.homeownerId),
+      homeownerIdIdx: index("property_homeowner_id_idx").on(
+        property.homeownerId,
+      ),
     };
   },
 );
@@ -147,8 +149,8 @@ export const item = sqliteTable(
   },
   (item) => {
     return {
-      homeownerIdIdx: index("homeowner_id_idx").on(item.homeownerId),
-      propertyIdIdx: index("property_id_idx").on(item.propertyId),
+      homeownerIdIdx: index("item_homeowner_id_idx").on(item.homeownerId),
+      propertyIdIdx: index("item_property_id_idx").on(item.propertyId),
     };
   },
 );
@@ -180,7 +182,7 @@ export const itemPastDate = sqliteTable(
   },
   (itemPastDate) => {
     return {
-      itemIdIdx: index("item_id_idx").on(itemPastDate.itemId),
+      itemIdIdx: index("item_past_date_item_id_idx").on(itemPastDate.itemId),
     };
   },
 );
