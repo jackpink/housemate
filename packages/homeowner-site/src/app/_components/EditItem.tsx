@@ -81,7 +81,7 @@ export default function EditItem({
     <div
       className={clsx(
         "rounded-xl ",
-        item.status === ItemStatus.COMPLETED ? "bg-completed/30" : "bg-todo/70",
+        item.status === ItemStatus.COMPLETED ? "bg-completed/30" : "bg-todo/50",
       )}
     >
       <h1
