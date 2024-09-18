@@ -1,0 +1,1 @@
+CREATE INDEX `homeowner_id_idx` ON `property` (`homeownerId`);
