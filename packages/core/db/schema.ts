@@ -110,40 +110,48 @@ export enum RecurringSchedule {
   YEARLY = "yearly",
 }
 
-export const item = sqliteTable("item", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  title: text("title").notNull(),
-  description: text("description"),
-  status: text("status", { enum: ["completed", "todo"] }).notNull(),
-  category: text("category", { enum: ["job", "product", "issue"] }).notNull(),
-  recurring: integer("recurring", { mode: "boolean" }).default(false),
-  recurringSchedule: text("recurringSchedule", {
-    enum: Object.values(RecurringSchedule).map((value: any) => `${value}`) as [
-      string,
-      ...string[],
-    ],
-  })
-    .default("yearly")
-    .notNull(),
-  date: text("date")
-    .notNull()
-    .default(sql`(current_date)`),
-  toDoPriority: integer("toDoPriority"),
-  homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
-    onDelete: "cascade",
-  }),
-  propertyId: text("propertyId")
-    .references(() => property.id, {
-      onDelete: "cascade",
+export const item = sqliteTable(
+  "item",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    title: text("title").notNull(),
+    description: text("description"),
+    status: text("status", { enum: ["completed", "todo"] }).notNull(),
+    category: text("category", { enum: ["job", "product", "issue"] }).notNull(),
+    recurring: integer("recurring", { mode: "boolean" }).default(false),
+    recurringSchedule: text("recurringSchedule", {
+      enum: Object.values(RecurringSchedule).map(
+        (value: any) => `${value}`,
+      ) as [string, ...string[]],
     })
-    .notNull(),
-  warrantyEndDate: text("warrantyEndDate"),
-  filesRootFolderId: text("filesFolderId"),
-  commonTaskId: text("commonTaskId"),
-  deleted: integer("deleted", { mode: "boolean" }).default(false),
-});
+      .default("yearly")
+      .notNull(),
+    date: text("date")
+      .notNull()
+      .default(sql`(current_date)`),
+    toDoPriority: integer("toDoPriority"),
+    homeownerId: text("homeownerId").references(() => homeownerUsers.id, {
+      onDelete: "cascade",
+    }),
+    propertyId: text("propertyId")
+      .references(() => property.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    warrantyEndDate: text("warrantyEndDate"),
+    filesRootFolderId: text("filesFolderId"),
+    commonTaskId: text("commonTaskId"),
+    deleted: integer("deleted", { mode: "boolean" }).default(false),
+  },
+  (item) => {
+    return {
+      homeownerIdIdx: index("homeowner_id_idx").on(item.homeownerId),
+      propertyIdIdx: index("property_id_idx").on(item.propertyId),
+    };
+  },
+);
 
 export const itemRelations = relations(item, ({ one, many }) => ({
   filesRootFolder: one(itemFilesFolder, {
@@ -154,20 +162,28 @@ export const itemRelations = relations(item, ({ one, many }) => ({
   pastDates: many(itemPastDate),
 }));
 
-export const itemPastDate = sqliteTable("item_past_date", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  itemId: text("itemId")
-    .notNull()
-    .references(() => item.id, { onDelete: "cascade" }),
-  date: text("date").notNull(),
-  propertyId: text("propertyId")
-    .notNull()
-    .references(() => property.id, {
-      onDelete: "cascade",
-    }),
-});
+export const itemPastDate = sqliteTable(
+  "item_past_date",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    itemId: text("itemId")
+      .notNull()
+      .references(() => item.id, { onDelete: "cascade" }),
+    date: text("date").notNull(),
+    propertyId: text("propertyId")
+      .notNull()
+      .references(() => property.id, {
+        onDelete: "cascade",
+      }),
+  },
+  (itemPastDate) => {
+    return {
+      itemIdIdx: index("item_id_idx").on(itemPastDate.itemId),
+    };
+  },
+);
 
 export const itemPastDateRelations = relations(itemPastDate, ({ one }) => ({
   item: one(item, {
