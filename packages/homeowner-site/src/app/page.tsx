@@ -38,22 +38,23 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center justify-center bg-brand/50">
+      <div className="flex w-full flex-col items-center justify-center ">
+        <div className="flex w-full items-center justify-center bg-brand">
+          <ScheduleIcon width={30} height={30} />
+          <h2 className="pl-2 text-2xl font-bold">Schedule</h2>
+        </div>
         <div className="grid max-w-screen-lg gap-8 md:grid-cols-2">
           <div className="hidden items-center justify-center p-2 md:flex">
             <Image
               src={scheduleGif}
               alt="Schedule Marketing"
+              className="shadow-lg shadow-black"
               width={500}
               height={500}
               unoptimized={true}
             />
           </div>
           <div className="container flex flex-col items-center gap-4  px-4 py-16 ">
-            <div className="flex items-center justify-center">
-              <ScheduleIcon width={30} height={30} />
-              <h2 className="pl-2 text-2xl font-bold">Schedule</h2>
-            </div>
             <div className=" items-center justify-center p-2 md:hidden">
               <Image
                 src={scheduleGif}
