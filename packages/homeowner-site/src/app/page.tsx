@@ -6,10 +6,12 @@ import remindersMarketing from "../../public/remindersmarketingimage.png";
 import { EmailSentIcon, ScheduleIcon, ToDoIcon } from "../../../ui/Atoms/Icons";
 import scheduleGif from "../../public/schedule-show.gif";
 import todoGif from "../../public/todo-complete.gif";
+import HomePageNav from "./_components/HomePageNav";
 
 export default function HomePage() {
   return (
     <main className=" min-h-screen ">
+      <HomePageNav />
       <div className="flex w-full items-center justify-center ">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <Logo height="300" width="300" fillColour="#7df2cd" />
@@ -30,7 +32,9 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center justify-center pb-8">
+      <div
+        className={`flex w-full flex-col items-center justify-center pb-8  transition-opacity duration-700 ease-in `}
+      >
         <div className="flex w-full items-center justify-center rounded-t-full bg-brand py-4">
           <ScheduleIcon width={30} height={30} />
           <h2 className="pl-2 text-2xl font-bold">Schedule</h2>
