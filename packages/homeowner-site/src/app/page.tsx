@@ -14,14 +14,6 @@ export default function HomePage() {
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <Logo height="300" width="300" fillColour="#7df2cd" />
           <div className="flex flex-col items-center justify-center gap-4 text-center ">
-            <div className="items-center justify-center md:hidden">
-              <Image
-                src={computerMarketing}
-                alt="Schedule Marketing"
-                width={200}
-                height={200}
-              />
-            </div>
             <p className="text-3xl font-bold">
               Manage all your home management tasks.
             </p>
@@ -38,8 +30,8 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center justify-center ">
-        <div className="flex w-full items-center justify-center bg-brand">
+      <div className="flex w-full flex-col items-center justify-center pb-8">
+        <div className="flex w-full items-center justify-center rounded-t-full bg-brand py-4">
           <ScheduleIcon width={30} height={30} />
           <h2 className="pl-2 text-2xl font-bold">Schedule</h2>
         </div>
@@ -49,8 +41,8 @@ export default function HomePage() {
               src={scheduleGif}
               alt="Schedule Marketing"
               className="shadow-lg shadow-black"
-              width={500}
-              height={500}
+              width={600}
+              height={600}
               unoptimized={true}
             />
           </div>
@@ -59,8 +51,9 @@ export default function HomePage() {
               <Image
                 src={scheduleGif}
                 alt="Schedule Marketing"
-                width={300}
-                height={300}
+                className="shadow-lg shadow-black"
+                width={500}
+                height={500}
                 unoptimized={true}
               />
             </div>
@@ -79,19 +72,20 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center justify-center bg-brand/60">
+      <div className="flex w-full flex-col items-center justify-center pb-8">
+        <div className="flex w-full items-center justify-center rounded-t-full bg-brand py-4">
+          <ToDoIcon width={40} height={40} />
+          <h2 className="pl-2 text-2xl font-bold">To Dos</h2>
+        </div>
         <div className="grid max-w-screen-lg gap-8 md:grid-cols-2 ">
           <div className="container flex flex-col items-center gap-4  px-4 py-16 ">
-            <div className="flex items-center justify-center ">
-              <ToDoIcon width={40} height={40} />
-              <h2 className="pl-2 text-2xl font-bold">To Dos</h2>
-            </div>
             <div className="items-center justify-center p-2 md:hidden">
               <Image
                 src={todoGif}
                 alt="To Do Marketing"
-                width={300}
-                height={300}
+                className="shadow-lg shadow-black"
+                width={600}
+                height={600}
                 unoptimized={true}
               />
             </div>
@@ -114,6 +108,7 @@ export default function HomePage() {
             <Image
               src={todoGif}
               alt="To Do Marketing"
+              className="shadow-lg shadow-black"
               width={500}
               height={500}
               unoptimized={true}
@@ -121,7 +116,11 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center justify-center bg-brand/50">
+      <div className="flex w-full flex-col items-center justify-center pb-8">
+        <div className="flex w-full items-center justify-center rounded-t-full bg-brand py-4">
+          <EmailSentIcon width={40} height={40} />
+          <h2 className="pl-2 text-2xl font-bold">Reminders</h2>
+        </div>
         <div className="grid max-w-screen-lg gap-8 md:grid-cols-2 ">
           <div className="hidden items-center justify-center md:flex">
             <Image
@@ -132,10 +131,6 @@ export default function HomePage() {
             />
           </div>
           <div className="container flex flex-col items-center gap-4  px-4 py-16 ">
-            <div className="flex items-center justify-center">
-              <EmailSentIcon width={40} height={40} />
-              <h2 className="pl-2 text-2xl font-bold">Reminders</h2>
-            </div>
             <div className=" items-center justify-center md:hidden">
               <Image
                 src={remindersMarketing}
