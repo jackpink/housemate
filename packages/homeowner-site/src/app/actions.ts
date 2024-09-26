@@ -26,8 +26,14 @@ import { cookies, headers } from "next/headers";
 import { send } from "process";
 import { sendVerificationEmail } from "~/utils/emails";
 import { Alert } from "../../../core/homeowner/alert";
+import { authRateLimit } from "~/server/ratelimiter";
 
 export async function signInAction(email: string, password: string) {
+  const ip = headers().get("x-forwarded-for") ?? "unknown";
+  const isRateLimited = authRateLimit(ip);
+  if (isRateLimited) {
+    return { error: "Too many requests" };
+  }
   const result = await signIn({
     email: email,
     password: password,
