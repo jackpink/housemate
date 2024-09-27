@@ -69,6 +69,11 @@ export async function signUpAction({
   email: string;
   password: string;
 }) {
+  const ip = headers().get("x-forwarded-for") ?? "unknown";
+  const isRateLimited = authRateLimit(ip);
+  if (isRateLimited) {
+    return { error: "Too many requests" };
+  }
   const result = await signUp({
     firstName,
     lastName,
@@ -117,6 +122,11 @@ export async function sendPasswordResetEmailAction({
 }: {
   email: string;
 }) {
+  const ip = headers().get("x-forwarded-for") ?? "unknown";
+  const isRateLimited = authRateLimit(ip);
+  if (isRateLimited) {
+    return { error: "Too many requests" };
+  }
   // get user with email
   const user = await User.getByEmail(email);
 
